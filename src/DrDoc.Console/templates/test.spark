@@ -1,0 +1,14 @@
+﻿<table>
+	<tr>
+		<th>Namespace</th>
+		<th>Types</th>
+	</tr>
+	<tr each="var ns in Namespaces">
+		<td>${ns.Name}</td>
+		<td>
+      <ul>
+        <li each="var type in ns.Types">${type.Name}</li>
+      </ul>
+    </td>
+	</tr>
+</table>
