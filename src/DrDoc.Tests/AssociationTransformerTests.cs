@@ -64,6 +64,19 @@ namespace DrDoc.Tests
         }
 
         [Test]
+        public void ShouldForceTypeIfOnlyMethodDefined()
+        {
+            var associations = new Association[]
+            {
+              new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod"" />".ToNode(), typeof(Second).GetMethod("SecondMethod")),
+            };
+            var namespaces = transformer.Transform(associations);
+
+            namespaces[0].Name.ShouldEqual("Example");
+            namespaces[0].Types.ShouldContain(x => x.Name == "Second");
+        }
+
+        [Test]
         public void ShouldHaveMethodsInTypes()
         {
             var associations = new Association[]

@@ -32,7 +32,7 @@ namespace DrDoc
 
             generator.Convert("test.spark", namespaces , writer);
 
-            Console.WriteLine(writer.ToString());
+            File.WriteAllText("output.htm", writer.ToString());
             Console.ReadKey();
         }
     }

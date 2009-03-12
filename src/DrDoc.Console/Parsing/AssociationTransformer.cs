@@ -12,24 +12,12 @@ namespace DrDoc.Parsing
 
             foreach (TypeAssociation association in associations.Where(x => x is TypeAssociation))
             {
-                var @namespace = association.Type.Namespace;
-
-                if (!namespaces.Exists(x => x.Name == @namespace))
-                    namespaces.Add(new DocNamespace(@namespace));
+                AddNamespace(namespaces, association);
             }
 
             foreach (TypeAssociation association in associations.Where(x => x is TypeAssociation))
             {
-                var namespaceName = association.Type.Namespace;
-                var @namespace = namespaces.Find(x => x.Name == namespaceName);
-                var doc = new DocType(association.Type.Name);
-
-                var summaryNode = association.Xml.SelectSingleNode("summary");
-
-                if (summaryNode != null)
-                    doc.Summary = summaryNode.InnerText;
-
-                @namespace.AddType(doc);
+                AddType(namespaces, association);
             }
 
             foreach (MethodAssociation association in associations.Where(x => x is MethodAssociation))
@@ -40,10 +28,20 @@ namespace DrDoc.Parsing
                 var typeName = association.Method.DeclaringType.Name;
                 var @namespace = namespaces.Find(x => x.Name == namespaceName);
 
-                if (@namespace == null) continue;
+                if (@namespace == null)
+                {
+                    AddNamespace(namespaces, new TypeAssociation(null, association.Method.DeclaringType));
+                    @namespace = namespaces.Find(x => x.Name == namespaceName);
+                }
+
                 var type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
 
-                if (type == null) continue;
+                if (type == null)
+                {
+                    AddType(namespaces, new TypeAssociation(null, association.Method.DeclaringType));
+                    type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
+                }
+
                 var doc = new DocMethod(association.Method.Name);
 
                 foreach (var parameter in association.Method.GetParameters())
@@ -72,6 +70,31 @@ namespace DrDoc.Parsing
             }
 
             return namespaces;
+        }
+
+        private void AddNamespace(List<DocNamespace> namespaces, TypeAssociation association)
+        {
+            var @namespace = association.Type.Namespace;
+
+            if (!namespaces.Exists(x => x.Name == @namespace))
+                namespaces.Add(new DocNamespace(@namespace));
+        }
+
+        private void AddType(List<DocNamespace> namespaces, TypeAssociation association)
+        {
+            var namespaceName = association.Type.Namespace;
+            var @namespace = namespaces.Find(x => x.Name == namespaceName);
+            var doc = new DocType(association.Type.Name);
+
+            if (association.Xml != null)
+            {
+                var summaryNode = association.Xml.SelectSingleNode("summary");
+
+                if (summaryNode != null)
+                    doc.Summary = summaryNode.InnerText;
+            }
+
+            @namespace.AddType(doc);
         }
     }
 }
