@@ -1,74 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Spark;
+using Spark.FileSystem;
 
 namespace DrDoc.Generation
 {
-    class HtmlGenerator
+    public class HtmlGenerator
     {
         private readonly SparkViewEngine engine;
 
         public HtmlGenerator()
         {
             engine = new SparkViewEngine();
-            engine.ViewFolder = new Spark.FileSystem.FileSystemViewFolder("templates");
-            engine.DefaultPageBaseType = typeof(TemplateBase).FullName;
+            engine.ViewFolder = new FileSystemViewFolder("templates");
+            engine.DefaultPageBaseType = typeof(SparkTemplateBase).FullName;
         }
 
-        public void Convert(string template, IEnumerable<DocNamespace> namespaces, TextWriter output)
+        public HtmlGenerator(IEnumerable<KeyValuePair<string, string>> templates)
+            : this()
+        {
+            var viewFolder = new InMemoryViewFolder();
+
+            foreach (var pair in templates)
+            {
+                viewFolder.Add(pair.Key, pair.Value);
+            }
+
+            engine.ViewFolder = viewFolder;
+        }
+
+        public string Convert(string templateName, IEnumerable<DocNamespace> namespaces)
         {
             var descriptor = new SparkViewDescriptor()
-                .AddTemplate(template);
+                .AddTemplate(templateName);
+            var view = (SparkTemplateBase)engine.CreateInstance(descriptor);
 
-            var view = (TemplateBase)engine.CreateInstance(descriptor);
-            
-            try
+            using (var writer = new StringWriter())
             {
-                view.Namespaces = new List<DocNamespace>(namespaces).ToArray();
-                view.RenderView(output);
+                try
+                {
+                    view.Namespaces = new List<DocNamespace>(namespaces).ToArray();
+                    view.RenderView(writer);
+                }
+                finally
+                {
+                    engine.ReleaseInstance(view);
+                }
+
+                return writer.ToString();
             }
-            finally
-            {
-                engine.ReleaseInstance(view);
-            }
         }
-    }
-
-    /// <summary>
-    /// Base class of all spark views. In this example it's named in the
-    /// web.config spark/pages/@pageBaseType attribute. 
-    /// 
-    /// If you use #latebound syntax in expressions you need to have Eval
-    /// methods in the base class, and with direct usage it's a
-    /// "bring your own Eval" situation.
-    /// 
-    /// For convenience this example will rely on the ViewDataDictionary.
-    /// </summary>
-    public abstract class TemplateBase : AbstractSparkView
-    {
-        public object Eval(string expression)
-        {
-//            return ViewData.Eval(expression);
-            return null;
-        }
-
-        public string Eval(string expression, string format)
-        {
-            //return ViewData.Eval(expression, format);
-            return null;
-        }
-
-        /// <summary>
-        /// Members of this class are also available to the views
-        /// </summary>
-        public bool IsInStock(int productId)
-        {
-            return DateTime.UtcNow.Second % 2 == 1;
-        }
-
-        public DocNamespace[] Namespaces { get; set; }
     }
 }

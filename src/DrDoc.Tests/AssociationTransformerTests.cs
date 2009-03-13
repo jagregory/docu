@@ -3,6 +3,7 @@ using DrDoc.Parsing;
 using Example;
 using Example.Deep;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace DrDoc.Tests
 {
@@ -14,7 +15,7 @@ namespace DrDoc.Tests
         [SetUp]
         public void CreateTransformer()
         {
-            transformer = new AssociationTransformer();
+            transformer = new AssociationTransformer(new CommentContentParser());
         }
 
         [Test]
@@ -59,8 +60,21 @@ namespace DrDoc.Tests
             };
             var namespaces = transformer.Transform(associations);
 
-            namespaces[0].Types[0].Summary.ShouldEqual("First summary");
-            namespaces[0].Types[1].Summary.ShouldEqual("Second summary");
+            namespaces[0].Types[0].Summary.CountShouldEqual(1);
+            ((DocTextBlock)namespaces[0].Types[0].Summary[0]).Text.ShouldEqual("First summary");
+            namespaces[0].Types[1].Summary.CountShouldEqual(1);
+            ((DocTextBlock)namespaces[0].Types[1].Summary[0]).Text.ShouldEqual("Second summary");
+        }
+
+        [Test]
+        public void ShouldPassSummaryToContentParser()
+        {
+            var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
+            var associations = new[] { new TypeAssociation(@"<member name=""T:Example.First""><summary>First summary</summary></member>".ToNode(), typeof(First)) };
+            
+            new AssociationTransformer(contentParser).Transform(associations);
+
+            contentParser.AssertWasCalled(x => x.Parse(associations[0].Xml.ChildNodes[0]));
         }
 
         [Test]

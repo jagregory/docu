@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2FB9E7C3-B602-4343-B510-9C8DBFC7B8FD}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -60,17 +60,27 @@
     <Compile Include="Associations\MethodAssociation.cs" />
     <Compile Include="Associations\PropertyAssociation.cs" />
     <Compile Include="Associations\TypeAssociation.cs" />
+    <Compile Include="DocCodeBlock.cs" />
     <Compile Include="DocMethod.cs" />
     <Compile Include="DocNamespace.cs" />
+    <Compile Include="DocParagraphBlock.cs" />
     <Compile Include="DocParameter.cs" />
     <Compile Include="DocProperty.cs" />
+    <Compile Include="DocReferenceBlock.cs" />
+    <Compile Include="DocTextBlock.cs" />
     <Compile Include="DocType.cs" />
     <Compile Include="Generation\HtmlGenerator.cs" />
+    <Compile Include="Generation\SparkTemplateBase.cs" />
+    <Compile Include="IReferencable.cs" />
+    <Compile Include="Parsing\CommentContentParser.cs" />
+    <Compile Include="DocBlock.cs" />
     <Compile Include="Parsing\IAssociationTransformer.cs" />
     <Compile Include="Parsing\DocParser.cs" />
+    <Compile Include="Parsing\ICommentContentParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Parsing\AssociationTransformer.cs" />
+    <Compile Include="UnresolvedReference.cs" />
     <Compile Include="Utils\Method.cs" />
   </ItemGroup>
   <ItemGroup>

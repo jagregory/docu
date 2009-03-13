@@ -6,6 +6,13 @@ namespace DrDoc.Parsing
 {
     public class AssociationTransformer : IAssociationTransformer
     {
+        private readonly ICommentContentParser commentContentParser;
+
+        public AssociationTransformer(ICommentContentParser commentContentParser)
+        {
+            this.commentContentParser = commentContentParser;
+        }
+
         public IList<DocNamespace> Transform(IEnumerable<Association> associations)
         {
             var namespaces = new List<DocNamespace>();
@@ -91,7 +98,7 @@ namespace DrDoc.Parsing
                 var summaryNode = association.Xml.SelectSingleNode("summary");
 
                 if (summaryNode != null)
-                    doc.Summary = summaryNode.InnerText;
+                    doc.Summary = commentContentParser.Parse(summaryNode);
             }
 
             @namespace.AddType(doc);

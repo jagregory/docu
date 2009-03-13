@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace DrDoc
 {
-    public class DocType
+    public class DocType : IReferencable
     {
         private readonly IList<DocMethod> methods = new List<DocMethod>();
         private readonly IList<DocProperty> properties = new List<DocProperty>();
@@ -10,6 +10,7 @@ namespace DrDoc
         public DocType(string name)
         {
             Name = name;
+            Summary = new List<DocBlock>();
         }
 
         internal void AddMethod(DocMethod method)
@@ -31,6 +32,7 @@ namespace DrDoc
         {
             get { return properties; }
         }
-        public string Summary { get; internal set; }
+        
+        public IList<DocBlock> Summary { get; internal set; }
     }
 }

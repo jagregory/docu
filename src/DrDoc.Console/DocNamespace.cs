@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace DrDoc
 {
-    public class DocNamespace
+    public class DocNamespace : IReferencable
     {
         private readonly IList<DocType> types = new List<DocType>();
 

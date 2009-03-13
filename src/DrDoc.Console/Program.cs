@@ -25,14 +25,13 @@ namespace DrDoc
         static void Main(string[] args)
         {
             Assembly.LoadFrom("NHibernate.dll");
-            var parser = new DocParser(new Associator(), new AssociationTransformer());
+            var parser = new DocParser(new Associator(), new AssociationTransformer(new CommentContentParser()));
             var namespaces = parser.Parse(new[] {Assembly.LoadFrom("FluentNHibernate.dll")}, File.ReadAllText("FluentNHibernate.XML"));
             var generator = new HtmlGenerator();
-            var writer = new StringWriter();
 
-            generator.Convert("test.spark", namespaces , writer);
+            var text = generator.Convert("test.spark", namespaces);
 
-            File.WriteAllText("output.htm", writer.ToString());
+            File.WriteAllText("output.htm", text);
             Console.ReadKey();
         }
     }
