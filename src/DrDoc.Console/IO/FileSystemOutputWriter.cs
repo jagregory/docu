@@ -13,5 +13,10 @@ namespace DrDoc.IO
         {
             Directory.CreateDirectory(path);
         }
+
+        public bool Exists(string directory)
+        {
+            return Directory.Exists(directory);
+        }
     }
 }

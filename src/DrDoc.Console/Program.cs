@@ -27,7 +27,7 @@ namespace DrDoc
         {
             Assembly.LoadFrom("NHibernate.dll");
 
-            var transformer = new BulkTransformer(new TemplateTransformer(new HtmlGenerator(), new FileSystemOutputWriter()));
+            var transformer = new BulkTransformer(new TemplateTransformer(new HtmlGenerator(), new FileSystemOutputWriter(), new PatternTemplateResolver()));
 
             var parser = new DocParser(new Associator(), new AssociationTransformer(new CommentContentParser()));
             var namespaces = parser.Parse(new[] {Assembly.LoadFrom("FluentNHibernate.dll")}, File.ReadAllText("FluentNHibernate.XML"));

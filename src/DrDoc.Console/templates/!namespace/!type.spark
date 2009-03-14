@@ -39,7 +39,7 @@
   <body>
     <p class="header">
 		<strong>Namespace</strong> ${Namespace.Name}<br />
-		<strong>Type</strong> ${Type.Name}
+		<strong>Type</strong> ${h(Type.PrettyName)}
 	</p>
     <div class="content">
 		<h3 class="section">Methods</h3>

@@ -21,6 +21,11 @@ namespace DrDoc.Generation
             {
                 transformer.Transform(file, namespaces);
             }
+
+            foreach (var directory in Directory.GetDirectories(path))
+            {
+                TransformDirectory(directory, namespaces);
+            }
         }
     }
 }

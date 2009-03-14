@@ -42,7 +42,7 @@
 		<for each="var ns in Namespaces">
 			<a class="namespace" href="${ns.Name}.htm">${ns.Name}</a>
 			<for each="var type in ns.Types">
-				<a class="type" href="${ns.Name}.${type.Name}.htm">${h(type.PrettyName)}</a><br />
+				<a class="type" href="${ns.Name}/${type.Name}.htm">${h(type.PrettyName)}</a><br />
 			</for>
 		</for>
 	</body> 

@@ -72,8 +72,11 @@
     <Compile Include="Generation\BulkTransformer.cs" />
     <Compile Include="Generation\HtmlGenerator.cs" />
     <Compile Include="Generation\IOutputGenerator.cs" />
+    <Compile Include="Generation\IPatternTemplateResolver.cs" />
     <Compile Include="Generation\ITemplateTransformer.cs" />
     <Compile Include="Generation\OutputData.cs" />
+    <Compile Include="Generation\PatternTemplateResolver.cs" />
+    <Compile Include="Generation\TemplateMatch.cs" />
     <Compile Include="IO\FileSystemOutputWriter.cs" />
     <Compile Include="IO\IOutputWriter.cs" />
     <Compile Include="Generation\SparkTemplateBase.cs" />
@@ -106,7 +109,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="templates\!type.spark">
+    <Content Include="templates\!namespace\!type.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
