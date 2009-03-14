@@ -8,6 +8,7 @@ namespace DrDoc.Generation
     {
         private const string A_Bang = "!";
         private const string Namespace = "namespace.spark";
+        private const string Type = "type.spark";
 
         private readonly IOutputGenerator generator;
         private readonly IOutputWriter writer;
@@ -45,6 +46,9 @@ namespace DrDoc.Generation
 
             if (specialName == Namespace)
                 return TransformNamespaces(templatePath, namespaces);
+            if (specialName == Type)
+                return TransformTypes(templatePath, namespaces);
+
 
             return new OutputFile[0];
         }
@@ -59,6 +63,24 @@ namespace DrDoc.Generation
                 var filename = templatePath.Replace("!namespace", ns.Name).Replace("spark", "htm");
 
                 transformedOutputs.Add(new OutputFile(filename, output));
+            }
+
+            return transformedOutputs;
+        }
+
+        private IEnumerable<OutputFile> TransformTypes(string templatePath, IList<DocNamespace> namespaces)
+        {
+            var transformedOutputs = new List<OutputFile>();
+
+            foreach (var ns in namespaces)
+            {
+                foreach (var type in ns.Types)
+                {
+                    var output = generator.Convert(templatePath, new OutputData { Namespaces = namespaces, Namespace = ns, Type = type });
+                    var filename = templatePath.Replace("!type", ns.Name + "." + type.Name).Replace("spark", "htm");
+
+                    transformedOutputs.Add(new OutputFile(filename, output));
+                }
             }
 
             return transformedOutputs;

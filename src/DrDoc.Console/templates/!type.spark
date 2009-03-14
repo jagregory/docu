@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>#{Type.Name}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <style>
+      body {
+      margin: 0;
+      padding: 0;
+      font-family: Verdana,Arial,Helvetica,sans-serif;
+      font-size: 90%;
+      }
+
+      .header {
+        background: #048;
+        border-bottom: 3px solid #006;
+        font-size: 18px;
+        margin: 0;
+        color: #FFF;
+        padding: 10px;
+        font-weight: bold;
+      }
+      
+      .header strong {
+        font-size: 12px;
+        font-weight: normal;
+      }
+      
+      .content {
+		margin: 10px;
+	  }
+      
+      .section {
+		color: #333;
+		border-bottom: 1px solid #999;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="header">
+		<strong>Namespace</strong> ${Namespace.Name}<br />
+		<strong>Type</strong> ${Type.Name}
+	</p>
+    <div class="content">
+		<h3 class="section">Methods</h3>
+		<ul>
+			<for each="var method in Type.Methods">
+				<li>${h(method.Name)}</li>
+			</for>
+		</ul>
+		
+		<h3 class="section">Properties</h3>
+		<ul>
+			<for each="var property in Type.Properties">
+				<li>${h(property.Name)}</li>
+			</for>
+		</ul>
+	</div>
+  </body>
+</html>

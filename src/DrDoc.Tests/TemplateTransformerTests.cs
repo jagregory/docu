@@ -79,5 +79,45 @@ namespace DrDoc.Tests
             writer.AssertWasCalled(x => x.WriteFile("One.htm", "content"));
             writer.AssertWasCalled(x => x.WriteFile("Two.htm", "content"));
         }
+
+        [Test]
+        public void GeneratesOutputForEachTypeFromTemplateWhenPatternUsed()
+        {
+            var generator = MockRepository.GenerateMock<IOutputGenerator>();
+            var writer = MockRepository.GenerateStub<IOutputWriter>();
+            var transformer = new TemplateTransformer(generator, writer);
+            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+
+            namespaces[0].AddType(new DocType("TypeOne"));
+            namespaces[1].AddType(new DocType("TypeTwo"));
+
+            transformer.Transform("!type.spark", namespaces);
+
+            generator.AssertWasCalled(
+                x => x.Convert(null, null),
+                x => x.Constraints(Is.Equal("!type.spark"), Is.Anything())
+                      .Repeat.Twice());
+        }
+
+        [Test]
+        public void WritesOutputForEachTypeToFileWhenPatternUsed()
+        {
+            var generator = MockRepository.GenerateStub<IOutputGenerator>();
+            var writer = MockRepository.GenerateMock<IOutputWriter>();
+            var transformer = new TemplateTransformer(generator, writer);
+            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+
+            namespaces[0].AddType(new DocType("TypeOne"));
+            namespaces[1].AddType(new DocType("TypeTwo"));
+
+            generator.Stub(x => x.Convert(null, null))
+                .IgnoreArguments()
+                .Return("content");
+
+            transformer.Transform("!type.spark", namespaces);
+
+            writer.AssertWasCalled(x => x.WriteFile("One.TypeOne.htm", "content"));
+            writer.AssertWasCalled(x => x.WriteFile("Two.TypeTwo.htm", "content"));
+        }
     }
 }
