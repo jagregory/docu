@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace DrDoc
 {
     public class DocParameter
@@ -6,9 +8,11 @@ namespace DrDoc
         {
             Name = name;
             Type = type;
+            Summary = new List<DocBlock>();
         }
 
         public string Name { get; private set; }
         public string Type { get; private set; }
+        public IList<DocBlock> Summary { get; internal set; }
     }
 }

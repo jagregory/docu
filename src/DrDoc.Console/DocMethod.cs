@@ -9,6 +9,7 @@ namespace DrDoc
         public DocMethod(string name)
         {
             Name = name;
+            Summary = new List<DocBlock>();
         }
 
         internal void AddParameter(DocParameter parameter)

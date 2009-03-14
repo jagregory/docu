@@ -131,7 +131,7 @@ namespace DrDoc.Tests
 
             namespaces[0].Types[0].Methods[0].Summary.CountShouldEqual(1);
             ((DocTextBlock)namespaces[0].Types[0].Methods[0].Summary[0]).Text.ShouldEqual("Second method");
-            namespaces[0].Types[0].Methods[0].Summary.CountShouldEqual(1);
+            namespaces[0].Types[0].Methods[1].Summary.CountShouldEqual(1);
             ((DocTextBlock)namespaces[0].Types[0].Methods[1].Summary[0]).Text.ShouldEqual("Second method 2");
         }
 
@@ -173,6 +173,44 @@ namespace DrDoc.Tests
             namespaces[0].Types[0].Methods[0].Parameters
                 .ShouldContain(x => x.Name == "one" && x.Type == "System.String")
                 .ShouldContain(x => x.Name == "two" && x.Type == "System.Int32");
+        }
+
+        [Test]
+        public void ShouldHaveSummaryForMethodParameter()
+        {
+            var associations = new[]
+            {
+              new MethodAssociation(@"
+                <member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"">
+                  <param name=""one"">First parameter</param>
+                  <param name=""two"">Second parameter</param>
+                </member>".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
+            };
+            var namespaces = transformer.Transform(associations);
+
+            namespaces[0].Types[0].Methods[0].Parameters[0].Summary.CountShouldEqual(1);
+            ((DocTextBlock)namespaces[0].Types[0].Methods[0].Parameters[0].Summary[0]).Text.ShouldEqual("First parameter");
+            namespaces[0].Types[0].Methods[0].Parameters[1].Summary.CountShouldEqual(1);
+            ((DocTextBlock)namespaces[0].Types[0].Methods[0].Parameters[1].Summary[0]).Text.ShouldEqual("Second parameter");
+        }
+
+        [Test]
+        public void ShouldPassMethodParameterSummaryToContentParser()
+        {
+            var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
+            var associations = new[]
+            {
+                new MethodAssociation(@"
+                <member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"">
+                  <param name=""one"">First parameter</param>
+                  <param name=""two"">Second parameter</param>
+                </member>".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
+            };
+
+            new AssociationTransformer(contentParser).Transform(associations);
+
+            contentParser.AssertWasCalled(x => x.Parse(associations[0].Xml.ChildNodes[0]));
+            contentParser.AssertWasCalled(x => x.Parse(associations[0].Xml.ChildNodes[1]));
         }
     }
 }

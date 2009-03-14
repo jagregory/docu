@@ -48,7 +48,9 @@
 				<table>
 					<tr each="var param in method.Parameters">
 						<td><code>${param.Type} ${param.Name}:</code></td>
-						<td>summary</td>
+						<td>
+							<p each="var block in param.Summary">${block}</p>
+						</td>
 					</tr>
 				</table>
 			</div>

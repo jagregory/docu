@@ -88,7 +88,17 @@ namespace DrDoc.Parsing
 
             foreach (var parameter in association.Method.GetParameters())
             {
-                doc.AddParameter(new DocParameter(parameter.Name, parameter.ParameterType.FullName));
+                var docParam = new DocParameter(parameter.Name, parameter.ParameterType.FullName);
+
+                if (association.Xml != null)
+                {
+                    var paramNode = association.Xml.SelectSingleNode("param[@name='" + parameter.Name + "']");
+
+                    if (paramNode != null)
+                        docParam.Summary = commentContentParser.Parse(paramNode);
+                }
+
+                doc.AddParameter(docParam);
             }
 
             type.AddMethod(doc);
