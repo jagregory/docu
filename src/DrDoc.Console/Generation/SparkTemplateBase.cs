@@ -18,7 +18,7 @@ namespace DrDoc.Generation
     /// </summary>
     public abstract class SparkTemplateBase : AbstractSparkView
     {
-        private IOutputFormatter formatter = new HtmlOutputFormatter();
+        protected readonly IOutputFormatter Formatter = new HtmlOutputFormatter();
 
         public string flatten(IList<DocBlock> blocks)
         {
@@ -45,13 +45,13 @@ namespace DrDoc.Generation
             {
                 if (block is DocCodeBlock)
                 {
-                    sb.Append(formatter.Format((DocCodeBlock)block));
+                    sb.Append(Formatter.Format((DocCodeBlock)block));
                     sb.Append(" ");
                     continue;
                 }
                 if (block is DocReferenceBlock)
                 {
-                    sb.Append(formatter.Format((DocReferenceBlock)block));
+                    sb.Append(Formatter.Format((DocReferenceBlock)block));
                     sb.Append(" ");
                     continue;
                 }

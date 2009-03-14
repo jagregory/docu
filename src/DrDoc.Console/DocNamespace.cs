@@ -4,7 +4,7 @@ namespace DrDoc
 {
     public class DocNamespace : IReferencable
     {
-        private readonly IList<DocType> types = new List<DocType>();
+        private readonly List<DocType> types = new List<DocType>();
 
         public DocNamespace(string name)
         {
@@ -16,6 +16,11 @@ namespace DrDoc
         public IList<DocType> Types
         {
             get { return types; }
+        }
+
+        public void Sort()
+        {
+            types.Sort((x, y) => x.Name.CompareTo(y.Name));
         }
 
         public void AddType(DocType type)

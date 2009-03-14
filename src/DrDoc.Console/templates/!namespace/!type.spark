@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+﻿# Formatter.NamespaceUrlFormat = "../{namespace}.htm";
+# Formatter.TypeUrlFormat = "../{type.namespace}/{type}.htm";
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <title>#{Type.Name}</title>
@@ -6,12 +8,10 @@
     <link type="text/css" rel="stylesheet" href="../main.css" />
   </head>
   <body>
-
 <use namespace="System.Collections.Generic"/>
 <macro name="OutputMethodParams" items="IList[[DocParameter]]">
 <for each="var item in items">${item.Type} ${item.Name}<if condition="itemIndex < items.Count - 1">, </if></for>
 </macro>
-
     <p class="header">
 		<strong>Namespace</strong> ${Namespace.Name}<br />
 		<strong>Type</strong> ${h(Type.PrettyName)}

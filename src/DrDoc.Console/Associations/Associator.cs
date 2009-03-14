@@ -13,12 +13,17 @@ namespace DrDoc.Associations
         {
             var associations = new List<Association>();
 
+            foreach (var type in types)
+            {
+                associations.Add(new UndocumentedTypeAssociation("T:" + type.FullName, type));
+            }
+
             foreach (var node in snippets)
             {
                 var name = node.Attributes["name"].Value;
 
                 if (name.StartsWith("T"))
-                    associations.Add(ParseType(types, node));
+                    ParseType(associations, types, node);
                 else if (name.StartsWith("M"))
                     associations.Add(ParseMethod(types, node));
                 else if (name.StartsWith("P"))
@@ -116,17 +121,16 @@ namespace DrDoc.Associations
             return null;
         }
 
-        private Association ParseType(Type[] types, XmlNode node)
+        private void ParseType(List<Association> associations, Type[] types, XmlNode node)
         {
             var name = node.Attributes["name"].Value.Substring(2);
+            var index = associations.FindIndex(x => x.Name == "T:" + name);
 
             foreach (var type in types)
             {
                 if (type.FullName == name)
-                    return new TypeAssociation(node.Attributes["name"].Value, node, type);
+                    associations[index] = new TypeAssociation(node.Attributes["name"].Value, node, type);
             }
-
-            return null;
         }
     }
 }

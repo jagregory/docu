@@ -59,7 +59,7 @@ namespace DrDoc
 
             foreach (var assembly in assemblies)
             {
-                types.AddRange(assembly.GetTypes());
+                types.AddRange(assembly.GetExportedTypes());
             }
 
             return types.ToArray();

@@ -63,7 +63,19 @@ namespace DrDoc.Parsing
                     block.Reference = new ExternalReference(block.Reference.Name);
             }
 
+            Sort(namespaces);
+
             return namespaces;
+        }
+
+        private void Sort(List<DocNamespace> namespaces)
+        {
+            namespaces.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+            foreach (var ns in namespaces)
+            {
+                ns.Sort();
+            }
         }
 
         private void AddMethod(List<DocNamespace> namespaces, List<DocReferenceBlock> references, MethodAssociation association)
@@ -168,6 +180,7 @@ namespace DrDoc.Parsing
 
         private string GetPrettyName(Type type)
         {
+            if (type.IsNested) return type.Name;
             if (type.IsGenericType)
             {
                 var sb = new StringBuilder();

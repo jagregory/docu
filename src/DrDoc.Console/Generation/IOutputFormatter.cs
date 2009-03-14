@@ -9,5 +9,8 @@ namespace DrDoc.Generation
     {
         string Format(DocReferenceBlock block);
         string Format(DocCodeBlock block);
+
+        string NamespaceUrlFormat { get; set; }
+        string TypeUrlFormat { get; set; }
     }
 }
