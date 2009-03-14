@@ -6,8 +6,8 @@ namespace DrDoc.Associations
 {
     public class TypeAssociation : Association
     {
-        public TypeAssociation(XmlNode xml, Type type)
-            : base(xml)
+        public TypeAssociation(string name, XmlNode xml, Type type)
+            : base(name, xml)
         {
             Type = type;
         }

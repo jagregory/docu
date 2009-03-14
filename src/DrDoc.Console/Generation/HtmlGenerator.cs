@@ -14,7 +14,11 @@ namespace DrDoc.Generation
 
         public HtmlGenerator()
         {
-            engine = new SparkViewEngine();
+            var setup = new SparkSettings();
+
+            setup.AddNamespace("DrDoc");
+
+            engine = new SparkViewEngine(setup);
             engine.ViewFolder = new FileSystemViewFolder(Environment.CurrentDirectory);
             engine.DefaultPageBaseType = typeof(SparkTemplateBase).FullName;
         }

@@ -6,6 +6,28 @@
     <link type="text/css" rel="stylesheet" href="../main.css" />
   </head>
   <body>
+
+<use namespace="System.Collections.Generic"/>
+<macro name="OutputMethodParams" items="IList[[DocParameter]]">
+<for each="var item in items">${item.Type} ${item.Name}<if condition="itemIndex < items.Count - 1">, </if></for>
+</macro>
+<macro name="WriteSummary" blocks="IList[[DocBlock]]">
+<p>
+<for each="var block in blocks">
+	<if condition="block is DocTextBlock">${block}</if>
+	<code if="block is DocCodeBlock">${block}</code>
+	<if condition="block is DocReferenceBlock">
+		<if condition="((DocReferenceBlock)block).Reference is DocNamespace">
+			<a href="../${((DocReferenceBlock)block).Reference.Name}.htm">${((DocReferenceBlock)block).Reference.Name}</a>&nbsp;
+		</if>
+		<if condition="((DocReferenceBlock)block).Reference is DocType">
+			<a href="../${((DocType)((DocReferenceBlock)block).Reference).Namespace.Name}/${((DocReferenceBlock)block).Reference.Name}.htm">${((DocReferenceBlock)block).Reference.Name}</a>&nbsp;
+		</if>
+	</if>
+</for>
+</p>
+</macro>
+
     <p class="header">
 		<strong>Namespace</strong> ${Namespace.Name}<br />
 		<strong>Type</strong> ${h(Type.PrettyName)}
@@ -13,7 +35,7 @@
     <div class="sub-header">
 		<if condition="Type.Summary.Count > 0">
 			<div id="summary">
-				<p each="var block in Type.Summary">${block}</p>
+				${WriteSummary(Type.Summary)}
 			</div>
 		</if>
 		
@@ -32,25 +54,17 @@
 		</if>
 	</div>
 
-<use namespace="System.Collections.Generic"/>
-<use namespace="DrDoc"/>
-<macro name="OutputMethodParams" items="IList[[DocParameter]]">
-<for each="var item in items">${item.Type} ${item.Name}<if condition="itemIndex < items.Count - 1">, </if></for>
-</macro>
-	
 	<if condition="Type.Methods.Count > 0">
 		<h3 class="section">Public instance methods</h3>
 		
 		<div id="${method.Name}" class="method" each="var method in Type.Methods">
 			<h4><strong>${h(method.Name)}</strong>(${OutputMethodParams(method.Parameters)})</h4>
 			<div class="content">
-				<p each="var block in method.Summary">${block}</p>
+				${WriteSummary(method.Summary)}
 				<table>
 					<tr each="var param in method.Parameters">
 						<td><code>${param.Type} ${param.Name}:</code></td>
-						<td>
-							<p each="var block in param.Summary">${block}</p>
-						</td>
+						<td>${WriteSummary(param.Summary)}</td>
 					</tr>
 				</table>
 			</div>

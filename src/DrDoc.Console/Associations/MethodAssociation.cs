@@ -6,8 +6,8 @@ namespace DrDoc.Associations
 {
     public class MethodAssociation : Association
     {
-        public MethodAssociation(XmlNode xml, MethodInfo method)
-            : base(xml)
+        public MethodAssociation(string name, XmlNode xml, MethodInfo method)
+            : base(name, xml)
         {
             Method = method;
         }

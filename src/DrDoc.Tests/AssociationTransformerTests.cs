@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DrDoc.Associations;
 using DrDoc.Parsing;
 using Example;
@@ -23,8 +24,8 @@ namespace DrDoc.Tests
         {
             var associations = new[]
             {
-              new TypeAssociation(@"<member name=""T:Example.First"" />".ToNode(), typeof(First)),  
-              new TypeAssociation(@"<member name=""T:Example.Deep.DeepFirst"" />".ToNode(), typeof(DeepFirst))
+              new TypeAssociation("T:Example.First", @"<member name=""T:Example.First"" />".ToNode(), typeof(First)),  
+              new TypeAssociation("T:Example.Deep.DeepFirst", @"<member name=""T:Example.Deep.DeepFirst"" />".ToNode(), typeof(DeepFirst))
             };
             var namespaces = transformer.Transform(associations);
 
@@ -37,9 +38,9 @@ namespace DrDoc.Tests
         {
             var associations = new[]
             {
-              new TypeAssociation(@"<member name=""T:Example.First"" />".ToNode(), typeof(First)),  
-              new TypeAssociation(@"<member name=""T:Example.Second"" />".ToNode(), typeof(Second)),  
-              new TypeAssociation(@"<member name=""T:Example.Deep.DeepFirst"" />".ToNode(), typeof(DeepFirst))
+              new TypeAssociation("T:Example.First", @"<member name=""T:Example.First"" />".ToNode(), typeof(First)),  
+              new TypeAssociation("T:Example.Second", @"<member name=""T:Example.Second"" />".ToNode(), typeof(Second)),  
+              new TypeAssociation("T:Example.Deep.DeepFirst", @"<member name=""T:Example.Deep.DeepFirst"" />".ToNode(), typeof(DeepFirst))
             };
             var namespaces = transformer.Transform(associations);
 
@@ -55,7 +56,7 @@ namespace DrDoc.Tests
         {
             var associations = new[]
             {
-              new TypeAssociation(@"<member name=""T:Example.GenericDefinition`1"" />".ToNode(), typeof(GenericDefinition<>)),  
+              new TypeAssociation("T:Example.GenericDefinition`1", @"<member name=""T:Example.GenericDefinition`1"" />".ToNode(), typeof(GenericDefinition<>)),  
             };
             var namespaces = transformer.Transform(associations);
 
@@ -68,8 +69,8 @@ namespace DrDoc.Tests
         {
             var associations = new[]
             {
-              new TypeAssociation(@"<member name=""T:Example.First""><summary>First summary</summary></member>".ToNode(), typeof(First)),  
-              new TypeAssociation(@"<member name=""T:Example.Second""><summary>Second summary</summary></member>".ToNode(), typeof(Second)),  
+              new TypeAssociation("T:Example.First", @"<member name=""T:Example.First""><summary>First summary</summary></member>".ToNode(), typeof(First)),  
+              new TypeAssociation("T:Example.Second", @"<member name=""T:Example.Second""><summary>Second summary</summary></member>".ToNode(), typeof(Second)),  
             };
             var namespaces = transformer.Transform(associations);
 
@@ -80,10 +81,28 @@ namespace DrDoc.Tests
         }
 
         [Test]
+        public void ShouldntHaveAnyUnresolvedReferencesLeftIfAllValid()
+        {
+            var associations = new[]
+            {
+              new TypeAssociation("T:Example.First", @"<member name=""T:Example.First"" />".ToNode(), typeof(First)),  
+              new TypeAssociation("T:Example.Second", @"<member name=""T:Example.Second""><summary><see cref=""T:Example.First"" /></summary></member>".ToNode(), typeof(Second)),  
+            };
+            var namespaces = transformer.Transform(associations);
+
+            ((DocReferenceBlock)namespaces[0].Types[1].Summary[0]).Reference.ShouldNotBeOfType<UnresolvedReference>();
+            ((DocReferenceBlock)namespaces[0].Types[1].Summary[0]).Reference.ShouldNotBeNull();
+        }
+
+        [Test]
         public void ShouldPassSummaryToContentParser()
         {
             var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
-            var associations = new[] { new TypeAssociation(@"<member name=""T:Example.First""><summary>First summary</summary></member>".ToNode(), typeof(First)) };
+            var associations = new[] { new TypeAssociation("T:Example.First", @"<member name=""T:Example.First""><summary>First summary</summary></member>".ToNode(), typeof(First)) };
+
+            contentParser.Stub(x => x.Parse(null))
+                .IgnoreArguments()
+                .Return(new List<DocBlock>());
             
             new AssociationTransformer(contentParser).Transform(associations);
 
@@ -95,7 +114,7 @@ namespace DrDoc.Tests
         {
             var associations = new Association[]
             {
-              new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod"" />".ToNode(), typeof(Second).GetMethod("SecondMethod")),
+              new MethodAssociation("M:Example.Second.SecondMethod", @"<member name=""M:Example.Second.SecondMethod"" />".ToNode(), typeof(Second).GetMethod("SecondMethod")),
             };
             var namespaces = transformer.Transform(associations);
 
@@ -108,9 +127,9 @@ namespace DrDoc.Tests
         {
             var associations = new Association[]
             {
-              new TypeAssociation(@"<member name=""T:Example.Second"" />".ToNode(), typeof(Second)),  
-              new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod"" />".ToNode(), typeof(Second).GetMethod("SecondMethod")),
-              new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"" />".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
+              new TypeAssociation("T:Example.Second", @"<member name=""T:Example.Second"" />".ToNode(), typeof(Second)),  
+              new MethodAssociation("M:Example.Second.SecondMethod", @"<member name=""M:Example.Second.SecondMethod"" />".ToNode(), typeof(Second).GetMethod("SecondMethod")),
+              new MethodAssociation("M:Example.Second.SecondMethod2(System.String,System.Int32)", @"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"" />".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
             };
             var namespaces = transformer.Transform(associations);
 
@@ -124,8 +143,8 @@ namespace DrDoc.Tests
         {
             var associations = new[]
             {
-              new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod""><summary>Second method</summary></member>".ToNode(), typeof(Second).GetMethod("SecondMethod")),
-              new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)""><summary>Second method 2</summary></member>".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
+              new MethodAssociation("M:Example.Second.SecondMethod", @"<member name=""M:Example.Second.SecondMethod""><summary>Second method</summary></member>".ToNode(), typeof(Second).GetMethod("SecondMethod")),
+              new MethodAssociation("M:Example.Second.SecondMethod2(System.String,System.Int32)", @"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)""><summary>Second method 2</summary></member>".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
             };
             var namespaces = transformer.Transform(associations);
 
@@ -139,7 +158,11 @@ namespace DrDoc.Tests
         public void ShouldPassMethodSummaryToContentParser()
         {
             var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
-            var associations = new[] { new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod""><summary>First summary</summary></member>".ToNode(), typeof(Second).GetMethod("SecondMethod")) };
+            var associations = new[] { new MethodAssociation("M:Example.Second.SecondMethod", @"<member name=""M:Example.Second.SecondMethod""><summary>First summary</summary></member>".ToNode(), typeof(Second).GetMethod("SecondMethod")) };
+
+            contentParser.Stub(x => x.Parse(null))
+                .IgnoreArguments()
+                .Return(new List<DocBlock>());
 
             new AssociationTransformer(contentParser).Transform(associations);
 
@@ -151,8 +174,8 @@ namespace DrDoc.Tests
         {
             var associations = new Association[]
             {
-              new TypeAssociation(@"<member name=""T:Example.Second"" />".ToNode(), typeof(Second)),  
-              new PropertyAssociation(@"<member name=""M:Example.Second.SecondProperty"" />".ToNode(), typeof(Second).GetProperty("SecondProperty")),
+              new TypeAssociation("T:Example.Second", @"<member name=""T:Example.Second"" />".ToNode(), typeof(Second)),  
+              new PropertyAssociation("M:Example.Second.SecondProperty", @"<member name=""M:Example.Second.SecondProperty"" />".ToNode(), typeof(Second).GetProperty("SecondProperty")),
             };
             var namespaces = transformer.Transform(associations);
 
@@ -165,8 +188,8 @@ namespace DrDoc.Tests
         {
             var associations = new Association[]
             {
-              new TypeAssociation(@"<member name=""T:Example.Second"" />".ToNode(), typeof(Second)),  
-              new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"" />".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
+              new TypeAssociation("T:Example.Second", @"<member name=""T:Example.Second"" />".ToNode(), typeof(Second)),  
+              new MethodAssociation("M:Example.Second.SecondMethod2(System.String,System.Int32)", @"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"" />".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
             };
             var namespaces = transformer.Transform(associations);
 
@@ -180,7 +203,7 @@ namespace DrDoc.Tests
         {
             var associations = new[]
             {
-              new MethodAssociation(@"
+              new MethodAssociation("M:Example.Second.SecondMethod2(System.String,System.Int32)", @"
                 <member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"">
                   <param name=""one"">First parameter</param>
                   <param name=""two"">Second parameter</param>
@@ -200,12 +223,16 @@ namespace DrDoc.Tests
             var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
             var associations = new[]
             {
-                new MethodAssociation(@"
+                new MethodAssociation("M:Example.Second.SecondMethod2(System.String,System.Int32)", @"
                 <member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"">
                   <param name=""one"">First parameter</param>
                   <param name=""two"">Second parameter</param>
                 </member>".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
             };
+
+            contentParser.Stub(x => x.Parse(null))
+                .IgnoreArguments()
+                .Return(new List<DocBlock>());
 
             new AssociationTransformer(contentParser).Transform(associations);
 

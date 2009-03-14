@@ -7,6 +7,6 @@ namespace DrDoc
             Reference = reference;
         }
 
-        public IReferencable Reference { get; private set; }
+        public IReferencable Reference { get; set; }
     }
 }

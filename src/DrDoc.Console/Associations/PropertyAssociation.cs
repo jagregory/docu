@@ -6,8 +6,8 @@ namespace DrDoc.Associations
 {
     public class PropertyAssociation : Association
     {
-        public PropertyAssociation(XmlNode xml, PropertyInfo property)
-            : base(xml)
+        public PropertyAssociation(string name, XmlNode xml, PropertyInfo property)
+            : base(name, xml)
         {
             Property = property;
         }

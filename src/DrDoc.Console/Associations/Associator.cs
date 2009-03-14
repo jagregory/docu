@@ -39,7 +39,7 @@ namespace DrDoc.Associations
                 if (type.FullName == typeName)
                 {
                     var property = type.GetProperty(propertyName);
-                    return new PropertyAssociation(node, property);
+                    return new PropertyAssociation(node.Attributes["name"].Value, node, property);
                 }
             }
 
@@ -109,7 +109,7 @@ namespace DrDoc.Associations
                 if (type.FullName == typeName)
                 {
                     var method = Method.Find(type, methodName, parameters);
-                    return new MethodAssociation(node, method);
+                    return new MethodAssociation(node.Attributes["name"].Value, node, method);
                 }
             }
 
@@ -123,7 +123,7 @@ namespace DrDoc.Associations
             foreach (var type in types)
             {
                 if (type.FullName == name)
-                    return new TypeAssociation(node, type);
+                    return new TypeAssociation(node.Attributes["name"].Value, node, type);
             }
 
             return null;

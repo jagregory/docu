@@ -31,6 +31,11 @@ namespace DrDoc.Tests
             Assert.That(actual, Is.TypeOf<T>());
         }
 
+        public static void ShouldNotBeOfType<T>(this object actual)
+        {
+            Assert.That(actual, Is.Not.TypeOf<T>());
+        }
+
         public static IEnumerable<T> ShouldContain<T>(this IEnumerable<T> actual, Func<T, bool> expected)
         {
             actual.First(expected).ShouldNotEqual(default(T));
