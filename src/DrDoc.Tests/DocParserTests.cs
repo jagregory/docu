@@ -12,7 +12,7 @@ namespace DrDoc.Tests
     [TestFixture]
     public class DocParserTests
     {
-        private string Xml = @"<?xml version=""1.0""?>
+        private string[] Xml = new[] {@"<?xml version=""1.0""?>
 <doc>
     <assembly>
         <name>DrDoc</name>
@@ -24,7 +24,7 @@ namespace DrDoc.Tests
         <member name=""T:Example.Second"" />
         <member name=""M:Example.Second.SecondMethod"" />
     </members>
-</doc>";
+</doc>"};
 
         [Test]
         public void TypesFromAssembliesPassedToAssociator()
@@ -34,7 +34,7 @@ namespace DrDoc.Tests
             var parser = new DocParser(associator, transformer);
             var assemblies = new[] {typeof(First).Assembly, typeof(DocParserTests).Assembly};
 
-            parser.Parse(assemblies, "");
+            parser.Parse(assemblies, new[] {""});
 
             associator.AssertWasCalled(
                 x => x.Examine(null, null),
@@ -75,7 +75,7 @@ namespace DrDoc.Tests
                 .IgnoreArguments()
                 .Return(associations);
 
-            parser.Parse(assemblies, "");
+            parser.Parse(assemblies, new[] {""});
 
             transformer.AssertWasCalled(x => x.Transform(associations));
         }

@@ -18,14 +18,14 @@ namespace DrDoc
             this.transformer = transformer;
         }
 
-        public IList<DocNamespace> Parse(Assembly[] assemblies, string xml)
+        public IList<DocNamespace> Parse(Assembly[] assemblies, string[] xml)
         {
             var assocations = GetAssociations(assemblies, xml);
 
             return transformer.Transform(assocations);
         }
 
-        private IEnumerable<Association> GetAssociations(Assembly[] assemblies, string xml)
+        private IEnumerable<Association> GetAssociations(Assembly[] assemblies, string[] xml)
         {
             var types = GetTypes(assemblies);
             var members = GetMembers(xml);
@@ -33,18 +33,21 @@ namespace DrDoc
             return associator.Examine(types, members);
         }
 
-        private XmlNode[] GetMembers(string xml)
+        private XmlNode[] GetMembers(string[] xml)
         {
-            if (string.IsNullOrEmpty(xml)) return new XmlNode[0];
-
-            var doc = new XmlDocument();
-            doc.LoadXml(xml);
-
             var nodes = new List<XmlNode>();
-            
-            foreach (var node in doc.SelectNodes("doc/members/*"))
+
+            foreach (var chunk in xml)
             {
-                nodes.Add((XmlNode)node);
+                if (string.IsNullOrEmpty(chunk)) continue;
+
+                var doc = new XmlDocument();
+                doc.LoadXml(chunk);
+
+                foreach (var node in doc.SelectNodes("doc/members/*"))
+                {
+                    nodes.Add((XmlNode)node);
+                }
             }
 
             return nodes.ToArray();
