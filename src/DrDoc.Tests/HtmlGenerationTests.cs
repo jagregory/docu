@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DrDoc.Associations;
 using DrDoc.Generation;
 using Example;
 using NUnit.Framework;
@@ -19,6 +20,7 @@ namespace DrDoc.Tests
                 { "namespace.shortcut", "${Namespace.Name.ToString()}"},
                 { "summary.simple", "<for each=\"var b in Namespaces[0].Types[0].Summary\">${b}</for>"},
                 { "summary.flattened", "<var test=\"'xxx'\" />${flatten(Namespaces[0].Types[0].Summary)}"},
+                { "method.overload", "<for each=\"var method in Type.Methods\">${method.Name.ToString()}(${OutputMethodParams(method)})</for>"}
             });
         }
 
@@ -66,6 +68,21 @@ namespace DrDoc.Tests
             var content = generator.Convert("summary.flattened", data);
 
             content.ShouldEqual("Hello world!");
+        }
+
+        [Test]
+        public void ShouldOutputOverloadedMethods()
+        {
+            var type = Type<First>();
+
+            type.Methods.Add(new DocMethod(MemberName.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload)), ""));
+            type.Methods.Add(new DocMethod(MemberName.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload)), ""));
+            type.Methods[1].Parameters.Add(new DocParameter("one", new ExternalReference(MemberName.FromType(typeof(string)))));
+            
+            var data = new OutputData { Type = type };
+            var content = generator.Convert("method.overload", data);
+
+            content.ShouldEqual("Method()Method(String one)"); // nasty, I know
         }
     }
 }

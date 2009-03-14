@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DrDoc.Associations;
 
 namespace DrDoc
 {
@@ -6,9 +7,10 @@ namespace DrDoc
     {
         private readonly IList<DocParameter> parameters = new List<DocParameter>();
 
-        public DocMethod(string name)
+        public DocMethod(MethodMemberName name, string prettyName)
         {
             Name = name;
+            PrettyName = prettyName;
             Summary = new List<DocBlock>();
         }
 
@@ -17,7 +19,8 @@ namespace DrDoc
             parameters.Add(parameter);
         }
 
-        public string Name { get; private set; }
+        public string PrettyName { get; set; }
+        public MethodMemberName Name { get; private set; }
         public IList<DocParameter> Parameters
         {
             get { return parameters; }

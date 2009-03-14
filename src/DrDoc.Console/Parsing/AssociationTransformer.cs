@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using DrDoc.Associations;
 
@@ -101,7 +102,8 @@ namespace DrDoc.Parsing
                 type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
             }
 
-            var doc = new DocMethod(association.Method.Name);
+            var prettyName = GetPrettyName(association.Method);
+            var doc = new DocMethod((MethodMemberName)association.Name, prettyName);
 
             if (association.Xml != null)
             {
@@ -208,6 +210,34 @@ namespace DrDoc.Parsing
             }
 
             return type.Name;
+        }
+
+        private string GetPrettyName(MethodInfo method)
+        {
+            if (method.IsGenericMethod)
+            {
+                var sb = new StringBuilder();
+                var name = method.Name;
+
+                if (name.Contains("`"))
+                    name = method.Name.Substring(0, method.Name.IndexOf('`'));
+
+                sb.Append(name);
+                sb.Append("<");
+
+                foreach (var argument in method.GetGenericArguments())
+                {
+                    sb.Append(argument.Name);
+                    sb.Append(", ");
+                }
+
+                sb.Length -= 2;
+                sb.Append(">");
+
+                return sb.ToString();
+            }
+
+            return method.Name;
         }
     }
 }

@@ -68,6 +68,24 @@ namespace DrDoc.Generation
             return sb.ToString();
         }
 
+        public string OutputMethodParams(DocMethod method)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var parameter in method.Parameters)
+            {
+                sb.Append(parameter.Reference.Name.ToString());
+                sb.Append(" ");
+                sb.Append(parameter.Name);
+                sb.Append(", ");
+            }
+
+            if (sb.Length > 0)
+                sb.Length -= 2;
+
+            return sb.ToString();
+        }
+
         public object Eval(string expression)
         {
             //            return ViewData.Eval(expression);

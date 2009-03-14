@@ -8,12 +8,8 @@
     <link type="text/css" rel="stylesheet" href="../main.css" />
   </head>
   <body>
-<use namespace="System.Collections.Generic"/>
-<macro name="OutputMethodParams" items="IList[[DocParameter]]">
-<for each="var item in items">${item.Reference.Name} ${item.Name}<if condition="itemIndex < items.Count - 1">, </if></for>
-</macro>
     <p class="header">
-		<strong>Namespace</strong> ${Namespace.Name}<br />
+		<strong>Namespace</strong> ${Namespace.Name.ToString()}<br />
 		<strong>Type</strong> ${h(Type.PrettyName)}
 	</p>
     <div class="sub-header">
@@ -26,7 +22,7 @@
 		<if condition="Type.Methods.Count > 0">
 			<h3 class="section">Methods</h3>
 			<ul>
-				<li each="var method in Type.Methods"><a href="#${method.Name}" class="type">${h(method.Name)}</a></li>
+				<li each="var method in Type.Methods"><a href="#${method.Name.ToString()}" class="type">${h(method.PrettyName)}</a></li>
 			</ul>
 		</if>
 		
@@ -42,7 +38,7 @@
 		<h3 class="section">Public instance methods</h3>
 		
 		<div id="${method.Name}" class="method" each="var method in Type.Methods">
-			<h4><strong>${h(method.Name)}</strong>(${OutputMethodParams(method.Parameters)})</h4>
+			<h4><strong>${h(method.PrettyName)}</strong>(${OutputMethodParams(method)})</h4>
 			<div class="content">
 				${WriteSummary(method.Summary)}
 				<table>

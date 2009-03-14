@@ -211,7 +211,7 @@ namespace DrDoc.Associations
             return new TypeMemberName(type.Name, type.Namespace);
         }
 
-        public static MemberName FromMethod(MethodInfo method, Type type)
+        public static MethodMemberName FromMethod(MethodInfo method, Type type)
         {
             var name = method.Name;
             var parameters = new List<TypeMemberName>();

@@ -5,6 +5,47 @@ using System.Text;
 
 namespace Example
 {
+    public class EmptyType
+    { }
+
+    public class SingleMethodType
+    {
+        public void Method()
+        { }
+    }
+
+    public class PropertyType
+    {
+        public string Property { get; set; }
+    }
+
+    public class ClassWithOverload
+    {
+        public void Method() { }
+        public void Method(string one) { }
+    }
+
+    public class ClassWithExplicitMethodImplementation : InterfaceForExplicitImplementation
+    {
+        void InterfaceForExplicitImplementation.Method()
+        {
+
+        }
+    }
+
+    public interface EmptyInterface
+    { }
+
+    public interface SingleMethodInterface
+    {
+        void Method();
+    }
+
+    public interface InterfaceForExplicitImplementation
+    {
+        void Method();
+    }
+
     /// <summary>
     /// First summary
     /// </summary>

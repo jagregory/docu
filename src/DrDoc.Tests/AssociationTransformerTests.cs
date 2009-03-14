@@ -12,7 +12,7 @@ using Rhino.Mocks;
 namespace DrDoc.Tests
 {
     [TestFixture]
-    public class AssociationTransformerTests
+    public class AssociationTransformerTests : BaseFixture
     {
         private AssociationTransformer transformer;
 
@@ -173,10 +173,12 @@ namespace DrDoc.Tests
               MethodAssociation<Second>(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"" />", x => x.SecondMethod2(null, 0))
             };
             var namespaces = transformer.Transform(associations);
+            var method = Method<Second>(x => x.SecondMethod());
+            var method2 = Method<Second>(x => x.SecondMethod2(null, 0));
 
             namespaces[0].Types[0].Methods
-                .ShouldContain(x => x.Name == "SecondMethod")
-                .ShouldContain(x => x.Name == "SecondMethod");
+                .ShouldContain(x => x.Name == MemberName.FromMethod(method, typeof(Second)))
+                .ShouldContain(x => x.Name == MemberName.FromMethod(method2, typeof(Second)));
         }
 
         [Test]

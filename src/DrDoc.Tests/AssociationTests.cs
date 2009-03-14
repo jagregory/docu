@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace DrDoc.Tests
 {
     [TestFixture]
-    public class AssociationTests
+    public class AssociationTests : BaseFixture
     {
         private Associator associator;
 
@@ -18,21 +18,6 @@ namespace DrDoc.Tests
         public void CreateAssociator()
         {
             associator = new Associator();
-        }
-
-        private MethodInfo Method<T>(Expression<Action<T>> methodAction)
-        {
-            var method = ((MethodCallExpression)methodAction.Body).Method;
-
-            if (method.IsGenericMethod)
-                return method.GetGenericMethodDefinition();
-
-            return method;
-        }
-
-        private PropertyInfo Property<T>(Expression<Func<T, object>> propertyAction)
-        {
-            return ((MemberExpression)propertyAction.Body).Member as PropertyInfo;
         }
 
         [Test]
@@ -90,6 +75,26 @@ namespace DrDoc.Tests
             ass.ShouldNotBeNull();
             ass.Xml.ShouldEqual(snippets[0]);
             ass.Method.ShouldEqual<Second>(x => x.SecondMethod());
+        }
+
+        [Test]
+        public void ShouldAssociateMethodOverloadSnippetWithCorrectReflectedMethod()
+        {
+            var types = new[] { typeof(ClassWithOverload) };
+            var snippets = new[] { @"<member name=""M:Example.ClassWithOverload.Method"" />".ToNode(), @"<member name=""M:Example.ClassWithOverload.Method(System.String)"" />".ToNode() };
+            var associations = associator.Examine(types, snippets);
+            var method = Method<ClassWithOverload>(x => x.Method());
+            var method2 = Method<ClassWithOverload>(x => x.Method(null));
+
+            var member = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(method, typeof(ClassWithOverload))) as MethodAssociation;
+            member.ShouldNotBeNull();
+            member.Xml.ShouldEqual(snippets[0]);
+            member.Method.ShouldEqual(method);
+
+            var member2 = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(method2, typeof(ClassWithOverload))) as MethodAssociation;
+            member2.ShouldNotBeNull();
+            member2.Xml.ShouldEqual(snippets[0]);
+            member2.Method.ShouldEqual(method2);
         }
 
         [Test]
@@ -153,6 +158,5 @@ namespace DrDoc.Tests
             ass.Xml.ShouldEqual(snippets[0]);
             ass.Property.ShouldEqual<Second>(x => x.SecondProperty);
         }
-
     }
 }

@@ -2,12 +2,13 @@ using System;
 using System.Linq;
 using System.Xml;
 using DrDoc.Associations;
+using Example;
 using NUnit.Framework;
 
 namespace DrDoc.Tests
 {
     [TestFixture]
-    public class AssociatorPrePopulationTests
+    public class AssociatorPrePopulationTests : BaseFixture
     {
         private Associator associator;
 
@@ -35,6 +36,24 @@ namespace DrDoc.Tests
             var member = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(typeof(SingleMethodType).GetMethod("Method"), typeof(SingleMethodType)));
             member.ShouldBeOfType<UndocumentedMethodAssociation>();
             member.Name.ToString().ShouldEqual("Method");
+        }
+
+        [Test]
+        public void ShouldAddOverloadedClassMethods()
+        {
+            var associations = associator.Examine(new[] { typeof(ClassWithOverload) }, new XmlNode[0]);
+            var method1 = Method<ClassWithOverload>(x => x.Method());
+            var method2 = Method<ClassWithOverload>(x => x.Method(null));
+
+            var member = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(method1, typeof(ClassWithOverload)));
+            member.ShouldBeOfType<UndocumentedMethodAssociation>();
+            member.Name.ToString().ShouldEqual("Method");
+
+            var member2 = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(method2, typeof(ClassWithOverload)));
+            member2.ShouldBeOfType<UndocumentedMethodAssociation>();
+            member2.Name.ToString().ShouldEqual("Method");
+
+            member2.ShouldNotEqual(member);
         }
 
         [Test]
@@ -75,40 +94,5 @@ namespace DrDoc.Tests
             member.ShouldBeOfType<UndocumentedMethodAssociation>();
             member.Name.ToString().ShouldEqual("Method");
         }
-    }
-
-    public class EmptyType
-    {}
-
-    public class SingleMethodType
-    {
-        public void Method()
-        {}
-    }
-
-    public class PropertyType
-    {
-        public string Property { get; set; }
-    }
-
-    public class ClassWithExplicitMethodImplementation : InterfaceForExplicitImplementation
-    {
-        void InterfaceForExplicitImplementation.Method()
-        {
-            
-        }
-    }
-
-    public interface EmptyInterface
-    {}
-
-    public interface SingleMethodInterface
-    {
-        void Method();
-    }
-
-    public interface InterfaceForExplicitImplementation
-    {
-        void Method();
     }
 }
