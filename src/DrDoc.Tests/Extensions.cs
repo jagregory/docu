@@ -64,9 +64,21 @@ namespace DrDoc.Tests
             return actual;
         }
 
+        public static T ShouldBeSameAs<T>(this T actual, T expected)
+        {
+            Assert.That(actual, Is.SameAs(expected));
+            return actual;
+        }
+
         public static T ShouldNotEqual<T>(this T actual, T expected)
         {
             Assert.That(actual, Is.Not.EqualTo(expected));
+            return actual;
+        }
+
+        public static T ShouldBeNull<T>(this T actual)
+        {
+            Assert.That(actual, Is.Null);
             return actual;
         }
 

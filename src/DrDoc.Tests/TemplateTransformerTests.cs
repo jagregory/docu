@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using DrDoc.Generation;
 using DrDoc.IO;
+using Example;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;
@@ -12,7 +13,7 @@ using Test = NUnit.Framework.TestAttribute;
 namespace DrDoc.Tests
 {
     [TestFixture]
-    public class TemplateTransformerTests
+    public class TemplateTransformerTests : BaseFixture
     {
         [Test]
         public void GeneratesOutputFromTemplate()
@@ -63,7 +64,7 @@ namespace DrDoc.Tests
             var writer = MockRepository.GenerateStub<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new TemplateTransformer(generator, writer, resolver);
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two")};
+            var namespaces = Namespaces("One", "Two");
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
@@ -88,7 +89,7 @@ namespace DrDoc.Tests
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new TemplateTransformer(generator, writer, resolver);
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
@@ -115,17 +116,17 @@ namespace DrDoc.Tests
             var writer = MockRepository.GenerateStub<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new TemplateTransformer(generator, writer, resolver);
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DocType("TypeOne"));
-            namespaces[1].AddType(new DocType("TypeTwo"));
+            namespaces[0].AddType(Type<First>());
+            namespaces[1].AddType(Type<Second>());
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch>
                 {
-                    new TemplateMatch("One.TypeOne.htm", "!type.spark", new OutputData()),
-                    new TemplateMatch("Two.TypeTwo.htm", "!type.spark", new OutputData())
+                    new TemplateMatch("One.First.htm", "!type.spark", new OutputData()),
+                    new TemplateMatch("Two.Second.htm", "!type.spark", new OutputData())
                 });
 
             transformer.Transform("!type.spark", namespaces);
@@ -143,17 +144,17 @@ namespace DrDoc.Tests
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new TemplateTransformer(generator, writer, resolver);
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DocType("TypeOne"));
-            namespaces[1].AddType(new DocType("TypeTwo"));
+            namespaces[0].AddType(Type<First>());
+            namespaces[1].AddType(Type<Second>());
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch>
                 {
-                    new TemplateMatch("One.TypeOne.htm", "!type.spark", new OutputData()),
-                    new TemplateMatch("Two.TypeTwo.htm", "!type.spark", new OutputData())
+                    new TemplateMatch("One.First.htm", "!type.spark", new OutputData()),
+                    new TemplateMatch("Two.Second.htm", "!type.spark", new OutputData())
                 });
 
             generator.Stub(x => x.Convert(null, null))
@@ -162,8 +163,8 @@ namespace DrDoc.Tests
 
             transformer.Transform("!type.spark", namespaces);
 
-            writer.AssertWasCalled(x => x.WriteFile("One.TypeOne.htm", "content"));
-            writer.AssertWasCalled(x => x.WriteFile("Two.TypeTwo.htm", "content"));
+            writer.AssertWasCalled(x => x.WriteFile("One.First.htm", "content"));
+            writer.AssertWasCalled(x => x.WriteFile("Two.Second.htm", "content"));
         }
 
         [Test]
@@ -173,7 +174,7 @@ namespace DrDoc.Tests
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new TemplateTransformer(generator, writer, resolver);
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
@@ -206,17 +207,17 @@ namespace DrDoc.Tests
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new TemplateTransformer(generator, writer, resolver);
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DocType("TypeOne"));
-            namespaces[1].AddType(new DocType("TypeTwo"));
+            namespaces[0].AddType(Type<First>());
+            namespaces[1].AddType(Type<Second>());
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch>
                 {
-                    new TemplateMatch("One.TypeOne\\template.htm", "!type\\template.spark", new OutputData()),
-                    new TemplateMatch("Two.TypeTwo\\template.htm", "!type\\template.spark", new OutputData()),
+                    new TemplateMatch("One.First\\template.htm", "!type\\template.spark", new OutputData()),
+                    new TemplateMatch("Two.Second\\template.htm", "!type\\template.spark", new OutputData()),
                 });
 
             writer.Stub(x => x.Exists(null))
@@ -229,10 +230,10 @@ namespace DrDoc.Tests
 
             transformer.Transform("!type\\template.spark", namespaces);
 
-            writer.AssertWasCalled(x => x.CreateDirectory("One.TypeOne"));
-            writer.AssertWasCalled(x => x.WriteFile("One.TypeOne\\template.htm", "content"));
-            writer.AssertWasCalled(x => x.CreateDirectory("Two.TypeTwo"));
-            writer.AssertWasCalled(x => x.WriteFile("Two.TypeTwo\\template.htm", "content"));
+            writer.AssertWasCalled(x => x.CreateDirectory("One.First"));
+            writer.AssertWasCalled(x => x.WriteFile("One.First\\template.htm", "content"));
+            writer.AssertWasCalled(x => x.CreateDirectory("Two.Second"));
+            writer.AssertWasCalled(x => x.WriteFile("Two.Second\\template.htm", "content"));
         }
 
         [Test]
@@ -242,7 +243,7 @@ namespace DrDoc.Tests
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new TemplateTransformer(generator, writer, resolver);
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()

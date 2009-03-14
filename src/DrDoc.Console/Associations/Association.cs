@@ -5,16 +5,16 @@ namespace DrDoc.Associations
 {
     public abstract class Association
     {
-        public Association(string name, XmlNode xml)
+        public Association(MemberName name, XmlNode xml)
         {
             Name = name;
             Xml = xml;
         }
 
         public XmlNode Xml { get; set; }
-        public string Name { get; private set; }
+        public MemberName Name { get; private set; }
 
-        public bool Match(string name)
+        public bool Match(MemberName name)
         {
             return Name == name;
         }

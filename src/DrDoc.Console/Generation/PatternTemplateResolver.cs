@@ -32,7 +32,7 @@ namespace DrDoc.Generation
                     {
                         matches.Add(
                             new TemplateMatch(
-                                outputPath.Replace(".spark", ".htm").Replace("!namespace", ns.Name),
+                                outputPath.Replace(".spark", ".htm").Replace("!namespace", ns.Name.ToString()),
                                 templatePath,
                                 new OutputData { Namespaces = namespaces, Namespace = ns }
                             ));
@@ -44,7 +44,7 @@ namespace DrDoc.Generation
                     {
                         foreach (var type in ns.Types)
                         {
-                            var name = HACK_inNamespace ? type.Name : ns.Name + "." + type.Name;
+                            var name = HACK_inNamespace ? type.Name.ToString() : ns.Name.ToString() + "." + type.Name.ToString();
 
                             matches.Add(
                                 new TemplateMatch(
@@ -79,7 +79,7 @@ namespace DrDoc.Generation
 
                     foreach (var ns in namespaces)
                     {
-                        var nsPath = templatePath.Replace(current, ns.Name);
+                        var nsPath = templatePath.Replace(current, ns.Name.ToString());
 
                         HACK_inNamespace = true;
 

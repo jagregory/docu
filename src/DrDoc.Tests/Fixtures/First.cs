@@ -19,7 +19,7 @@ namespace Example
             
         }
 
-        public void AMethod<C>()
+        public void BMethod<C>()
         {
             
         }

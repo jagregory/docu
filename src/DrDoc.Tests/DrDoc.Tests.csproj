@@ -58,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssociationTests.cs" />
+    <Compile Include="AssociatorPrePopulationTests.cs" />
+    <Compile Include="BaseFixture.cs" />
     <Compile Include="BulkTransformer_Directory_Tests.cs" />
     <Compile Include="CommentContentParserTests.cs" />
     <Compile Include="Extensions.cs" />

@@ -1,7 +1,9 @@
+using DrDoc.Associations;
+
 namespace DrDoc
 {
     public interface IReferencable
     {
-        string Name { get; }
+        MemberName Name { get; }
     }
 }

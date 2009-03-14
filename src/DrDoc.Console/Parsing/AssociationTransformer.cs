@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using DrDoc.Associations;
@@ -9,7 +10,7 @@ namespace DrDoc.Parsing
     public class AssociationTransformer : IAssociationTransformer
     {
         private readonly ICommentContentParser commentContentParser;
-        private readonly IDictionary<string, object> matchedAssociations = new Dictionary<string, object>();
+        private readonly IDictionary<MemberName, object> matchedAssociations = new Dictionary<MemberName, object>();
 
         public AssociationTransformer(ICommentContentParser commentContentParser)
         {
@@ -42,8 +43,8 @@ namespace DrDoc.Parsing
             {
                 if (association.Property == null) continue;
 
-                var namespaceName = association.Property.DeclaringType.Namespace;
-                var typeName = association.Property.DeclaringType.Name;
+                var namespaceName = MemberName.FromNamespace(association.Property.DeclaringType.Namespace);
+                var typeName = MemberName.FromType(association.Property.DeclaringType);
                 var @namespace = namespaces.Find(x => x.Name == namespaceName);
 
                 if (@namespace == null) continue;
@@ -82,13 +83,13 @@ namespace DrDoc.Parsing
         {
             if (association.Method == null) return;
 
-            var namespaceName = association.Method.DeclaringType.Namespace;
-            var typeName = association.Method.DeclaringType.Name;
+            var namespaceName = MemberName.FromNamespace(association.TargetType.Namespace);
+            var typeName = MemberName.FromType(association.TargetType);
             var @namespace = namespaces.Find(x => x.Name == namespaceName);
 
             if (@namespace == null)
             {
-                AddNamespace(namespaces, new TypeAssociation(association.Name.Replace("M:", "N:"), null, association.Method.DeclaringType));
+                AddNamespace(namespaces, new TypeAssociation(association.Name.CloneAsNamespace(), null, association.TargetType));
                 @namespace = namespaces.Find(x => x.Name == namespaceName);
             }
 
@@ -96,7 +97,7 @@ namespace DrDoc.Parsing
 
             if (type == null)
             {
-                AddType(namespaces, references, new TypeAssociation(association.Name.Replace("M:", "T:"), null, association.Method.DeclaringType));
+                AddType(namespaces, references, new TypeAssociation(association.Name.CloneAsType(), null, association.TargetType));
                 type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
             }
 
@@ -118,7 +119,7 @@ namespace DrDoc.Parsing
 
             foreach (var parameter in association.Method.GetParameters())
             {
-                var reference = new UnresolvedReference("T:" + parameter.ParameterType.FullName);
+                var reference = new UnresolvedReference(MemberName.FromType(parameter.ParameterType));
                 var docParam = new DocParameter(parameter.Name, reference);
 
                 references.Add(docParam);
@@ -140,28 +141,31 @@ namespace DrDoc.Parsing
                 doc.AddParameter(docParam);
             }
 
+            if (matchedAssociations.ContainsKey(association.Name))
+                return; // weird case when a type has the same method declared twice
+
             matchedAssociations.Add(association.Name, doc);
             type.AddMethod(doc);
         }
 
         private void AddNamespace(List<DocNamespace> namespaces, TypeAssociation association)
         {
-            var @namespace = association.Type.Namespace;
+            var @namespace = MemberName.FromNamespace(association.Type.Namespace);
 
             if (!namespaces.Exists(x => x.Name == @namespace))
             {
                 var doc = new DocNamespace(@namespace);
-                matchedAssociations.Add("N:" + association.Name.Substring(2), doc);
+                matchedAssociations.Add(association.Name.CloneAsNamespace(), doc);
                 namespaces.Add(doc);
             }
         }
 
         private void AddType(List<DocNamespace> namespaces, List<IReferrer> references, TypeAssociation association)
         {
-            var namespaceName = association.Type.Namespace;
+            var namespaceName = MemberName.FromNamespace(association.Type.Namespace);
             var @namespace = namespaces.Find(x => x.Name == namespaceName);
             var prettyName = GetPrettyName(association.Type);
-            var doc = new DocType(association.Type.Name, prettyName, @namespace);
+            var doc = new DocType(association.Name, prettyName, @namespace);
 
             if (association.Xml != null)
             {

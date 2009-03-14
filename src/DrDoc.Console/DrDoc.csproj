@@ -57,9 +57,12 @@
     <Compile Include="Associations\Association.cs" />
     <Compile Include="Associations\Associator.cs" />
     <Compile Include="Associations\IAssociator.cs" />
+    <Compile Include="Associations\MemberName.cs" />
     <Compile Include="Associations\MethodAssociation.cs" />
     <Compile Include="Associations\PropertyAssociation.cs" />
     <Compile Include="Associations\TypeAssociation.cs" />
+    <Compile Include="Associations\UndocumentedMethodAssociation.cs" />
+    <Compile Include="Associations\UndocumentedPropertyAssociation.cs" />
     <Compile Include="Associations\UndocumentedTypeAssociation.cs" />
     <Compile Include="DocCodeBlock.cs" />
     <Compile Include="DocMethod.cs" />

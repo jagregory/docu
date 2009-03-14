@@ -1,4 +1,6 @@
+using DrDoc.Associations;
 using DrDoc.Parsing;
+using Example;
 using NUnit.Framework;
 
 namespace DrDoc.Tests
@@ -76,12 +78,12 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldParseSee()
         {
-            var blocks = parser.Parse("<x><see cref=\"Type\" /></x>".ToNode());
+            var blocks = parser.Parse("<x><see cref=\"T:Example.First\" /></x>".ToNode());
 
             blocks.CountShouldEqual(1);
             blocks[0].ShouldBeOfType<DocReferenceBlock>();
             ((DocReferenceBlock)blocks[0]).Reference.ShouldBeOfType<UnresolvedReference>();
-            ((DocReferenceBlock)blocks[0]).Reference.Name.ShouldEqual("Type");
+            ((DocReferenceBlock)blocks[0]).Reference.Name.ShouldEqual(MemberName.FromType(typeof(First)));
         }
 
         [Test]

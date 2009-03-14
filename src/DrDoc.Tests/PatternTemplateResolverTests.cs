@@ -1,10 +1,13 @@
+using System.Collections.Generic;
+using DrDoc.Associations;
 using DrDoc.Generation;
+using Example;
 using NUnit.Framework;
 
 namespace DrDoc.Tests
 {
     [TestFixture]
-    public class PatternTemplateResolverTests
+    public class PatternTemplateResolverTests : BaseFixture
     {
         [Test]
         public void MatchesSingleFilename()
@@ -21,7 +24,7 @@ namespace DrDoc.Tests
         public void MatchesNamespacePatternFilename()
         {
             var resolver = new PatternTemplateResolver();
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
             var results = resolver.Resolve("!namespace.spark", namespaces);
 
             results.CountShouldEqual(2);
@@ -35,17 +38,17 @@ namespace DrDoc.Tests
         public void MatchesTypePatternFilename()
         {
             var resolver = new PatternTemplateResolver();
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DocType("TypeOne"));
-            namespaces[1].AddType(new DocType("TypeTwo"));
+            namespaces[0].AddType(new DocType(MemberName.FromType(typeof(First))));
+            namespaces[1].AddType(new DocType(MemberName.FromType(typeof(Second))));
 
             var results = resolver.Resolve("!type.spark", namespaces);
 
             results.CountShouldEqual(2);
-            results[0].OutputPath.ShouldEqual("One.TypeOne.htm");
+            results[0].OutputPath.ShouldEqual("One.First.htm");
             results[0].TemplatePath.ShouldEqual("!type.spark");
-            results[1].OutputPath.ShouldEqual("Two.TypeTwo.htm");
+            results[1].OutputPath.ShouldEqual("Two.Second.htm");
             results[1].TemplatePath.ShouldEqual("!type.spark");
         }
 
@@ -65,7 +68,7 @@ namespace DrDoc.Tests
         public void MatchesPatternTemplateInDirectory()
         {
             var resolver = new PatternTemplateResolver();
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
             var results = resolver.Resolve("directory\\!namespace.spark", namespaces);
 
             results.CountShouldEqual(2);
@@ -79,7 +82,7 @@ namespace DrDoc.Tests
         public void MatchesTemplateInNamespacePatternDirectory()
         {
             var resolver = new PatternTemplateResolver();
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
             var results = resolver.Resolve("!namespace\\template.spark", namespaces);
 
             results.CountShouldEqual(2);
@@ -93,17 +96,17 @@ namespace DrDoc.Tests
         public void MatchesTemplateInTypePatternDirectory()
         {
             var resolver = new PatternTemplateResolver();
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DocType("TypeOne"));
-            namespaces[1].AddType(new DocType("TypeTwo"));
+            namespaces[0].AddType(new DocType(MemberName.FromType(typeof(First))));
+            namespaces[1].AddType(new DocType(MemberName.FromType(typeof(Second))));
 
             var results = resolver.Resolve("!type\\template.spark", namespaces);
 
             results.CountShouldEqual(2);
-            results[0].OutputPath.ShouldEqual("One.TypeOne\\template.htm");
+            results[0].OutputPath.ShouldEqual("One.First\\template.htm");
             results[0].TemplatePath.ShouldEqual("!type\\template.spark");
-            results[1].OutputPath.ShouldEqual("Two.TypeTwo\\template.htm");
+            results[1].OutputPath.ShouldEqual("Two.Second\\template.htm");
             results[1].TemplatePath.ShouldEqual("!type\\template.spark");
         }
 
@@ -111,23 +114,23 @@ namespace DrDoc.Tests
         public void MatchesTypePatternInNamespaceDirectory()
         {
             var resolver = new PatternTemplateResolver();
-            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DocType("TypeOne"));
-            namespaces[0].AddType(new DocType("TypeTwo"));
-            namespaces[1].AddType(new DocType("TypeThree"));
-            namespaces[1].AddType(new DocType("TypeFour"));
+            namespaces[0].AddType(new DocType(MemberName.FromType(typeof(First))));
+            namespaces[0].AddType(new DocType(MemberName.FromType(typeof(Second))));
+            namespaces[1].AddType(new DocType(MemberName.FromType(typeof(First))));
+            namespaces[1].AddType(new DocType(MemberName.FromType(typeof(Second))));
 
             var results = resolver.Resolve("!namespace\\!type.spark", namespaces);
 
             results.CountShouldEqual(4);
-            results[0].OutputPath.ShouldEqual("One\\TypeOne.htm");
+            results[0].OutputPath.ShouldEqual("One\\First.htm");
             results[0].TemplatePath.ShouldEqual("!namespace\\!type.spark");
-            results[1].OutputPath.ShouldEqual("One\\TypeTwo.htm");
+            results[1].OutputPath.ShouldEqual("One\\Second.htm");
             results[1].TemplatePath.ShouldEqual("!namespace\\!type.spark");
-            results[2].OutputPath.ShouldEqual("Two\\TypeThree.htm");
+            results[2].OutputPath.ShouldEqual("Two\\First.htm");
             results[2].TemplatePath.ShouldEqual("!namespace\\!type.spark");
-            results[3].OutputPath.ShouldEqual("Two\\TypeFour.htm");
+            results[3].OutputPath.ShouldEqual("Two\\Second.htm");
             results[3].TemplatePath.ShouldEqual("!namespace\\!type.spark");
         }
     }

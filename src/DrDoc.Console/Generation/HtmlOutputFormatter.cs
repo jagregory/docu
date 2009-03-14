@@ -15,9 +15,9 @@ namespace DrDoc.Generation
             var url = "";
 
             if (block.Reference is DocNamespace)
-                url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", block.Reference.Name}});
+                url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", block.Reference.Name.ToString()}});
             else if (block.Reference is DocType)
-                url = Format(TypeUrlFormat, new Dictionary<string, string> {{"type.namespace", ((DocType)block.Reference).Namespace.Name}, {"type", block.Reference.Name}});
+                url = Format(TypeUrlFormat, new Dictionary<string, string> {{"type.namespace", ((DocType)block.Reference).Namespace.Name.ToString()}, {"type", block.Reference.Name.ToString()}});
 
 			return "<a href=\"" + url + "\">" + block.Reference.Name + "</a>";
         }
@@ -30,9 +30,9 @@ namespace DrDoc.Generation
             var url = "";
 
             if (reference is DocNamespace)
-                url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", reference.Name}});
+                url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", reference.Name.ToString()}});
             else if (reference is DocType)
-                url = Format(TypeUrlFormat, new Dictionary<string, string> {{"type.namespace", ((DocType)reference).Namespace.Name}, {"type", reference.Name}});
+                url = Format(TypeUrlFormat, new Dictionary<string, string> {{"type.namespace", ((DocType)reference).Namespace.Name.ToString()}, {"type", reference.Name.ToString()}});
 
             return "<a href=\"" + url + "\">" + reference.Name + "</a>";
         }

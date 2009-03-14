@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Diagnostics;
+using DrDoc.Associations;
 
 namespace DrDoc
 {
@@ -6,12 +8,12 @@ namespace DrDoc
     {
         private readonly List<DocType> types = new List<DocType>();
 
-        public DocNamespace(string name)
+        public DocNamespace(MemberName name)
         {
             Name = name;
         }
 
-        public string Name { get; private set; }
+        public MemberName Name { get; private set; }
 
         public IList<DocType> Types
         {
@@ -21,6 +23,11 @@ namespace DrDoc
         public void Sort()
         {
             types.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+            foreach (var type in types)
+            {
+                type.Sort();
+            }
         }
 
         public void AddType(DocType type)

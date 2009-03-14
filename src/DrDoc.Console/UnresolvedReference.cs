@@ -1,12 +1,14 @@
+using DrDoc.Associations;
+
 namespace DrDoc
 {
     public class UnresolvedReference : IReferencable
     {
-        public UnresolvedReference(string name)
+        public UnresolvedReference(MemberName name)
         {
             Name = name;
         }
 
-        public string Name { get; private set; }
+        public MemberName Name { get; private set; }
     }
 }

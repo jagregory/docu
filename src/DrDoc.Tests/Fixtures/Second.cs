@@ -12,7 +12,7 @@ namespace Example
             
         }
 
-        public void SecondMethod2(string one, First two)
+        public void SecondMethod3(string one, First two)
         {
 
         }

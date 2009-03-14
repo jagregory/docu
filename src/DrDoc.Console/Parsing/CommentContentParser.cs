@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using DrDoc.Associations;
 
 namespace DrDoc.Parsing
 {
@@ -64,7 +65,7 @@ namespace DrDoc.Parsing
 
         private DocBlock ParseSee(XmlNode content)
         {
-            var referenceTarget = content.Attributes["cref"].Value;
+            var referenceTarget = MemberName.FromString(content.Attributes["cref"].Value);
 
             return new DocReferenceBlock(new UnresolvedReference(referenceTarget));
         }
