@@ -7,8 +7,8 @@ namespace DrDoc.Generation
     public class TemplateTransformer : ITemplateTransformer
     {
         private const string A_Bang = "!";
-        private const string Namespace = "namespace.spark";
-        private const string Type = "type.spark";
+        private const string Namespace = "namespace";
+        private const string Type = "type";
 
         private readonly IOutputGenerator generator;
         private readonly IOutputWriter writer;
@@ -24,7 +24,9 @@ namespace DrDoc.Generation
             var transformedOutput = new List<OutputFile>();
             var templateName = Path.GetFileName(templatePath);
 
-            if (templateName.StartsWith(A_Bang))
+            if (!Path.HasExtension(templatePath))
+                transformedOutput.AddRange(TransformDirectory(templatePath, namespaces));
+            else if (templateName.StartsWith(A_Bang))
                 transformedOutput.AddRange(TransformSpecial(templatePath, namespaces));
             else
             {
@@ -38,6 +40,36 @@ namespace DrDoc.Generation
             {
                 writer.WriteFile(pair.FileName, pair.Content);
             }
+        }
+
+        private IEnumerable<OutputFile> TransformDirectory(string templatePath, IList<DocNamespace> namespaces)
+        {
+            var directoryName = Path.GetFileName(templatePath);
+
+            if (directoryName.StartsWith(A_Bang))
+            {
+                var specialName = GetSpecialName(directoryName);
+
+                if (specialName == Namespace)
+                {
+                    foreach (var ns in namespaces)
+                    {
+                        writer.CreateDirectory(ns.Name);
+                    }
+                }
+                else if (specialName == Type)
+                {
+                    foreach (var ns in namespaces)
+                    {
+                        foreach (var type in ns.Types)
+                        {
+                            writer.CreateDirectory(ns.Name + "." + type.Name);
+                        }
+                    }
+                }
+            }
+
+            return new OutputFile[0];
         }
 
         private IEnumerable<OutputFile> TransformSpecial(string templatePath, IList<DocNamespace> namespaces)
@@ -88,7 +120,7 @@ namespace DrDoc.Generation
 
         private string GetSpecialName(string templatePath)
         {
-            return Path.GetFileName(templatePath).Substring(1);
+            return Path.GetFileNameWithoutExtension(templatePath).Substring(1);
         }
 
         private class OutputFile

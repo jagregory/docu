@@ -119,5 +119,53 @@ namespace DrDoc.Tests
             writer.AssertWasCalled(x => x.WriteFile("One.TypeOne.htm", "content"));
             writer.AssertWasCalled(x => x.WriteFile("Two.TypeTwo.htm", "content"));
         }
+
+        [Test]
+        public void TransformsDirectoriesWithNamespacePattern()
+        {
+            var generator = MockRepository.GenerateStub<IOutputGenerator>();
+            var writer = MockRepository.GenerateMock<IOutputWriter>();
+            var transformer = new TemplateTransformer(generator, writer);
+            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+
+            transformer.Transform("!namespace", namespaces);
+
+            writer.AssertWasCalled(x => x.CreateDirectory("One"));
+            writer.AssertWasCalled(x => x.CreateDirectory("Two"));
+        }
+
+        [Test]
+        public void TransformsDirectoriesWithTypePattern()
+        {
+            var generator = MockRepository.GenerateStub<IOutputGenerator>();
+            var writer = MockRepository.GenerateMock<IOutputWriter>();
+            var transformer = new TemplateTransformer(generator, writer);
+            var namespaces = new[] { new DocNamespace("One"), new DocNamespace("Two") };
+
+            namespaces[0].AddType(new DocType("TypeOne"));
+            namespaces[1].AddType(new DocType("TypeTwo"));
+
+            transformer.Transform("!type", namespaces);
+
+            writer.AssertWasCalled(x => x.CreateDirectory("One.TypeOne"));
+            writer.AssertWasCalled(x => x.CreateDirectory("One.TypeOne"));
+        }
+
+        [Test]
+        public void TransformsTemplatesInDirectories()
+        {
+            var generator = MockRepository.GenerateStub<IOutputGenerator>();
+            var writer = MockRepository.GenerateMock<IOutputWriter>();
+            var transformer = new TemplateTransformer(generator, writer);
+            var namespaces = new DocNamespace[0];
+
+            generator.Stub(x => x.Convert(null, null))
+                .IgnoreArguments()
+                .Return("content");
+
+            transformer.Transform("directory\\test.spark", namespaces);
+
+            writer.AssertWasCalled(x => x.WriteFile("directory\\test.htm", "content"));
+        }
     }
 }

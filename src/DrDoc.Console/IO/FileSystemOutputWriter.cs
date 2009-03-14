@@ -8,5 +8,10 @@ namespace DrDoc.IO
         {
             File.WriteAllText(fileName, content);
         }
+
+        public void CreateDirectory(string path)
+        {
+            Directory.CreateDirectory(path);
+        }
     }
 }
