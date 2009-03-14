@@ -7,6 +7,12 @@ namespace DrDoc
         private readonly IList<DocMethod> methods = new List<DocMethod>();
         private readonly IList<DocProperty> properties = new List<DocProperty>();
 
+        public DocType(string name, string prettyName)
+            : this(name)
+        {
+            PrettyName = prettyName;
+        }
+
         public DocType(string name)
         {
             Name = name;
@@ -24,6 +30,8 @@ namespace DrDoc
         }
 
         public string Name { get; private set; }
+        public string PrettyName { get; private set; }
+
         public IList<DocMethod> Methods
         {
             get { return methods; }

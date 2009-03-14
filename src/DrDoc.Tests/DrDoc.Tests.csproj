@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssociationTests.cs" />
+    <Compile Include="BulkTransformer_Directory_Tests.cs" />
     <Compile Include="CommentContentParserTests.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Fixtures\First.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="DocParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AssociationTransformerTests.cs" />
+    <Compile Include="TemplateTransformerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DrDoc.Console\DrDoc.csproj">

@@ -69,8 +69,15 @@
     <Compile Include="DocReferenceBlock.cs" />
     <Compile Include="DocTextBlock.cs" />
     <Compile Include="DocType.cs" />
+    <Compile Include="Generation\BulkTransformer.cs" />
     <Compile Include="Generation\HtmlGenerator.cs" />
+    <Compile Include="Generation\IOutputGenerator.cs" />
+    <Compile Include="Generation\ITemplateTransformer.cs" />
+    <Compile Include="Generation\OutputData.cs" />
+    <Compile Include="IO\FileSystemOutputWriter.cs" />
+    <Compile Include="IO\IOutputWriter.cs" />
     <Compile Include="Generation\SparkTemplateBase.cs" />
+    <Compile Include="Generation\TemplateTransformer.cs" />
     <Compile Include="IReferencable.cs" />
     <Compile Include="Parsing\CommentContentParser.cs" />
     <Compile Include="DocBlock.cs" />
@@ -84,7 +91,17 @@
     <Compile Include="Utils\Method.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="templates\test.spark">
+    <Content Include="templates\index.spark">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="templates\!namespace.spark">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="templates\namespaces.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

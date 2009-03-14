@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using DrDoc.Associations;
 using DrDoc.Generation;
+using DrDoc.IO;
 using DrDoc.Parsing;
 
 namespace DrDoc
@@ -25,13 +26,15 @@ namespace DrDoc
         static void Main(string[] args)
         {
             Assembly.LoadFrom("NHibernate.dll");
+
+            var transformer = new BulkTransformer(new TemplateTransformer(new HtmlGenerator(), new FileSystemOutputWriter()));
+
             var parser = new DocParser(new Associator(), new AssociationTransformer(new CommentContentParser()));
             var namespaces = parser.Parse(new[] {Assembly.LoadFrom("FluentNHibernate.dll")}, File.ReadAllText("FluentNHibernate.XML"));
-            var generator = new HtmlGenerator();
 
-            var text = generator.Convert("test.spark", namespaces);
+            transformer.TransformDirectory("templates", namespaces);
 
-            File.WriteAllText("output.htm", text);
+            Console.WriteLine("Done");
             Console.ReadKey();
         }
     }

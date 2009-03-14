@@ -18,7 +18,7 @@ namespace DrDoc
             this.transformer = transformer;
         }
 
-        public IEnumerable<DocNamespace> Parse(Assembly[] assemblies, string xml)
+        public IList<DocNamespace> Parse(Assembly[] assemblies, string xml)
         {
             var assocations = GetAssociations(assemblies, xml);
 

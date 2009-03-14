@@ -15,6 +15,7 @@ namespace DrDoc.Tests
             generator = new HtmlGenerator(new Dictionary<string, string>
             {
                 { "namespace.simple", "${Namespaces[0].Name}"},
+                { "namespace.shortcut", "${Namespace.Name}"},
                 { "summary.simple", "<for each=\"var b in Namespaces[0].Types[0].Summary\">${b}</for>"},
                 { "summary.flattened", "<var test=\"'xxx'\" />${flatten(Namespaces[0].Types[0].Summary)}"},
             });
@@ -23,7 +24,17 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldOutputSimpleNamespace()
         {
-            var content = generator.Convert("namespace.simple", new[] { new DocNamespace("Example") });
+            var data = new OutputData { Namespaces = new List<DocNamespace> { new DocNamespace("Example") } };
+            var content = generator.Convert("namespace.simple", data);
+
+            content.ShouldEqual("Example");
+        }
+
+        [Test]
+        public void ShouldOutputShortcutNamespace()
+        {
+            var data = new OutputData { Namespace = new DocNamespace("Example") };
+            var content = generator.Convert("namespace.shortcut", data);
 
             content.ShouldEqual("Example");
         }
@@ -35,8 +46,9 @@ namespace DrDoc.Tests
             var type = new DocType("First");
             type.Summary.Add(new DocTextBlock("Hello world!"));
             ns.AddType(type);
+            var data = new OutputData { Namespaces = new List<DocNamespace> { ns } };
 
-            var content = generator.Convert("summary.simple", new[] { ns });
+            var content = generator.Convert("summary.simple", data);
 
             content.ShouldEqual("Hello world!");
         }
@@ -48,8 +60,9 @@ namespace DrDoc.Tests
             var type = new DocType("First");
             type.Summary.Add(new DocTextBlock("Hello world!"));
             ns.AddType(type);
+            var data = new OutputData { Namespaces = new List<DocNamespace> { ns } };
 
-            var content = generator.Convert("summary.flattened", new[] { ns });
+            var content = generator.Convert("summary.flattened", data);
 
             content.ShouldEqual("Hello world!");
         }

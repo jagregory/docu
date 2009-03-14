@@ -51,6 +51,19 @@ namespace DrDoc.Tests
         }
 
         [Test]
+        public void ShouldHavePrettyNamesForGenericTypes()
+        {
+            var associations = new[]
+            {
+              new TypeAssociation(@"<member name=""T:Example.GenericDefinition`1"" />".ToNode(), typeof(GenericDefinition<>)),  
+            };
+            var namespaces = transformer.Transform(associations);
+
+            namespaces[0].Types
+                .ShouldContain(x => x.PrettyName == "GenericDefinition<T>");
+        }
+
+        [Test]
         public void ShouldHaveSummaryForType()
         {
             var associations = new[]

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,14 +8,14 @@ using Spark.FileSystem;
 
 namespace DrDoc.Generation
 {
-    public class HtmlGenerator
+    public class HtmlGenerator : IOutputGenerator
     {
         private readonly SparkViewEngine engine;
 
         public HtmlGenerator()
         {
             engine = new SparkViewEngine();
-            engine.ViewFolder = new FileSystemViewFolder("templates");
+            engine.ViewFolder = new FileSystemViewFolder(Environment.CurrentDirectory);
             engine.DefaultPageBaseType = typeof(SparkTemplateBase).FullName;
         }
 
@@ -31,7 +32,7 @@ namespace DrDoc.Generation
             engine.ViewFolder = viewFolder;
         }
 
-        public string Convert(string templateName, IEnumerable<DocNamespace> namespaces)
+        public string Convert(string templateName, OutputData data)
         {
             var descriptor = new SparkViewDescriptor()
                 .AddTemplate(templateName);
@@ -41,7 +42,7 @@ namespace DrDoc.Generation
             {
                 try
                 {
-                    view.Namespaces = new List<DocNamespace>(namespaces).ToArray();
+                    view.ViewData = data;
                     view.RenderView(writer);
                 }
                 finally

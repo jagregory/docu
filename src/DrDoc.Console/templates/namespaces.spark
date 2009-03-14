@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
+	<head> 
+		<title>Namespaces</title> 
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /> 
+		<base target="body" /> 
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				font-family: Verdana,Arial,Helvetica,sans-serif;
+				font-size: 90%;
+			}
+			
+			a.namespace {
+				display: block;
+				background: #CCC;
+				color: #000;
+				border-top: 1px solid #999;
+				border-bottom: 1px solid #999;
+				margin: 10px 0;
+				padding: 2px 10px;
+				font-weight: bold;
+				font-size: 12px;
+				text-decoration: none;
+			}
+			
+			a.type {
+				margin: 0 10px;
+				background: #eef;
+				color: #039;
+				text-decoration: none;
+			}
+			
+			a.type:hover {
+				color: #FFF;
+				background: #039;
+			}
+		</style>
+	</head> 
+	<body>
+		<for each="var ns in Namespaces">
+			<a class="namespace" href="${ns.Name}.htm">${ns.Name}</a>
+			<for each="var type in ns.Types">
+				<a class="type" href="${type.Name}.htm">${h(type.PrettyName)}</a><br />
+			</for>
+		</for>
+	</body> 
+</html>

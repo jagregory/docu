@@ -29,6 +29,11 @@ namespace DrDoc.Generation
             return sb.ToString();
         }
 
+        public string h(string content)
+        {
+            return content.Replace("<", "&lt;").Replace(">", "&gt;");
+        }
+
         public object Eval(string expression)
         {
             //            return ViewData.Eval(expression);
@@ -49,6 +54,21 @@ namespace DrDoc.Generation
             return DateTime.UtcNow.Second % 2 == 1;
         }
 
-        public DocNamespace[] Namespaces { get; set; }
+        public IList<DocNamespace> Namespaces
+        {
+            get { return ViewData.Namespaces; }
+        }
+
+        public DocNamespace Namespace
+        {
+            get { return ViewData.Namespace; }
+        }
+
+        public DocType Type
+        {
+            get { return ViewData.Type; }
+        }
+
+        public OutputData ViewData { get; set; }
     }
 }

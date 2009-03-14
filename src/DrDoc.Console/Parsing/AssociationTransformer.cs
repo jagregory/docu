@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DrDoc.Associations;
 
 namespace DrDoc.Parsing
@@ -91,7 +93,8 @@ namespace DrDoc.Parsing
         {
             var namespaceName = association.Type.Namespace;
             var @namespace = namespaces.Find(x => x.Name == namespaceName);
-            var doc = new DocType(association.Type.Name);
+            var prettyName = GetPrettyName(association.Type);
+            var doc = new DocType(association.Type.Name, prettyName);
 
             if (association.Xml != null)
             {
@@ -102,6 +105,30 @@ namespace DrDoc.Parsing
             }
 
             @namespace.AddType(doc);
+        }
+
+        private string GetPrettyName(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                var sb = new StringBuilder();
+
+                sb.Append(type.Name.Substring(0, type.Name.IndexOf('`')));
+                sb.Append("<");
+
+                foreach (var argument in type.GetGenericArguments())
+                {
+                    sb.Append(argument.Name);
+                    sb.Append(", ");
+                }
+
+                sb.Length -= 2;
+                sb.Append(">");
+
+                return sb.ToString();
+            }
+
+            return type.Name;
         }
     }
 }
