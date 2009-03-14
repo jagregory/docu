@@ -120,6 +120,33 @@ namespace DrDoc.Tests
         }
 
         [Test]
+        public void ShouldHaveSummaryForMethods()
+        {
+            var associations = new[]
+            {
+              new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod""><summary>Second method</summary></member>".ToNode(), typeof(Second).GetMethod("SecondMethod")),
+              new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)""><summary>Second method 2</summary></member>".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
+            };
+            var namespaces = transformer.Transform(associations);
+
+            namespaces[0].Types[0].Methods[0].Summary.CountShouldEqual(1);
+            ((DocTextBlock)namespaces[0].Types[0].Methods[0].Summary[0]).Text.ShouldEqual("Second method");
+            namespaces[0].Types[0].Methods[0].Summary.CountShouldEqual(1);
+            ((DocTextBlock)namespaces[0].Types[0].Methods[1].Summary[0]).Text.ShouldEqual("Second method 2");
+        }
+
+        [Test]
+        public void ShouldPassMethodSummaryToContentParser()
+        {
+            var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
+            var associations = new[] { new MethodAssociation(@"<member name=""M:Example.Second.SecondMethod""><summary>First summary</summary></member>".ToNode(), typeof(Second).GetMethod("SecondMethod")) };
+
+            new AssociationTransformer(contentParser).Transform(associations);
+
+            contentParser.AssertWasCalled(x => x.Parse(associations[0].Xml.ChildNodes[0]));
+        }
+
+        [Test]
         public void ShouldHavePropertiesInTypes()
         {
             var associations = new Association[]

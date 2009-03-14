@@ -21,5 +21,7 @@ namespace DrDoc
         {
             get { return parameters; }
         }
+
+        public IList<DocBlock> Summary { get; internal set; }
     }
 }

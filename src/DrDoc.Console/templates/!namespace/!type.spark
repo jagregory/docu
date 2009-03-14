@@ -3,58 +3,56 @@
   <head>
     <title>#{Type.Name}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    <style>
-      body {
-      margin: 0;
-      padding: 0;
-      font-family: Verdana,Arial,Helvetica,sans-serif;
-      font-size: 90%;
-      }
-
-      .header {
-        background: #048;
-        border-bottom: 3px solid #006;
-        font-size: 18px;
-        margin: 0;
-        color: #FFF;
-        padding: 10px;
-        font-weight: bold;
-      }
-      
-      .header strong {
-        font-size: 12px;
-        font-weight: normal;
-      }
-      
-      .content {
-		margin: 10px;
-	  }
-      
-      .section {
-		color: #333;
-		border-bottom: 1px solid #999;
-      }
-    </style>
+    <link type="text/css" rel="stylesheet" href="../main.css" />
   </head>
   <body>
     <p class="header">
 		<strong>Namespace</strong> ${Namespace.Name}<br />
 		<strong>Type</strong> ${h(Type.PrettyName)}
 	</p>
-    <div class="content">
-		<h3 class="section">Methods</h3>
-		<ul>
-			<for each="var method in Type.Methods">
-				<li>${h(method.Name)}</li>
-			</for>
-		</ul>
+    <div class="sub-header">
+		<if condition="Type.Summary.Count > 0">
+			<div id="summary">
+				<p each="var block in Type.Summary">${block}</p>
+			</div>
+		</if>
 		
-		<h3 class="section">Properties</h3>
-		<ul>
-			<for each="var property in Type.Properties">
-				<li>${h(property.Name)}</li>
-			</for>
-		</ul>
+		<if condition="Type.Methods.Count > 0">
+			<h3 class="section">Methods</h3>
+			<ul>
+				<li each="var method in Type.Methods"><a href="#${method.Name}" class="type">${h(method.Name)}</a></li>
+			</ul>
+		</if>
+		
+		<if condition="Type.Properties.Count > 0">
+			<h3 class="section">Properties</h3>
+			<ul>
+				<li each="var property in Type.Properties">${h(property.Name)}</li>
+			</ul>
+		</if>
 	</div>
+
+<use namespace="System.Collections.Generic"/>
+<use namespace="DrDoc"/>
+<macro name="OutputMethodParams" items="IList[[DocParameter]]">
+<for each="var item in items">${item.Type} ${item.Name}<if condition="itemIndex < items.Count - 1">, </if></for>
+</macro>
+	
+	<if condition="Type.Methods.Count > 0">
+		<h3 class="section">Public instance methods</h3>
+		
+		<div id="${method.Name}" class="method" each="var method in Type.Methods">
+			<h4><strong>${h(method.Name)}</strong>(${OutputMethodParams(method.Parameters)})</h4>
+			<div class="content">
+				<p each="var block in method.Summary">${block}</p>
+				<table>
+					<tr each="var param in method.Parameters">
+						<td><code>${param.Type} ${param.Name}:</code></td>
+						<td>summary</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</if>
   </body>
 </html>

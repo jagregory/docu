@@ -31,34 +31,7 @@ namespace DrDoc.Parsing
 
             foreach (MethodAssociation association in associations.Where(x => x is MethodAssociation))
             {
-                if (association.Method == null) continue; // BUG
-
-                var namespaceName = association.Method.DeclaringType.Namespace;
-                var typeName = association.Method.DeclaringType.Name;
-                var @namespace = namespaces.Find(x => x.Name == namespaceName);
-
-                if (@namespace == null)
-                {
-                    AddNamespace(namespaces, new TypeAssociation(null, association.Method.DeclaringType));
-                    @namespace = namespaces.Find(x => x.Name == namespaceName);
-                }
-
-                var type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
-
-                if (type == null)
-                {
-                    AddType(namespaces, new TypeAssociation(null, association.Method.DeclaringType));
-                    type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
-                }
-
-                var doc = new DocMethod(association.Method.Name);
-
-                foreach (var parameter in association.Method.GetParameters())
-                {
-                    doc.AddParameter(new DocParameter(parameter.Name, parameter.ParameterType.FullName));
-                }
-
-                type.AddMethod(doc);
+                AddMethod(namespaces, association);
             }
 
             foreach (PropertyAssociation association in associations.Where(x => x is PropertyAssociation))
@@ -79,6 +52,46 @@ namespace DrDoc.Parsing
             }
 
             return namespaces;
+        }
+
+        private void AddMethod(List<DocNamespace> namespaces, MethodAssociation association)
+        {
+            if (association.Method == null) return;
+
+            var namespaceName = association.Method.DeclaringType.Namespace;
+            var typeName = association.Method.DeclaringType.Name;
+            var @namespace = namespaces.Find(x => x.Name == namespaceName);
+
+            if (@namespace == null)
+            {
+                AddNamespace(namespaces, new TypeAssociation(null, association.Method.DeclaringType));
+                @namespace = namespaces.Find(x => x.Name == namespaceName);
+            }
+
+            var type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
+
+            if (type == null)
+            {
+                AddType(namespaces, new TypeAssociation(null, association.Method.DeclaringType));
+                type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
+            }
+
+            var doc = new DocMethod(association.Method.Name);
+
+            if (association.Xml != null)
+            {
+                var summaryNode = association.Xml.SelectSingleNode("summary");
+
+                if (summaryNode != null)
+                    doc.Summary = commentContentParser.Parse(summaryNode);
+            }
+
+            foreach (var parameter in association.Method.GetParameters())
+            {
+                doc.AddParameter(new DocParameter(parameter.Name, parameter.ParameterType.FullName));
+            }
+
+            type.AddMethod(doc);
         }
 
         private void AddNamespace(List<DocNamespace> namespaces, TypeAssociation association)

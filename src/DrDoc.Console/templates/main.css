@@ -1,0 +1,112 @@
+﻿body {
+	margin: 0;
+	padding: 0;
+	font-family: Verdana,Arial,Helvetica,sans-serif;
+	font-size: 90%;
+}
+
+.header {
+	background: #048;
+	border-bottom: 3px solid #006;
+	font-size: 18px;
+	margin: 0;
+	color: #FFF;
+	padding: 10px;
+	font-weight: bold;
+}
+
+.header strong {
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.sub-header {
+	margin:  0 20px;
+}
+
+.sub-header ul 
+{
+	margin: 0 0 0 30px;
+	padding: 0;
+}
+
+.sub-header ul li {
+	display: inline;
+	margin: 0 10px 0 0;
+	padding: 0;
+	text-indent: 0;
+}
+
+.section {
+	color: #333;
+	border-bottom: 1px solid #999;
+	margin: 10px 10px 0 10px;
+}
+
+a.namespace {
+	display: block;
+	background: #CCC;
+	color: #000;
+	border-top: 1px solid #999;
+	border-bottom: 1px solid #999;
+	margin: 10px 0;
+	padding: 2px 10px;
+	font-weight: bold;
+	font-size: 12px;
+	text-decoration: none;
+}
+
+a.type {
+	background: #eef;
+	color: #039;
+	text-decoration: none;
+}
+
+a.type:hover {
+	color: #FFF;
+	background: #039;
+}
+
+div.method 
+{
+	background: #EFEFEF;
+	border: 1px dotted #CCC;
+	margin: 5px 10px 15px 10px;
+	padding: 0;
+}
+
+div.method h4 
+{
+	background:#CCC;
+	border-bottom:1px solid #666;
+	color:#000;
+	padding:2px 5px;
+	margin:0;
+	font-weight: normal;
+}
+
+div.method .content
+{
+	padding: 0 10px 5px 10px;
+}
+
+#summary 
+{
+	background:#EFEFEF;
+	border:1px dotted #999999;
+	margin: 5px 10px 15px 10px;
+	padding: 5px 10px;
+}
+
+#namespaces ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#namespaces ul li 
+{
+	text-indent: 0;
+	padding-left: 10px;
+}
