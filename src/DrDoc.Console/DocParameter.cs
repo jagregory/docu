@@ -2,17 +2,17 @@ using System.Collections.Generic;
 
 namespace DrDoc
 {
-    public class DocParameter
+    public class DocParameter : IReferrer
     {
-        public DocParameter(string name, string type)
+        public DocParameter(string name, IReferencable reference)
         {
             Name = name;
-            Type = type;
+            Reference = reference;
             Summary = new List<DocBlock>();
         }
 
         public string Name { get; private set; }
-        public string Type { get; private set; }
+        public IReferencable Reference { get; set; }
         public IList<DocBlock> Summary { get; internal set; }
     }
 }

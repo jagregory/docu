@@ -86,6 +86,7 @@
     <Compile Include="Generation\SparkTemplateBase.cs" />
     <Compile Include="Generation\TemplateTransformer.cs" />
     <Compile Include="IReferencable.cs" />
+    <Compile Include="IReferrer.cs" />
     <Compile Include="Parsing\CommentContentParser.cs" />
     <Compile Include="DocBlock.cs" />
     <Compile Include="Parsing\IAssociationTransformer.cs" />

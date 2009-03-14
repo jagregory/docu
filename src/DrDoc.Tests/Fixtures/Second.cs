@@ -12,6 +12,11 @@ namespace Example
             
         }
 
+        public void SecondMethod2(string one, First two)
+        {
+
+        }
+
         public string SecondProperty { get; set; }
     }
 }

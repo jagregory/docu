@@ -200,16 +200,16 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldHaveParametersInMethods()
         {
-            var associations = new Association[]
-            {
-              new TypeAssociation("T:Example.Second", @"<member name=""T:Example.Second"" />".ToNode(), typeof(Second)),  
-              new MethodAssociation("M:Example.Second.SecondMethod2(System.String,System.Int32)", @"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"" />".ToNode(), typeof(Second).GetMethod("SecondMethod2"))
-            };
+            var associations = new Association[] { new MethodAssociation("M:Example.Second.SecondMethod2(System.String,System.Int32)", @"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"" />".ToNode(), typeof(Second).GetMethod("SecondMethod2")) };
             var namespaces = transformer.Transform(associations);
 
-            namespaces[0].Types[0].Methods[0].Parameters
-                .ShouldContain(x => x.Name == "one" && x.Type == "System.String")
-                .ShouldContain(x => x.Name == "two" && x.Type == "System.Int32");
+            var method = namespaces[0].Types[0].Methods[0];
+
+            method.Parameters.CountShouldEqual(2);
+            method.Parameters[0].Name.ShouldEqual("one");
+            method.Parameters[0].Reference.ShouldBeOfType<ExternalReference>();
+            method.Parameters[1].Name.ShouldEqual("two");
+            method.Parameters[1].Reference.ShouldBeOfType<ExternalReference>();
         }
 
         [Test]

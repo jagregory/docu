@@ -37,6 +37,11 @@ namespace DrDoc.Generation
             return content.Replace("<", "&lt;").Replace(">", "&gt;");
         }
 
+        public string WriteReference(IReferencable reference)
+        {
+            return Formatter.Format(reference);
+        }
+
         public string WriteSummary(IList<DocBlock> summary)
         {
             var sb = new StringBuilder();
@@ -49,9 +54,9 @@ namespace DrDoc.Generation
                     sb.Append(" ");
                     continue;
                 }
-                if (block is DocReferenceBlock)
+                if (block is IReferrer)
                 {
-                    sb.Append(Formatter.Format((DocReferenceBlock)block));
+                    sb.Append(WriteReference(((IReferrer)block).Reference));
                     sb.Append(" ");
                     continue;
                 }

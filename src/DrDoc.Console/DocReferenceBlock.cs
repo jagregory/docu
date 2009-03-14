@@ -1,6 +1,6 @@
 namespace DrDoc
 {
-    public class DocReferenceBlock : DocBlock
+    public class DocReferenceBlock : DocBlock, IReferrer
     {
         public DocReferenceBlock(IReferencable reference)
         {

@@ -19,7 +19,7 @@ namespace DrDoc.Parsing
         public IList<DocNamespace> Transform(IEnumerable<Association> associations)
         {
             var namespaces = new List<DocNamespace>();
-            var references = new List<DocReferenceBlock>();
+            var references = new List<IReferrer>();
 
             matchedAssociations.Clear();
 
@@ -78,7 +78,7 @@ namespace DrDoc.Parsing
             }
         }
 
-        private void AddMethod(List<DocNamespace> namespaces, List<DocReferenceBlock> references, MethodAssociation association)
+        private void AddMethod(List<DocNamespace> namespaces, List<IReferrer> references, MethodAssociation association)
         {
             if (association.Method == null) return;
 
@@ -118,7 +118,10 @@ namespace DrDoc.Parsing
 
             foreach (var parameter in association.Method.GetParameters())
             {
-                var docParam = new DocParameter(parameter.Name, parameter.ParameterType.FullName);
+                var reference = new UnresolvedReference("T:" + parameter.ParameterType.FullName);
+                var docParam = new DocParameter(parameter.Name, reference);
+
+                references.Add(docParam);
 
                 if (association.Xml != null)
                 {
@@ -153,7 +156,7 @@ namespace DrDoc.Parsing
             }
         }
 
-        private void AddType(List<DocNamespace> namespaces, List<DocReferenceBlock> references, TypeAssociation association)
+        private void AddType(List<DocNamespace> namespaces, List<IReferrer> references, TypeAssociation association)
         {
             var namespaceName = association.Type.Namespace;
             var @namespace = namespaces.Find(x => x.Name == namespaceName);

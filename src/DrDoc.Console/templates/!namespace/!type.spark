@@ -10,7 +10,7 @@
   <body>
 <use namespace="System.Collections.Generic"/>
 <macro name="OutputMethodParams" items="IList[[DocParameter]]">
-<for each="var item in items">${item.Type} ${item.Name}<if condition="itemIndex < items.Count - 1">, </if></for>
+<for each="var item in items">${item.Reference.Name} ${item.Name}<if condition="itemIndex < items.Count - 1">, </if></for>
 </macro>
     <p class="header">
 		<strong>Namespace</strong> ${Namespace.Name}<br />
@@ -47,7 +47,7 @@
 				${WriteSummary(method.Summary)}
 				<table>
 					<tr each="var param in method.Parameters">
-						<td><code>${param.Type} ${param.Name}:</code></td>
+						<td><code>${WriteReference(param.Reference)} ${param.Name}:</code></td>
 						<td>${WriteSummary(param.Summary)}</td>
 					</tr>
 				</table>

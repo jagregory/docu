@@ -22,6 +22,26 @@ namespace DrDoc.Generation
 			return "<a href=\"" + url + "\">" + block.Reference.Name + "</a>";
         }
 
+        public string Format(IReferencable reference)
+        {
+            if (reference is ExternalReference)
+                return Format((ExternalReference)reference);
+            
+            var url = "";
+
+            if (reference is DocNamespace)
+                url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", reference.Name}});
+            else if (reference is DocType)
+                url = Format(TypeUrlFormat, new Dictionary<string, string> {{"type.namespace", ((DocType)reference).Namespace.Name}, {"type", reference.Name}});
+
+            return "<a href=\"" + url + "\">" + reference.Name + "</a>";
+        }
+
+        public string Format(ExternalReference reference)
+        {
+            return "<span title=\"" + reference.FullName + "\">" + reference.Name + "</span>";
+        }
+
         public string Format(DocCodeBlock block)
         {
             return "<code>" + block.Text + "</code>";
