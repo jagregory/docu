@@ -95,6 +95,20 @@ namespace DrDoc.Tests
         }
 
         [Test]
+        public void UnresolvedReferencesBecomeExternalReferencesIfStillExist()
+        {
+            var associations = new[]
+            {
+              new TypeAssociation("T:Example.Second", @"<member name=""T:Example.Second""><summary><see cref=""T:Example.First"" /></summary></member>".ToNode(), typeof(Second)),  
+            };
+            var namespaces = transformer.Transform(associations);
+
+            ((DocReferenceBlock)namespaces[0].Types[0].Summary[0]).Reference.ShouldBeOfType<ExternalReference>();
+            ((DocReferenceBlock)namespaces[0].Types[0].Summary[0]).Reference.Name.ShouldEqual("First");
+            ((ExternalReference)((DocReferenceBlock)namespaces[0].Types[0].Summary[0]).Reference).FullName.ShouldEqual("Example.First");
+        }
+
+        [Test]
         public void ShouldPassSummaryToContentParser()
         {
             var contentParser = MockRepository.GenerateMock<ICommentContentParser>();

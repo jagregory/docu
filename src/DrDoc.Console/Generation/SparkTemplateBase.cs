@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Spark;
 
@@ -17,6 +18,8 @@ namespace DrDoc.Generation
     /// </summary>
     public abstract class SparkTemplateBase : AbstractSparkView
     {
+        private IOutputFormatter formatter = new HtmlOutputFormatter();
+
         public string flatten(IList<DocBlock> blocks)
         {
             var sb = new StringBuilder();
@@ -32,6 +35,32 @@ namespace DrDoc.Generation
         public string h(string content)
         {
             return content.Replace("<", "&lt;").Replace(">", "&gt;");
+        }
+
+        public string WriteSummary(IList<DocBlock> summary)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var block in summary)
+            {
+                if (block is DocCodeBlock)
+                {
+                    sb.Append(formatter.Format((DocCodeBlock)block));
+                    sb.Append(" ");
+                    continue;
+                }
+                if (block is DocReferenceBlock)
+                {
+                    sb.Append(formatter.Format((DocReferenceBlock)block));
+                    sb.Append(" ");
+                    continue;
+                }
+
+                sb.Append(block.ToString());
+                sb.Append(" ");
+            }
+
+            return sb.ToString();
         }
 
         public object Eval(string expression)

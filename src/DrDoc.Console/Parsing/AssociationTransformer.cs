@@ -59,6 +59,8 @@ namespace DrDoc.Parsing
             {
                 if (matchedAssociations.ContainsKey(block.Reference.Name))
                     block.Reference = (IReferencable)matchedAssociations[block.Reference.Name];
+                else
+                    block.Reference = new ExternalReference(block.Reference.Name);
             }
 
             return namespaces;

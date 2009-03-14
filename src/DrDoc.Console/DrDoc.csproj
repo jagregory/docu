@@ -69,8 +69,11 @@
     <Compile Include="DocReferenceBlock.cs" />
     <Compile Include="DocTextBlock.cs" />
     <Compile Include="DocType.cs" />
+    <Compile Include="ExternalReference.cs" />
     <Compile Include="Generation\BulkTransformer.cs" />
     <Compile Include="Generation\HtmlGenerator.cs" />
+    <Compile Include="Generation\HtmlOutputFormatter.cs" />
+    <Compile Include="Generation\IOutputFormatter.cs" />
     <Compile Include="Generation\IOutputGenerator.cs" />
     <Compile Include="Generation\IPatternTemplateResolver.cs" />
     <Compile Include="Generation\ITemplateTransformer.cs" />

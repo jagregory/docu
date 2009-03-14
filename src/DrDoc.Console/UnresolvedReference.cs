@@ -1,8 +1,5 @@
 namespace DrDoc
 {
-    /// <summary>
-    /// <see cref="IReferencable"/>
-    /// </summary>
     public class UnresolvedReference : IReferencable
     {
         public UnresolvedReference(string name)

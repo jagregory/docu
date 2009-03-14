@@ -11,22 +11,6 @@
 <macro name="OutputMethodParams" items="IList[[DocParameter]]">
 <for each="var item in items">${item.Type} ${item.Name}<if condition="itemIndex < items.Count - 1">, </if></for>
 </macro>
-<macro name="WriteSummary" blocks="IList[[DocBlock]]">
-<p>
-<for each="var block in blocks">
-	<if condition="block is DocTextBlock">${block}</if>
-	<code if="block is DocCodeBlock">${block}</code>
-	<if condition="block is DocReferenceBlock">
-		<if condition="((DocReferenceBlock)block).Reference is DocNamespace">
-			<a href="../${((DocReferenceBlock)block).Reference.Name}.htm">${((DocReferenceBlock)block).Reference.Name}</a>&nbsp;
-		</if>
-		<if condition="((DocReferenceBlock)block).Reference is DocType">
-			<a href="../${((DocType)((DocReferenceBlock)block).Reference).Namespace.Name}/${((DocReferenceBlock)block).Reference.Name}.htm">${((DocReferenceBlock)block).Reference.Name}</a>&nbsp;
-		</if>
-	</if>
-</for>
-</p>
-</macro>
 
     <p class="header">
 		<strong>Namespace</strong> ${Namespace.Name}<br />
