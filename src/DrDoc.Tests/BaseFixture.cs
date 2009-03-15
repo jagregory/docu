@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using DrDoc.Model;
+using DrDoc.Documentation;
+using DrDoc.Parsing.Model;
 using DrDoc.Parsing;
 
 namespace DrDoc.Tests
@@ -24,9 +25,9 @@ namespace DrDoc.Tests
             return ((MemberExpression)propertyAction.Body).Member as PropertyInfo;
         }
 
-        protected IList<DocNamespace> Namespaces(params string[] namespaces)
+        protected IList<Namespace> Namespaces(params string[] namespaces)
         {
-            var list = new List<DocNamespace>();
+            var list = new List<Namespace>();
 
             foreach (var ns in namespaces)
             {
@@ -36,17 +37,17 @@ namespace DrDoc.Tests
             return list;
         }
 
-        protected DocNamespace Namespace(string ns)
+        protected Namespace Namespace(string ns)
         {
-            return new DocNamespace(Identifier.FromNamespace(ns));
+            return new Namespace(Identifier.FromNamespace(ns));
         }
 
-        protected DocType Type<T>()
+        protected DeclaredType Type<T>()
         {
-            return new DocType(Identifier.FromType(typeof(T)));
+            return new DeclaredType(Identifier.FromType(typeof(T)));
         }
 
-        protected IList<IDocumentationMember> DocMembers(params Type[] types)
+        protected IList<IDocumentationMember> DocMembers(params System.Type[] types)
         {
             var documentableMembers = new DocumentableMemberFinder();
 

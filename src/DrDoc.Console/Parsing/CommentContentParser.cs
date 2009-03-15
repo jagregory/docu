@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using DrDoc.Model;
+using DrDoc.Documentation;
+using DrDoc.Documentation.Comments;
+using DrDoc.Parsing.Model;
 
 namespace DrDoc.Parsing
 {
     public class CommentContentParser : ICommentContentParser
     {
-        private readonly IDictionary<Func<XmlNode, bool>, Func<XmlNode, DocBlock>> parsers = new Dictionary<Func<XmlNode, bool>, Func<XmlNode, DocBlock>>();
+        private readonly IDictionary<Func<XmlNode, bool>, Func<XmlNode, IComment>> parsers = new Dictionary<Func<XmlNode, bool>, Func<XmlNode, IComment>>();
         
         public CommentContentParser()
         {
@@ -21,9 +23,9 @@ namespace DrDoc.Parsing
             parsers.Add(node => node.Name == "para", ParseParagraph);
         }
 
-        public IList<DocBlock> Parse(XmlNode content)
+        public IList<IComment> Parse(XmlNode content)
         {
-            var blocks = new List<DocBlock>();
+            var blocks = new List<IComment>();
 
             foreach (XmlNode node in content.ChildNodes)
             {
@@ -48,31 +50,31 @@ namespace DrDoc.Parsing
             return blocks.AsReadOnly();
         }
 
-        private DocBlock ParseText(XmlNode content)
+        private IComment ParseText(XmlNode content)
         {
-            return new DocTextBlock(PrepareText(content.InnerText));
+            return new InlineText(PrepareText(content.InnerText));
         }
 
-        private DocBlock ParseInlineCode(XmlNode content)
+        private IComment ParseInlineCode(XmlNode content)
         {
-            return new DocCodeBlock(PrepareText(content.InnerText));
+            return new InlineCode(PrepareText(content.InnerText));
         }
 
-        private DocBlock ParseMultilineCode(XmlNode content)
+        private IComment ParseMultilineCode(XmlNode content)
         {
-            return new DocCodeBlock(PrepareText(content.InnerText));
+            return new InlineCode(PrepareText(content.InnerText));
         }
 
-        private DocBlock ParseSee(XmlNode content)
+        private IComment ParseSee(XmlNode content)
         {
             var referenceTarget = Identifier.FromString(content.Attributes["cref"].Value);
 
-            return new DocReferenceBlock(new UnresolvedReference(referenceTarget));
+            return new See(new UnresolvedReference(referenceTarget));
         }
 
-        private DocBlock ParseParagraph(XmlNode content)
+        private IComment ParseParagraph(XmlNode content)
         {
-            return new DocParagraphBlock(PrepareText(content.InnerText));
+            return new Paragraph(PrepareText(content.InnerText));
         }
 
         private string PrepareText(string text)

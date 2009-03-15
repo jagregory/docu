@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using DrDoc.Documentation;
 
 namespace DrDoc.Generation
 {
@@ -8,7 +9,7 @@ namespace DrDoc.Generation
     {
         private bool HACK_inNamespace;
 
-        public IList<TemplateMatch> Resolve(string path, IList<DocNamespace> namespaces)
+        public IList<TemplateMatch> Resolve(string path, IList<Namespace> namespaces)
         {
             var current = path;
 
@@ -20,7 +21,7 @@ namespace DrDoc.Generation
             return ResolveRecursive(current, path, path, namespaces, new OutputData { Namespaces = namespaces });
         }
 
-        private IList<TemplateMatch> ResolveRecursive(string current, string outputPath, string templatePath, IList<DocNamespace> namespaces, OutputData data)
+        private IList<TemplateMatch> ResolveRecursive(string current, string outputPath, string templatePath, IList<Namespace> namespaces, OutputData data)
         {
             var matches = new List<TemplateMatch>();
 
@@ -83,7 +84,7 @@ namespace DrDoc.Generation
 
                         HACK_inNamespace = true;
 
-                        matches.AddRange(ResolveRecursive(parts[0], nsPath, templatePath, new List<DocNamespace> { ns }, new OutputData { Namespaces = data.Namespaces, Namespace = ns, Type = data.Type }));
+                        matches.AddRange(ResolveRecursive(parts[0], nsPath, templatePath, new List<Namespace> { ns }, new OutputData { Namespaces = data.Namespaces, Namespace = ns, Type = data.Type }));
                     }
 
                     HACK_inNamespace = false;
@@ -98,7 +99,7 @@ namespace DrDoc.Generation
                         {
                             var typePath = templatePath.Replace(current, ns.Name + "." + type.Name);
 
-                            matches.AddRange(ResolveRecursive(parts[0], typePath, templatePath, new List<DocNamespace> { ns }, new OutputData { Namespaces = data.Namespaces, Namespace = ns, Type = type }));    
+                            matches.AddRange(ResolveRecursive(parts[0], typePath, templatePath, new List<Namespace> { ns }, new OutputData { Namespaces = data.Namespaces, Namespace = ns, Type = type }));    
                         }
                     }
                 }

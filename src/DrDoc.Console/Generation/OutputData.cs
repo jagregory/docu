@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using DrDoc.Documentation;
 
 namespace DrDoc.Generation
 {
     public class OutputData
     {
-        public IList<DocNamespace> Namespaces { get; set; }
-        public DocNamespace Namespace { get; set; }
-        public DocType Type { get; set; }
+        public IList<Namespace> Namespaces { get; set; }
+        public Namespace Namespace { get; set; }
+        public DeclaredType Type { get; set; }
     }
 }

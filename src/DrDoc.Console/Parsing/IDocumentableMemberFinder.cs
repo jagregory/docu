@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using DrDoc.Model;
+using DrDoc.Parsing.Model;
 
 namespace DrDoc.Parsing
 {

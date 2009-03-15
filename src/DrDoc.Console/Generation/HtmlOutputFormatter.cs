@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using DrDoc.Documentation;
+using DrDoc.Documentation.Comments;
 
 namespace DrDoc.Generation
 {
@@ -10,14 +12,14 @@ namespace DrDoc.Generation
             TypeUrlFormat = "{type.namespace}/{type}.htm";
         }
 
-        public string Format(DocReferenceBlock block)
+        public string Format(See block)
         {
             var url = "";
 
-            if (block.Reference is DocNamespace)
+            if (block.Reference is Namespace)
                 url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", block.Reference.Name.ToString()}});
-            else if (block.Reference is DocType)
-                url = Format(TypeUrlFormat, new Dictionary<string, string> {{"type.namespace", ((DocType)block.Reference).Namespace.Name.ToString()}, {"type", block.Reference.Name.ToString()}});
+            else if (block.Reference is DeclaredType)
+                url = Format(TypeUrlFormat, new Dictionary<string, string> {{"type.namespace", ((DeclaredType)block.Reference).Namespace.Name.ToString()}, {"type", block.Reference.Name.ToString()}});
 
 			return "<a href=\"" + url + "\">" + block.Reference.Name + "</a>";
         }
@@ -30,13 +32,13 @@ namespace DrDoc.Generation
             var url = "";
             var name = reference.Name.ToString();
 
-            if (reference is DocNamespace)
+            if (reference is Namespace)
                 url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", reference.Name.ToString()}});
-            else if (reference is DocType)
+            else if (reference is DeclaredType)
             {
-                var type = (DocType)reference;
+                var type = (DeclaredType)reference;
                 name = type.PrettyName;
-                url = Format(TypeUrlFormat, new Dictionary<string, string> { { "type.namespace", ((DocType)reference).Namespace.Name.ToString() }, { "type", reference.Name.ToString() } });
+                url = Format(TypeUrlFormat, new Dictionary<string, string> { { "type.namespace", ((DeclaredType)reference).Namespace.Name.ToString() }, { "type", reference.Name.ToString() } });
             }
 
             return "<a href=\"" + url + "\">" + Escape(name) + "</a>";
@@ -52,7 +54,7 @@ namespace DrDoc.Generation
             return "<span title=\"" + reference.FullName + "\">" + Escape(reference.Name.ToString()) + "</span>";
         }
 
-        public string Format(DocCodeBlock block)
+        public string Format(InlineCode block)
         {
             return "<code>" + block.Text + "</code>";
         }

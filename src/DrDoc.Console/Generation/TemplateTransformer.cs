@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using DrDoc.Documentation;
 using DrDoc.IO;
 
 namespace DrDoc.Generation
@@ -17,7 +18,7 @@ namespace DrDoc.Generation
             this.writer = writer;
         }
 
-        public void Transform(string templatePath, IList<DocNamespace> namespaces)
+        public void Transform(string templatePath, IList<Namespace> namespaces)
         {
             var paths = patternTemplateResolver.Resolve(templatePath, namespaces);
 

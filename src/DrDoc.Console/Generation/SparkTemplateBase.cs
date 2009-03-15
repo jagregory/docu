@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using DrDoc.Documentation;
+using DrDoc.Documentation.Comments;
 using Spark;
 
 namespace DrDoc.Generation
@@ -20,7 +22,7 @@ namespace DrDoc.Generation
     {
         protected readonly IOutputFormatter Formatter = new HtmlOutputFormatter();
 
-        public string flatten(IList<DocBlock> blocks)
+        public string flatten(IList<IComment> blocks)
         {
             var sb = new StringBuilder();
 
@@ -42,15 +44,15 @@ namespace DrDoc.Generation
             return Formatter.Format(reference);
         }
 
-        public string WriteSummary(IList<DocBlock> summary)
+        public string WriteSummary(IList<IComment> summary)
         {
             var sb = new StringBuilder();
 
             foreach (var block in summary)
             {
-                if (block is DocCodeBlock)
+                if (block is InlineCode)
                 {
-                    sb.Append(Formatter.Format((DocCodeBlock)block));
+                    sb.Append(Formatter.Format((InlineCode)block));
                     sb.Append(" ");
                     continue;
                 }
@@ -68,7 +70,7 @@ namespace DrDoc.Generation
             return sb.ToString();
         }
 
-        public string OutputMethodParams(DocMethod method)
+        public string OutputMethodParams(Method method)
         {
             var sb = new StringBuilder();
 
@@ -106,17 +108,17 @@ namespace DrDoc.Generation
             return DateTime.UtcNow.Second % 2 == 1;
         }
 
-        public IList<DocNamespace> Namespaces
+        public IList<Namespace> Namespaces
         {
             get { return ViewData.Namespaces; }
         }
 
-        public DocNamespace Namespace
+        public Namespace Namespace
         {
             get { return ViewData.Namespace; }
         }
 
-        public DocType Type
+        public DeclaredType Type
         {
             get { return ViewData.Type; }
         }

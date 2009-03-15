@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DrDoc.Documentation;
 
 namespace DrDoc.Generation
 {
@@ -15,7 +16,7 @@ namespace DrDoc.Generation
             this.transformer = transformer;
         }
 
-        public void TransformDirectory(string path, IList<DocNamespace> namespaces)
+        public void TransformDirectory(string path, IList<Namespace> namespaces)
         {
             foreach (var file in Directory.GetFiles(path, "*.spark"))
             {

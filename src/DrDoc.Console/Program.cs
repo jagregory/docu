@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using DrDoc.Documentation;
 using DrDoc.Generation;
 using DrDoc.IO;
 using DrDoc.Parsing;
@@ -25,8 +26,8 @@ namespace DrDoc
 
             var transformer = new BulkTransformer(new TemplateTransformer(new HtmlGenerator(), new FileSystemOutputWriter(), new PatternTemplateResolver()));
 
-            var parser = new DocParser(new Associator(), new AssociationTransformer(new CommentContentParser()), new DocumentableMemberFinder());
-            var namespaces = parser.Parse(loadedAssemblies, xmls);
+            var parser = new Parser(new DocumentationXmlMatcher(), new DocumentModel(new CommentContentParser()), new DocumentableMemberFinder());
+            var namespaces = parser.CreateDocumentModel(loadedAssemblies, xmls);
 
             transformer.TransformDirectory("templates", namespaces);
 
