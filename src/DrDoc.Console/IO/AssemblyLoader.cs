@@ -6,7 +6,7 @@ namespace DrDoc.IO
     {
         public Assembly LoadFrom(string assemblyPath)
         {
-            return null;
+            return Assembly.LoadFrom(assemblyPath);
         }
     }
 }

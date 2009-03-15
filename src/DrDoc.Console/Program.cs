@@ -25,12 +25,11 @@ namespace DrDoc
 
             var assemblies = GetAssembliesFromArgs(args);
             var xmls = GetXmlsFromArgs(args, assemblies);
-            var loadedAssemblies = LoadAssemblies(assemblies);
 
             var documentationGenerator = ObjectFactory.GetInstance<DocumentationGenerator>();
 
-            documentationGenerator.SetAssemblies(loadedAssemblies);
-            documentationGenerator.SetXmlContent(xmls);
+            documentationGenerator.SetAssemblies(assemblies);
+            documentationGenerator.SetXmlFiles(xmls);
             documentationGenerator.Generate();
 
             Console.WriteLine("Done");
@@ -43,7 +42,7 @@ namespace DrDoc
             foreach (var arg in args)
             {
                 if (arg.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
-                    xmls.Add(File.ReadAllText(arg));
+                    xmls.Add(arg);
             }
 
             if (xmls.Count == 0)
@@ -54,7 +53,7 @@ namespace DrDoc
                     var name = assembly.Replace(".dll", ".xml");
 
                     if (File.Exists(name))
-                        xmls.Add(File.ReadAllText(name));
+                        xmls.Add(name);
                 }
             }
 

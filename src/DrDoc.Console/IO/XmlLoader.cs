@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using DrDoc.IO;
 
 namespace DrDoc.IO
@@ -6,7 +8,7 @@ namespace DrDoc.IO
     {
         public string LoadFrom(string xmlFileName)
         {
-            return null;
+            return File.ReadAllText(xmlFileName);
         }
     }
 }
