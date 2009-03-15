@@ -5,6 +5,7 @@ namespace DrDoc.Generation
 {
     public interface IPageWriter
     {
-        void CreatePages(string templatePath, string destination, IList<Namespace> namespaces);
+        void CreatePages(string templateDirectory, string destination, IList<Namespace> namespaces);
+        void SetTemplatePath(string templateDirectory);
     }
 }

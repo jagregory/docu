@@ -210,5 +210,28 @@ namespace DrDoc.Tests.Generation
 
             writer.AssertWasCalled(x => x.WriteFile("output\\directory\\test.htm", "content"));
         }
+
+        [Test]
+        public void when_template_directory_set_exclude_directory_from_output()
+        {
+            var generator = MockRepository.GenerateStub<IOutputGenerator>();
+            var writer = MockRepository.GenerateMock<IOutputWriter>();
+            var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
+            var transformer = new PageWriter(generator, writer, resolver);
+            var namespaces = new Namespace[0];
+
+            resolver.Stub(x => x.Resolve(null, null))
+                .IgnoreArguments()
+                .Return(new List<TemplateMatch> { new TemplateMatch("templates\\simple.htm", "templates\\simple.spark", new OutputData()) });
+
+            generator.Stub(x => x.Convert(null, null))
+                .IgnoreArguments()
+                .Return("content");
+
+            transformer.SetTemplatePath("templates");
+            transformer.CreatePages("templates\\simple.spark", "output", namespaces);
+
+            writer.AssertWasCalled(x => x.WriteFile("output\\simple.htm", "content"));
+        }
     }
 }

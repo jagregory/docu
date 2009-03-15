@@ -96,5 +96,17 @@ namespace DrDoc.Tests.Generation
 
             transformer.AssertWasCalled(x => x.CreatePages(directory_sub_oneSpark, "output", namespaces));
         }
+
+        [Test]
+        public void should_pass_template_path_to_writer()
+        {
+            var transformer = MockRepository.GenerateMock<IPageWriter>();
+            var bulkTransformer = new BulkPageWriter(transformer);
+            var namespaces = new Namespace[0];
+
+            bulkTransformer.CreatePagesFromDirectory(directory_sub, "output", namespaces);
+
+            transformer.AssertWasCalled(x => x.SetTemplatePath(directory_sub));
+        }
     }
 }

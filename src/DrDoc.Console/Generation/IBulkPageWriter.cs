@@ -5,6 +5,6 @@ namespace DrDoc.Generation
 {
     public interface IBulkPageWriter
     {
-        void CreatePagesFromDirectory(string path, string destination, IList<Namespace> namespaces);
+        void CreatePagesFromDirectory(string templatePath, string destination, IList<Namespace> namespaces);
     }
 }

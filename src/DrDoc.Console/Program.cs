@@ -15,6 +15,7 @@ namespace DrDoc
     {
         static void Main(string[] args)
         {
+            Debugger.Break();
             ContainerBootstrapper.BootstrapStructureMap();
 
             if (args.Length == 0)

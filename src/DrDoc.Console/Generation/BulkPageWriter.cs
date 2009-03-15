@@ -16,14 +16,16 @@ namespace DrDoc.Generation
             this.writer = writer;
         }
 
-        public void CreatePagesFromDirectory(string path, string destination, IList<Namespace> namespaces)
+        public void CreatePagesFromDirectory(string templatePath, string destination, IList<Namespace> namespaces)
         {
-            foreach (var file in Directory.GetFiles(path, "*.spark"))
+            writer.SetTemplatePath(templatePath);
+
+            foreach (var file in Directory.GetFiles(templatePath, "*.spark"))
             {
                 writer.CreatePages(file, destination, namespaces);
             }
 
-            foreach (var directory in Directory.GetDirectories(path))
+            foreach (var directory in Directory.GetDirectories(templatePath))
             {
                 CreatePagesFromDirectory(directory, destination, namespaces);
             }

@@ -10,6 +10,7 @@ namespace DrDoc.Generation
         private readonly IOutputGenerator generator;
         private readonly IOutputWriter writer;
         private readonly IPatternTemplateResolver patternTemplateResolver;
+        private string templatePath;
 
         public PageWriter(IOutputGenerator generator, IOutputWriter writer, IPatternTemplateResolver patternTemplateResolver)
         {
@@ -18,9 +19,9 @@ namespace DrDoc.Generation
             this.writer = writer;
         }
 
-        public void CreatePages(string templatePath, string destination, IList<Namespace> namespaces)
+        public void CreatePages(string templateDirectory, string destination, IList<Namespace> namespaces)
         {
-            var paths = patternTemplateResolver.Resolve(templatePath, namespaces);
+            var paths = patternTemplateResolver.Resolve(templateDirectory, namespaces);
 
             foreach (var path in paths)
             {
@@ -32,7 +33,11 @@ namespace DrDoc.Generation
                 {
                     var outputFilename = Path.GetFileName(path.OutputPath);
 
-                    outputDir = Path.Combine(destination, outputDir);
+                    if (!string.IsNullOrEmpty(templatePath))
+                        outputDir = outputDir.Replace(templatePath, destination);
+                    else
+                        outputDir = Path.Combine(destination, outputDir);
+
                     outputPath = Path.Combine(outputDir, outputFilename);
                 }
 
@@ -41,6 +46,11 @@ namespace DrDoc.Generation
 
                     writer.WriteFile(outputPath, output);
             }
+        }
+
+        public void SetTemplatePath(string templateDirectory)
+        {
+            templatePath = templateDirectory;
         }
     }
 }
