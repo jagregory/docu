@@ -7,6 +7,7 @@ using DrDoc.Documentation;
 using DrDoc.Generation;
 using DrDoc.IO;
 using DrDoc.Parsing;
+using StructureMap;
 
 namespace DrDoc
 {
@@ -14,6 +15,8 @@ namespace DrDoc
     {
         static void Main(string[] args)
         {
+            ContainerBootstrapper.BootstrapStructureMap();
+
             if (args.Length == 0)
             {
                 Console.WriteLine("Nothing to do!");
@@ -24,16 +27,7 @@ namespace DrDoc
             var xmls = GetXmlsFromArgs(args, assemblies);
             var loadedAssemblies = LoadAssemblies(assemblies);
 
-            var documentationGenerator = new DocumentationGenerator(new AssemblyLoader(), new XmlLoader(),
-                                                                    new AssemblyXmlParser(
-                                                                        new DocumentationXmlMatcher(),
-                                                                        new DocumentModel(new CommentContentParser()),
-                                                                        new DocumentableMemberFinder()),
-                                                                    new BulkPageWriter(
-                                                                        new PageWriter(new HtmlGenerator(),
-                                                                                       new FileSystemOutputWriter(),
-                                                                                       new PatternTemplateResolver())),
-                                                                    new UntransformableResourceManager());
+            var documentationGenerator = ObjectFactory.GetInstance<DocumentationGenerator>();
 
             documentationGenerator.SetAssemblies(loadedAssemblies);
             documentationGenerator.SetXmlContent(xmls);
