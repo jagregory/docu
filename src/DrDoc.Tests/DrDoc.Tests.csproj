@@ -64,6 +64,8 @@
     <Compile Include="DocumentationGeneratorTests\SetXml.cs" />
     <Compile Include="DocumentationGeneratorTests\SetAssembly.cs" />
     <Compile Include="Generation\TemplateTransformerTests.cs" />
+    <Compile Include="Generation\UntransformableResourceManagerTests.cs" />
+    <Compile Include="Generation\UntransformableResourceManagerTestsBase.cs" />
     <Compile Include="IO\AssemblyLoaderTests.cs" />
     <Compile Include="IO\XmlLoaderTests.cs" />
     <Compile Include="Parsing\DocumentationXmlMatcherTests.cs" />
