@@ -6,7 +6,7 @@ using DrDoc.Parsing;
 
 namespace DrDoc
 {
-    public class DocumentationGenerator
+    public class DocumentationGenerator : IDocumentationGenerator
     {
         private readonly IAssemblyLoader assemblyLoader;
         private readonly IXmlLoader xmlLoader;

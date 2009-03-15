@@ -57,6 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Console\ConsoleApplicationTests\Arguments.cs" />
+    <Compile Include="Console\ConsoleApplicationTests\ValidArguments.cs" />
     <Compile Include="DocumentationGeneratorTests\BaseDocumentationGeneratorFixture.cs" />
     <Compile Include="DocumentationGeneratorTests\Generate.cs" />
     <Compile Include="DocumentationGeneratorTests\SetOutputPath.cs" />
@@ -89,6 +91,11 @@
       <Project>{2FB9E7C3-B602-4343-B510-9C8DBFC7B8FD}</Project>
       <Name>DrDoc</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DummyDocs.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

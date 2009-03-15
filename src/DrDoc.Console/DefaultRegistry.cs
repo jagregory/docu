@@ -1,3 +1,4 @@
+using DrDoc.Console;
 using DrDoc.Generation;
 using DrDoc.IO;
 using StructureMap.Configuration.DSL;
@@ -18,6 +19,10 @@ namespace DrDoc
                 .TheDefault.IsThis(new HtmlGenerator());
             ForRequestedType<IOutputWriter>()
                 .TheDefaultIsConcreteType<FileSystemOutputWriter>();
+            ForRequestedType<IScreenWriter>()
+                .TheDefaultIsConcreteType<ConsoleScreenWriter>();
+            ForRequestedType<IScreenMessage>()
+                .AsSingletons();
         }
     }
 }
