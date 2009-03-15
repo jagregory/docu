@@ -20,6 +20,7 @@ namespace DrDoc.Tests.Generation
             {
                 { "namespace.simple", "${Namespaces[0].Name.ToString()}"},
                 { "namespace.shortcut", "${Namespace.Name.ToString()}"},
+                { "namespace.linq", "<for each=\"var ns in Namespaces.Where(x => x.Name == Identifier.FromNamespace('Test'))\">${ns.Name.ToString()}</for>"},
                 { "summary.simple", "<for each=\"var b in Namespaces[0].Types[0].Summary\">${b}</for>"},
                 { "summary.flattened", "<var test=\"'xxx'\" />${flatten(Namespaces[0].Types[0].Summary)}"},
                 { "method.overload", "<for each=\"var method in Type.Methods\">${method.Name.ToString()}(${OutputMethodParams(method)})</for>"}
@@ -42,6 +43,15 @@ namespace DrDoc.Tests.Generation
             var content = generator.Convert("namespace.shortcut", data);
 
             content.ShouldEqual("Example");
+        }
+
+        [Test]
+        public void ShouldOutputNamespaceThatUsesLinq()
+        {
+            var data = new OutputData { Namespaces = Namespaces("Example", "Test") };
+            var content = generator.Convert("namespace.linq", data);
+
+            content.ShouldEqual("Test");
         }
 
         [Test]

@@ -15,6 +15,8 @@ namespace DrDoc.Generation
             var setup = new SparkSettings();
 
             setup.AddNamespace("DrDoc");
+            setup.AddNamespace("DrDoc.Parsing.Model");
+            setup.AddNamespace("System.Linq");
 
             engine = new SparkViewEngine(setup);
             engine.ViewFolder = new FileSystemViewFolder("templates");
