@@ -1,37 +1,21 @@
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DrDoc.Documentation;
 using DrDoc.Generation;
 using DrDoc.IO;
 using Example;
-using NUnit.Framework;
 using Rhino.Mocks;
-using Is=Rhino.Mocks.Constraints.Is;
+using Rhino.Mocks.Constraints;
+using TestFixture = NUnit.Framework.TestFixtureAttribute;
+using Test = NUnit.Framework.TestAttribute;
 
 namespace DrDoc.Tests.Generation
 {
     [TestFixture]
-    public class TemplateTransformerTests : BaseFixture
+    public class TemplateTransformer_OutputDir_Tests : BaseFixture
     {
-        [Test]
-        public void GeneratesOutputFromTemplate()
-        {
-            var generator = MockRepository.GenerateMock<IOutputGenerator>();
-            var writer = MockRepository.GenerateStub<IOutputWriter>();
-            var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
-            var transformer = new PageWriter(generator, writer, resolver);
-            var namespaces = new Namespace[0];
-
-            resolver.Stub(x => x.Resolve(null, null))
-                .IgnoreArguments()
-                .Return(new List<TemplateMatch> { new TemplateMatch("simple.htm", "simple.spark", new OutputData()) });
-
-            transformer.CreatePages("simple.spark", "", namespaces);
-
-            generator.AssertWasCalled(
-                x => x.Convert(null, null),
-                x => x.Constraints(Is.Equal("simple.spark"), Is.Anything()));
-        }
-
         [Test]
         public void WritesOutputToFile()
         {
@@ -49,34 +33,9 @@ namespace DrDoc.Tests.Generation
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("simple.spark", "", namespaces);
+            transformer.CreatePages("simple.spark", "output", namespaces);
 
-            writer.AssertWasCalled(x => x.WriteFile("simple.htm", "content"));
-        }
-
-        [Test]
-        public void GeneratesOutputForEachNamespaceFromTemplateWhenPatternUsed()
-        {
-            var generator = MockRepository.GenerateMock<IOutputGenerator>();
-            var writer = MockRepository.GenerateStub<IOutputWriter>();
-            var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
-            var transformer = new PageWriter(generator, writer, resolver);
-            var namespaces = Namespaces("One", "Two");
-
-            resolver.Stub(x => x.Resolve(null, null))
-                .IgnoreArguments()
-                .Return(new List<TemplateMatch>
-                {
-                    new TemplateMatch("One.htm", "!namespace.spark", new OutputData()),
-                    new TemplateMatch("Two.htm", "!namespace.spark", new OutputData())
-                });
-
-            transformer.CreatePages("!namespace.spark", "", namespaces);
-
-            generator.AssertWasCalled(
-                x => x.Convert(null, null),
-                x => x.Constraints(Is.Equal("!namespace.spark"), Is.Anything())
-                         .Repeat.Twice());
+            writer.AssertWasCalled(x => x.WriteFile("output\\simple.htm", "content"));
         }
 
         [Test]
@@ -100,38 +59,10 @@ namespace DrDoc.Tests.Generation
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("!namespace.spark", "", namespaces);
+            transformer.CreatePages("!namespace.spark", "output", namespaces);
 
-            writer.AssertWasCalled(x => x.WriteFile("One.htm", "content"));
-            writer.AssertWasCalled(x => x.WriteFile("Two.htm", "content"));
-        }
-
-        [Test]
-        public void GeneratesOutputForEachTypeFromTemplateWhenPatternUsed()
-        {
-            var generator = MockRepository.GenerateMock<IOutputGenerator>();
-            var writer = MockRepository.GenerateStub<IOutputWriter>();
-            var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
-            var transformer = new PageWriter(generator, writer, resolver);
-            var namespaces = Namespaces("One", "Two");
-
-            namespaces[0].AddType(Type<First>());
-            namespaces[1].AddType(Type<Second>());
-
-            resolver.Stub(x => x.Resolve(null, null))
-                .IgnoreArguments()
-                .Return(new List<TemplateMatch>
-                {
-                    new TemplateMatch("One.First.htm", "!type.spark", new OutputData()),
-                    new TemplateMatch("Two.Second.htm", "!type.spark", new OutputData())
-                });
-
-            transformer.CreatePages("!type.spark", "", namespaces);
-
-            generator.AssertWasCalled(
-                x => x.Convert(null, null),
-                x => x.Constraints(Is.Equal("!type.spark"), Is.Anything())
-                         .Repeat.Twice());
+            writer.AssertWasCalled(x => x.WriteFile("output\\One.htm", "content"));
+            writer.AssertWasCalled(x => x.WriteFile("output\\Two.htm", "content"));
         }
 
         [Test]
@@ -158,10 +89,10 @@ namespace DrDoc.Tests.Generation
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("!type.spark", "", namespaces);
+            transformer.CreatePages("!type.spark", "output", namespaces);
 
-            writer.AssertWasCalled(x => x.WriteFile("One.First.htm", "content"));
-            writer.AssertWasCalled(x => x.WriteFile("Two.Second.htm", "content"));
+            writer.AssertWasCalled(x => x.WriteFile("output\\One.First.htm", "content"));
+            writer.AssertWasCalled(x => x.WriteFile("output\\Two.Second.htm", "content"));
         }
 
         [Test]
@@ -189,12 +120,12 @@ namespace DrDoc.Tests.Generation
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("!namespace\\template.spark", "", namespaces);
+            transformer.CreatePages("!namespace\\template.spark", "output", namespaces);
 
-            writer.AssertWasCalled(x => x.CreateDirectory("One"));
-            writer.AssertWasCalled(x => x.WriteFile("One\\template.htm", "content"));
-            writer.AssertWasCalled(x => x.CreateDirectory("Two"));
-            writer.AssertWasCalled(x => x.WriteFile("Two\\template.htm", "content"));
+            writer.AssertWasCalled(x => x.CreateDirectory("output\\One"));
+            writer.AssertWasCalled(x => x.WriteFile("output\\One\\template.htm", "content"));
+            writer.AssertWasCalled(x => x.CreateDirectory("output\\Two"));
+            writer.AssertWasCalled(x => x.WriteFile("output\\Two\\template.htm", "content"));
         }
 
         [Test]
@@ -225,12 +156,12 @@ namespace DrDoc.Tests.Generation
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("!type\\template.spark", "", namespaces);
+            transformer.CreatePages("!type\\template.spark", "output", namespaces);
 
-            writer.AssertWasCalled(x => x.CreateDirectory("One.First"));
-            writer.AssertWasCalled(x => x.WriteFile("One.First\\template.htm", "content"));
-            writer.AssertWasCalled(x => x.CreateDirectory("Two.Second"));
-            writer.AssertWasCalled(x => x.WriteFile("Two.Second\\template.htm", "content"));
+            writer.AssertWasCalled(x => x.CreateDirectory("output\\One.First"));
+            writer.AssertWasCalled(x => x.WriteFile("output\\One.First\\template.htm", "content"));
+            writer.AssertWasCalled(x => x.CreateDirectory("output\\Two.Second"));
+            writer.AssertWasCalled(x => x.WriteFile("output\\Two.Second\\template.htm", "content"));
         }
 
         [Test]
@@ -253,10 +184,10 @@ namespace DrDoc.Tests.Generation
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("!namespace\\test.spark", "", namespaces);
+            transformer.CreatePages("!namespace\\test.spark", "output", namespaces);
 
-            writer.AssertWasCalled(x => x.WriteFile("One\\test.htm", "content"));
-            writer.AssertWasCalled(x => x.WriteFile("Two\\test.htm", "content"));
+            writer.AssertWasCalled(x => x.WriteFile("output\\One\\test.htm", "content"));
+            writer.AssertWasCalled(x => x.WriteFile("output\\Two\\test.htm", "content"));
         }
 
         [Test]
@@ -275,9 +206,9 @@ namespace DrDoc.Tests.Generation
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("directory\\test.spark", "", namespaces);
+            transformer.CreatePages("directory\\test.spark", "output", namespaces);
 
-            writer.AssertWasCalled(x => x.WriteFile("directory\\test.htm", "content"));
+            writer.AssertWasCalled(x => x.WriteFile("output\\directory\\test.htm", "content"));
         }
     }
 }

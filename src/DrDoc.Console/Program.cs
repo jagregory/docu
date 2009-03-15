@@ -24,15 +24,22 @@ namespace DrDoc
             var xmls = GetXmlsFromArgs(args, assemblies);
             var loadedAssemblies = LoadAssemblies(assemblies);
 
-            var transformer = new BulkTransformer(new TemplateTransformer(new HtmlGenerator(), new FileSystemOutputWriter(), new PatternTemplateResolver()));
+            var documentationGenerator = new DocumentationGenerator(new AssemblyLoader(), new XmlLoader(),
+                                                                    new AssemblyXmlParser(
+                                                                        new DocumentationXmlMatcher(),
+                                                                        new DocumentModel(new CommentContentParser()),
+                                                                        new DocumentableMemberFinder()),
+                                                                    new BulkPageWriter(
+                                                                        new PageWriter(new HtmlGenerator(),
+                                                                                       new FileSystemOutputWriter(),
+                                                                                       new PatternTemplateResolver())),
+                                                                    new UntransformableResourceManager());
 
-            var parser = new Parser(new DocumentationXmlMatcher(), new DocumentModel(new CommentContentParser()), new DocumentableMemberFinder());
-            var namespaces = parser.CreateDocumentModel(loadedAssemblies, xmls);
-
-            transformer.TransformDirectory("templates", namespaces);
+            documentationGenerator.SetAssemblies(loadedAssemblies);
+            documentationGenerator.SetXmlContent(xmls);
+            documentationGenerator.Generate();
 
             Console.WriteLine("Done");
-            Console.ReadKey();
         }
 
         private static string[] GetXmlsFromArgs(string[] args, string[] assemblies)

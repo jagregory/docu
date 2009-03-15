@@ -50,39 +50,51 @@ namespace DrDoc.Tests.Generation
         [Test]
         public void ReadsDirectories()
         {
-            var transformer = MockRepository.GenerateMock<ITemplateTransformer>();
-            var bulkTransformer = new BulkTransformer(transformer);
+            var transformer = MockRepository.GenerateMock<IPageWriter>();
+            var bulkTransformer = new BulkPageWriter(transformer);
             var namespaces = new Namespace[0];
 
-            bulkTransformer.TransformDirectory(directory, namespaces);
+            bulkTransformer.CreatePagesFromDirectory(directory, "output", namespaces);
 
-            transformer.AssertWasCalled(x => x.Transform(directory_oneSpark, namespaces));
-            transformer.AssertWasCalled(x => x.Transform(directory_twoSpark, namespaces));
-            transformer.AssertWasCalled(x => x.Transform(directory_namespaceSpark, namespaces));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_oneSpark, "output", namespaces));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_twoSpark, "output", namespaces));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_namespaceSpark, "output", namespaces));
         }
 
         [Test]
         public void ReadsSubDirectories()
         {
-            var transformer = MockRepository.GenerateMock<ITemplateTransformer>();
-            var bulkTransformer = new BulkTransformer(transformer);
+            var transformer = MockRepository.GenerateMock<IPageWriter>();
+            var bulkTransformer = new BulkPageWriter(transformer);
             var namespaces = new Namespace[0];
 
-            bulkTransformer.TransformDirectory(directory, namespaces);
+            bulkTransformer.CreatePagesFromDirectory(directory, "output", namespaces);
 
-            transformer.AssertWasCalled(x => x.Transform(directory_sub_oneSpark, namespaces));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_sub_oneSpark, "output", namespaces));
         }
 
         [Test]
         public void ReadsSubNamespaceDirectories()
         {
-            var transformer = MockRepository.GenerateMock<ITemplateTransformer>();
-            var bulkTransformer = new BulkTransformer(transformer);
+            var transformer = MockRepository.GenerateMock<IPageWriter>();
+            var bulkTransformer = new BulkPageWriter(transformer);
             var namespaces = new Namespace[0];
 
-            bulkTransformer.TransformDirectory(directory, namespaces);
+            bulkTransformer.CreatePagesFromDirectory(directory, "output", namespaces);
 
-            transformer.AssertWasCalled(x => x.Transform(directory_namespace_oneSpark, namespaces));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_namespace_oneSpark, "output", namespaces));
+        }
+
+        [Test]
+        public void CanWriteToOutputDirectory()
+        {
+            var transformer = MockRepository.GenerateMock<IPageWriter>();
+            var bulkTransformer = new BulkPageWriter(transformer);
+            var namespaces = new Namespace[0];
+
+            bulkTransformer.CreatePagesFromDirectory(directory_sub, "output", namespaces);
+
+            transformer.AssertWasCalled(x => x.CreatePages(directory_sub_oneSpark, "output", namespaces));
         }
     }
 }
