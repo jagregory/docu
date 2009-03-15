@@ -1,3 +1,4 @@
+using System.IO;
 using NUnit.Framework;
 
 namespace DrDoc.Tests.Generation
@@ -59,6 +60,28 @@ namespace DrDoc.Tests.Generation
             move_files();
 
             directory_shouldnt_exist(output_folder, "empty_sub_directory");
+        }
+
+        [Test]
+        public void should_overwrite_files()
+        {
+            // create css file
+            File.WriteAllText(Path.Combine(output_folder, "a_css_file.css"), "");
+
+            move_files();
+
+            file_should_exist(output_folder, "a_css_file.css");
+        }
+
+        [Test]
+        public void should_overwrite_directories()
+        {
+            // create css file
+            Directory.CreateDirectory(Path.Combine(output_folder, "sub_directory"));
+
+            move_files();
+
+            directory_should_exist(output_folder, "sub_directory");
         }
     }
 }

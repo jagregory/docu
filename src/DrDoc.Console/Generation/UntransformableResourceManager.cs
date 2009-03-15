@@ -16,7 +16,7 @@ namespace DrDoc.Generation
                 if (!Directory.Exists(newDirectory))
                     Directory.CreateDirectory(newDirectory);
 
-                File.Copy(file, newPath);
+                File.Copy(file, newPath, true);
             }
         }
     }

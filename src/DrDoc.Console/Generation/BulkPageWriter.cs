@@ -20,15 +20,17 @@ namespace DrDoc.Generation
         {
             writer.SetTemplatePath(templatePath);
 
-            foreach (var file in Directory.GetFiles(templatePath, "*.spark"))
+            foreach (var file in Directory.GetFiles(templatePath, "*.spark", SearchOption.AllDirectories))
             {
+                if (IsPartial(file)) continue;
+
                 writer.CreatePages(file, destination, namespaces);
             }
+        }
 
-            foreach (var directory in Directory.GetDirectories(templatePath))
-            {
-                CreatePagesFromDirectory(directory, destination, namespaces);
-            }
+        private bool IsPartial(string file)
+        {
+            return Path.GetFileName(file).StartsWith("_");
         }
     }
 }
