@@ -1,9 +1,9 @@
-using DrDoc.Associations;
+using DrDoc.Model;
 
 namespace DrDoc
 {
     public interface IReferencable
     {
-        MemberName Name { get; }
+        Identifier Name { get; }
     }
 }

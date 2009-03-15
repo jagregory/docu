@@ -2,7 +2,8 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using DrDoc.Associations;
+using DrDoc.Model;
+using DrDoc.Parsing;
 using DrDoc.Utils;
 using Example;
 using NUnit.Framework;
@@ -23,11 +24,11 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldAssociateTypeSnippetWithCorrectReflectedType()
         {
-            var types = new[] {typeof(First), typeof(Second), typeof(Third)};
+            var types = DocMembers(typeof(First), typeof(Second), typeof(Third));
             var snippets = new[] { @"<member name=""T:Example.Second"" />".ToNode()};
-            var associations = associator.Examine(types, snippets);
+            var associations = associator.AssociateMembersWithXml(types, snippets);
 
-            var ass = associations.FirstOrDefault(x => x.Name == MemberName.FromType(typeof(Second))) as TypeAssociation;
+            var ass = associations.FirstOrDefault(x => x.Name == Identifier.FromType(typeof(Second))) as DocumentedType;
 
             ass.ShouldNotBeNull();
             ass.Xml.ShouldEqual(snippets[0]);
@@ -37,11 +38,11 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldAssociateGenericTypeSnippetWithCorrectReflectedType()
         {
-            var types = new[] { typeof(First), typeof(GenericDefinition<>) };
+            var types = DocMembers(typeof(First), typeof(GenericDefinition<>));
             var snippets = new[] { @"<member name=""T:Example.GenericDefinition`1"" />".ToNode() };
-            var associations = associator.Examine(types, snippets);
+            var associations = associator.AssociateMembersWithXml(types, snippets);
 
-            var ass = associations.FirstOrDefault(x => x.Name == MemberName.FromType(typeof(GenericDefinition<>))) as TypeAssociation;
+            var ass = associations.FirstOrDefault(x => x.Name == Identifier.FromType(typeof(GenericDefinition<>))) as DocumentedType;
 
             ass.ShouldNotBeNull();
             ass.Xml.ShouldEqual(snippets[0]);
@@ -51,11 +52,11 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldAssociateGenericTypeWithMultipleParamsSnippetWithCorrectReflectedType()
         {
-            var types = new[] { typeof(First), typeof(GenericDefinition<>), typeof(GenericDefinition<,>) };
+            var types = DocMembers(typeof(First), typeof(GenericDefinition<>), typeof(GenericDefinition<,>));
             var snippets = new[] { @"<member name=""T:Example.GenericDefinition`2"" />".ToNode() };
-            var associations = associator.Examine(types, snippets);
+            var associations = associator.AssociateMembersWithXml(types, snippets);
 
-            var ass = associations.FirstOrDefault(x => x.Name == MemberName.FromType(typeof(GenericDefinition<,>))) as TypeAssociation;
+            var ass = associations.FirstOrDefault(x => x.Name == Identifier.FromType(typeof(GenericDefinition<,>))) as DocumentedType;
 
             ass.ShouldNotBeNull();
             ass.Xml.ShouldEqual(snippets[0]);
@@ -65,12 +66,12 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldAssociateMethodSnippetWithCorrectReflectedMethod()
         {
-            var types = new[] { typeof(First), typeof(Second), typeof(Third) };
+            var types = DocMembers(typeof(First), typeof(Second), typeof(Third));
             var snippets = new[] { @"<member name=""M:Example.Second.SecondMethod"" />".ToNode() };
-            var associations = associator.Examine(types, snippets);
+            var associations = associator.AssociateMembersWithXml(types, snippets);
             var method = Method<Second>(x => x.SecondMethod());
 
-            var ass = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(method, typeof(Second))) as MethodAssociation;
+            var ass = associations.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(Second))) as DocumentedMethod;
 
             ass.ShouldNotBeNull();
             ass.Xml.ShouldEqual(snippets[0]);
@@ -80,18 +81,18 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldAssociateMethodOverloadSnippetWithCorrectReflectedMethod()
         {
-            var types = new[] { typeof(ClassWithOverload) };
+            var types = DocMembers(typeof(ClassWithOverload));
             var snippets = new[] { @"<member name=""M:Example.ClassWithOverload.Method"" />".ToNode(), @"<member name=""M:Example.ClassWithOverload.Method(System.String)"" />".ToNode() };
-            var associations = associator.Examine(types, snippets);
+            var associations = associator.AssociateMembersWithXml(types, snippets);
             var method = Method<ClassWithOverload>(x => x.Method());
             var method2 = Method<ClassWithOverload>(x => x.Method(null));
 
-            var member = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(method, typeof(ClassWithOverload))) as MethodAssociation;
+            var member = associations.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(ClassWithOverload))) as DocumentedMethod;
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
             member.Method.ShouldEqual(method);
 
-            var member2 = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(method2, typeof(ClassWithOverload))) as MethodAssociation;
+            var member2 = associations.FirstOrDefault(x => x.Name == Identifier.FromMethod(method2, typeof(ClassWithOverload))) as DocumentedMethod;
             member2.ShouldNotBeNull();
             member2.Xml.ShouldEqual(snippets[0]);
             member2.Method.ShouldEqual(method2);
@@ -100,12 +101,12 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldAssociateMethodOnGenericTypeSnippetWithCorrectReflectedMethod()
         {
-            var types = new[] { typeof(First), typeof(GenericDefinition<>), typeof(GenericDefinition<,>) };
+            var types = DocMembers(typeof(First), typeof(GenericDefinition<>), typeof(GenericDefinition<,>));
             var snippets = new[] { @"<member name=""M:Example.GenericDefinition`1.AMethod"" />".ToNode() };
-            var associations = associator.Examine(types, snippets);
+            var associations = associator.AssociateMembersWithXml(types, snippets);
             var method = Method<GenericDefinition<object>>(x => x.AMethod());
 
-            var ass = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(method, typeof(GenericDefinition<>))) as MethodAssociation;
+            var ass = associations.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(GenericDefinition<>))) as DocumentedMethod;
 
             ass.ShouldNotBeNull();
             ass.Xml.ShouldEqual(snippets[0]);
@@ -116,13 +117,13 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldAssociateGenericMethodOnGenericTypeSnippetWithCorrectReflectedMethod()
         {
-            var types = new[] { typeof(First), typeof(GenericDefinition<>), typeof(GenericDefinition<,>) };
+            var types = DocMembers(typeof(First), typeof(GenericDefinition<>), typeof(GenericDefinition<,>));
             var snippets = new[] { @"<member name=""M:Example.GenericDefinition`1.BMethod``1"" />".ToNode() };
-            var associations = associator.Examine(types, snippets);
+            var associations = associator.AssociateMembersWithXml(types, snippets);
             var method = typeof(GenericDefinition<>).GetMethod("BMethod");
 
             // may be broke!
-            var ass = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(method, typeof(GenericDefinition<>))) as MethodAssociation;
+            var ass = associations.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(GenericDefinition<>))) as DocumentedMethod;
 
             ass.ShouldNotBeNull();
             ass.Xml.ShouldEqual(snippets[0]);
@@ -132,12 +133,12 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldAssociateMethodWithParametersSnippetWithCorrectReflectedMethod()
         {
-            var types = new[] { typeof(First), typeof(Second), typeof(Third) };
+            var types = DocMembers(typeof(First), typeof(Second), typeof(Third));
             var snippets = new[] { @"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"" />".ToNode() };
-            var associations = associator.Examine(types, snippets);
+            var associations = associator.AssociateMembersWithXml(types, snippets);
             var method = Method<Second>(x => x.SecondMethod2(null, 0));
 
-            var ass = associations.FirstOrDefault(x => x.Name == MemberName.FromMethod(method, typeof(Second))) as MethodAssociation;
+            var ass = associations.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(Second))) as DocumentedMethod;
 
             ass.ShouldNotBeNull();
             ass.Xml.ShouldEqual(snippets[0]);
@@ -147,12 +148,12 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldAssociatePropertySnippetWithCorrectReflectedProperty()
         {
-            var types = new[] { typeof(First), typeof(Second), typeof(Third) };
+            var types = DocMembers(typeof(First), typeof(Second), typeof(Third));
             var snippets = new[] { @"<member name=""P:Example.Second.SecondProperty"" />".ToNode() };
-            var associations = associator.Examine(types, snippets);
+            var associations = associator.AssociateMembersWithXml(types, snippets);
             var property = Property<Second>(x => x.SecondProperty);
 
-            var ass = associations.FirstOrDefault(x => x.Name == MemberName.FromProperty(property, typeof(Second))) as PropertyAssociation;
+            var ass = associations.FirstOrDefault(x => x.Name == Identifier.FromProperty(property, typeof(Second))) as DocumentedProperty;
 
             ass.ShouldNotBeNull();
             ass.Xml.ShouldEqual(snippets[0]);

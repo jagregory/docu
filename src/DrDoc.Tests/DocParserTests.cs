@@ -1,5 +1,5 @@
 using System.Reflection;
-using DrDoc.Associations;
+using DrDoc.Model;
 using DrDoc.Parsing;
 using Example;
 using NUnit.Framework;
@@ -10,7 +10,7 @@ using CIs = Rhino.Mocks.Constraints.Is;
 namespace DrDoc.Tests
 {
     [TestFixture]
-    public class DocParserTests
+    public class DocParserTests : BaseFixture
     {
         private string[] Xml = new[] {@"<?xml version=""1.0""?>
 <doc>
@@ -31,16 +31,22 @@ namespace DrDoc.Tests
         {
             var associator = MockRepository.GenerateMock<IAssociator>();
             var transformer = MockRepository.GenerateStub<IAssociationTransformer>();
-            var parser = new DocParser(associator, transformer);
+            var documentableMembers = MockRepository.GenerateStub<IDocumentableMemberFinder>();
+            var parser = new DocParser(associator, transformer, documentableMembers);
             var assemblies = new[] {typeof(First).Assembly, typeof(DocParserTests).Assembly};
+            var members = DocMembers(typeof(First), typeof(Second));
+
+            documentableMembers.Stub(x => x.GetMembersForDocumenting(null))
+                .IgnoreArguments()
+                .Return(members);
 
             parser.Parse(assemblies, new[] {""});
 
             associator.AssertWasCalled(
-                x => x.Examine(null, null),
+                x => x.AssociateMembersWithXml(null, null),
                 x => x.IgnoreArguments()
                       .Constraints(
-                        CList.ContainsAll(new []{ typeof(First), typeof(DocParserTests)}),
+                        CIs.Equal(members),
                         CIs.Anything()));
         }
 
@@ -49,13 +55,14 @@ namespace DrDoc.Tests
         {
             var associator = MockRepository.GenerateMock<IAssociator>();
             var transformer = MockRepository.GenerateStub<IAssociationTransformer>();
-            var parser = new DocParser(associator, transformer);
+            var documentableMembers = MockRepository.GenerateStub<IDocumentableMemberFinder>();
+            var parser = new DocParser(associator, transformer, documentableMembers);
             var assemblies = new Assembly[0];
 
             parser.Parse(assemblies, Xml);
 
             associator.AssertWasCalled(
-                x => x.Examine(null, null),
+                x => x.AssociateMembersWithXml(null, null),
                 x => x.IgnoreArguments()
                       .Constraints(
                         CIs.Anything(),
@@ -67,11 +74,12 @@ namespace DrDoc.Tests
         {
             var associator = MockRepository.GenerateStub<IAssociator>();
             var transformer = MockRepository.GenerateMock<IAssociationTransformer>();
-            var parser = new DocParser(associator, transformer);
+            var documentableMembers = MockRepository.GenerateStub<IDocumentableMemberFinder>();
+            var parser = new DocParser(associator, transformer, documentableMembers);
             var assemblies = new Assembly[0];
-            var associations = new Association[0];
+            var associations = new IDocumentationMember[0];
 
-            associator.Stub(x => x.Examine(null, null))
+            associator.Stub(x => x.AssociateMembersWithXml(null, null))
                 .IgnoreArguments()
                 .Return(associations);
 

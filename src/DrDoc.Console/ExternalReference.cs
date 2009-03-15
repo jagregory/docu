@@ -1,19 +1,19 @@
-using DrDoc.Associations;
+using DrDoc.Model;
 
 namespace DrDoc
 {
     public class ExternalReference : IReferencable
     {
-        public ExternalReference(MemberName name)
+        public ExternalReference(Identifier name)
         {
             Name = name;
             FullName = Name.ToString();
 
-            if (Name is TypeMemberName)
+            if (Name is TypeIdentifier)
                 FullName = Name.CloneAsNamespace() + "." + Name;
         }
 
-        public MemberName Name { get; private set; }
+        public Identifier Name { get; private set; }
         public string FullName { get; private set; }
     }
 }

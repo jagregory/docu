@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using DrDoc.Associations;
+using DrDoc.Model;
 
 namespace DrDoc
 {
@@ -8,14 +8,14 @@ namespace DrDoc
         private readonly List<DocMethod> methods = new List<DocMethod>();
         private readonly List<DocProperty> properties = new List<DocProperty>();
 
-        public DocType(MemberName name, string prettyName, DocNamespace ns)
+        public DocType(Identifier name, string prettyName, DocNamespace ns)
             : this(name)
         {
             PrettyName = prettyName;
             Namespace = ns;
         }
 
-        public DocType(MemberName name)
+        public DocType(Identifier name)
         {
             Name = name;
             Summary = new List<DocBlock>();
@@ -31,7 +31,7 @@ namespace DrDoc
             properties.Add(property);
         }
 
-        public MemberName Name { get; private set; }
+        public Identifier Name { get; private set; }
         public DocNamespace Namespace { get; private set; }
         public string PrettyName { get; private set; }
 

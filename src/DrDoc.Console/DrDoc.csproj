@@ -54,16 +54,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Associations\Association.cs" />
-    <Compile Include="Associations\Associator.cs" />
-    <Compile Include="Associations\IAssociator.cs" />
-    <Compile Include="Associations\MemberName.cs" />
-    <Compile Include="Associations\MethodAssociation.cs" />
-    <Compile Include="Associations\PropertyAssociation.cs" />
-    <Compile Include="Associations\TypeAssociation.cs" />
-    <Compile Include="Associations\UndocumentedMethodAssociation.cs" />
-    <Compile Include="Associations\UndocumentedPropertyAssociation.cs" />
-    <Compile Include="Associations\UndocumentedTypeAssociation.cs" />
+    <Compile Include="Parsing\Associator.cs" />
+    <Compile Include="Parsing\DocumentableMemberFinder.cs" />
+    <Compile Include="Parsing\IAssociator.cs" />
+    <Compile Include="Model\IDocumentationMember.cs" />
+    <Compile Include="Model\Identifier.cs" />
+    <Compile Include="Model\DocumentedMethod.cs" />
+    <Compile Include="Model\DocumentedProperty.cs" />
+    <Compile Include="Model\DocumentedType.cs" />
+    <Compile Include="Model\MethodIdentifier.cs" />
+    <Compile Include="Model\NamespaceIdentifier.cs" />
+    <Compile Include="Model\PropertyIdentifier.cs" />
+    <Compile Include="Model\TypeIdentifier.cs" />
+    <Compile Include="Model\UndocumentedMethod.cs" />
+    <Compile Include="Model\UndocumentedProperty.cs" />
+    <Compile Include="Model\UndocumentedType.cs" />
     <Compile Include="DocCodeBlock.cs" />
     <Compile Include="DocMethod.cs" />
     <Compile Include="DocNamespace.cs" />
@@ -95,6 +100,7 @@
     <Compile Include="Parsing\IAssociationTransformer.cs" />
     <Compile Include="Parsing\DocParser.cs" />
     <Compile Include="Parsing\ICommentContentParser.cs" />
+    <Compile Include="Parsing\IDocumentableMemberFinder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Parsing\AssociationTransformer.cs" />

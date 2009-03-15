@@ -1,4 +1,4 @@
-using DrDoc.Associations;
+using DrDoc.Model;
 using DrDoc.Parsing;
 using Example;
 using NUnit.Framework;
@@ -83,7 +83,7 @@ namespace DrDoc.Tests
             blocks.CountShouldEqual(1);
             blocks[0].ShouldBeOfType<DocReferenceBlock>();
             ((DocReferenceBlock)blocks[0]).Reference.ShouldBeOfType<UnresolvedReference>();
-            ((DocReferenceBlock)blocks[0]).Reference.Name.ShouldEqual(MemberName.FromType(typeof(First)));
+            ((DocReferenceBlock)blocks[0]).Reference.Name.ShouldEqual(Identifier.FromType(typeof(First)));
         }
 
         [Test]

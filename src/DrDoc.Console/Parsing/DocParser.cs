@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
-using DrDoc.Associations;
+using DrDoc.Model;
 using DrDoc.Parsing;
 
 namespace DrDoc
@@ -11,29 +11,31 @@ namespace DrDoc
     {
         private readonly IAssociator associator;
         private readonly IAssociationTransformer transformer;
+        private readonly IDocumentableMemberFinder documentableMembers;
 
-        public DocParser(IAssociator associator, IAssociationTransformer transformer)
+        public DocParser(IAssociator associator, IAssociationTransformer transformer, IDocumentableMemberFinder documentableMembers)
         {
             this.associator = associator;
             this.transformer = transformer;
+            this.documentableMembers = documentableMembers;
         }
 
         public IList<DocNamespace> Parse(Assembly[] assemblies, string[] xml)
         {
-            var assocations = GetAssociations(assemblies, xml);
+            var members = GetAssociations(assemblies, xml);
 
-            return transformer.Transform(assocations);
+            return transformer.Transform(members);
         }
 
-        private IEnumerable<Association> GetAssociations(Assembly[] assemblies, string[] xml)
+        private IEnumerable<IDocumentationMember> GetAssociations(Assembly[] assemblies, string[] xml)
         {
-            var types = GetTypes(assemblies);
-            var members = GetMembers(xml);
+            var undocumentedMembers = GetUndocumentedMembers(assemblies);
+            var members = GetMembersXml(xml);
 
-            return associator.Examine(types, members);
+            return associator.AssociateMembersWithXml(undocumentedMembers, members);
         }
 
-        private XmlNode[] GetMembers(string[] xml)
+        private XmlNode[] GetMembersXml(string[] xml)
         {
             var nodes = new List<XmlNode>();
 
@@ -53,7 +55,7 @@ namespace DrDoc
             return nodes.ToArray();
         }
 
-        private Type[] GetTypes(Assembly[] assemblies)
+        private IList<IDocumentationMember> GetUndocumentedMembers(Assembly[] assemblies)
         {
             var types = new List<Type>();
 
@@ -62,7 +64,7 @@ namespace DrDoc
                 types.AddRange(assembly.GetExportedTypes());
             }
 
-            return types.ToArray();
+            return documentableMembers.GetMembersForDocumenting(types);
         }
     }
 }

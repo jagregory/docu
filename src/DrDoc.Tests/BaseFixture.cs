@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using DrDoc.Associations;
+using DrDoc.Model;
+using DrDoc.Parsing;
 
 namespace DrDoc.Tests
 {
@@ -37,12 +38,19 @@ namespace DrDoc.Tests
 
         protected DocNamespace Namespace(string ns)
         {
-            return new DocNamespace(MemberName.FromNamespace(ns));
+            return new DocNamespace(Identifier.FromNamespace(ns));
         }
 
         protected DocType Type<T>()
         {
-            return new DocType(MemberName.FromType(typeof(T)));
+            return new DocType(Identifier.FromType(typeof(T)));
+        }
+
+        protected IList<IDocumentationMember> DocMembers(params Type[] types)
+        {
+            var documentableMembers = new DocumentableMemberFinder();
+
+            return documentableMembers.GetMembersForDocumenting(types);
         }
     }
 }

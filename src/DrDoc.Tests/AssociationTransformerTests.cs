@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using DrDoc.Associations;
+using DrDoc.Model;
 using DrDoc.Parsing;
 using Example;
 using Example.Deep;
@@ -22,28 +22,28 @@ namespace DrDoc.Tests
             transformer = new AssociationTransformer(new CommentContentParser());
         }
 
-        private TypeAssociation TypeAssociation<T>(string xml)
+        private DocumentedType TypeAssociation<T>(string xml)
         {
-            return new TypeAssociation(MemberName.FromType(typeof(T)), xml.ToNode(), typeof(T));
+            return new DocumentedType(Identifier.FromType(typeof(T)), xml.ToNode(), typeof(T));
         }
 
-        private TypeAssociation TypeAssociation(Type type, string xml)
+        private DocumentedType TypeAssociation(Type type, string xml)
         {
-            return new TypeAssociation(MemberName.FromType(type), xml.ToNode(), type);
+            return new DocumentedType(Identifier.FromType(type), xml.ToNode(), type);
         }
 
-        private MethodAssociation MethodAssociation<T>(string xml, Expression<Action<T>> methodAction)
+        private DocumentedMethod MethodAssociation<T>(string xml, Expression<Action<T>> methodAction)
         {
             var method = ((MethodCallExpression)methodAction.Body).Method;
 
-            return new MethodAssociation(MemberName.FromMethod(method, typeof(T)), xml.ToNode(), method, typeof(T));
+            return new DocumentedMethod(Identifier.FromMethod(method, typeof(T)), xml.ToNode(), method, typeof(T));
         }
 
-        private PropertyAssociation PropertyAssociation<T>(string xml, Expression<Func<T, object>> propertyAction)
+        private DocumentedProperty PropertyAssociation<T>(string xml, Expression<Func<T, object>> propertyAction)
         {
             var property = ((MemberExpression)propertyAction.Body).Member as PropertyInfo;
 
-            return new PropertyAssociation(MemberName.FromProperty(property, typeof(T)), xml.ToNode(), property);
+            return new DocumentedProperty(Identifier.FromProperty(property, typeof(T)), xml.ToNode(), property);
         }
 
         [Test]
@@ -56,8 +56,8 @@ namespace DrDoc.Tests
             };
             var namespaces = transformer.Transform(associations);
 
-            namespaces.ShouldContain(x => x.Name == MemberName.FromNamespace("Example"));
-            namespaces.ShouldContain(x => x.Name == MemberName.FromNamespace("Example.Deep"));
+            namespaces.ShouldContain(x => x.Name == Identifier.FromNamespace("Example"));
+            namespaces.ShouldContain(x => x.Name == Identifier.FromNamespace("Example.Deep"));
         }
 
         [Test]
@@ -72,10 +72,10 @@ namespace DrDoc.Tests
             var namespaces = transformer.Transform(associations);
 
             namespaces[0].Types
-                .ShouldContain(x => x.Name == MemberName.FromType(typeof(First)))
-                .ShouldContain(x => x.Name == MemberName.FromType(typeof(Second)));
+                .ShouldContain(x => x.Name == Identifier.FromType(typeof(First)))
+                .ShouldContain(x => x.Name == Identifier.FromType(typeof(Second)));
             namespaces[1].Types
-                .ShouldContain(x => x.Name == MemberName.FromType(typeof(DeepFirst)));
+                .ShouldContain(x => x.Name == Identifier.FromType(typeof(DeepFirst)));
         }
 
         [Test]
@@ -131,7 +131,7 @@ namespace DrDoc.Tests
             var namespaces = transformer.Transform(associations);
 
             ((DocReferenceBlock)namespaces[0].Types[0].Summary[0]).Reference.ShouldBeOfType<ExternalReference>();
-            ((DocReferenceBlock)namespaces[0].Types[0].Summary[0]).Reference.Name.ShouldEqual(MemberName.FromType(typeof(First)));
+            ((DocReferenceBlock)namespaces[0].Types[0].Summary[0]).Reference.Name.ShouldEqual(Identifier.FromType(typeof(First)));
             ((ExternalReference)((DocReferenceBlock)namespaces[0].Types[0].Summary[0]).Reference).FullName.ShouldEqual("Example.First");
         }
 
@@ -153,20 +153,20 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldForceTypeIfOnlyMethodDefined()
         {
-            var associations = new Association[]
+            var associations = new IDocumentationMember[]
             {
               MethodAssociation<Second>(@"<member name=""M:Example.Second.SecondMethod"" />", x => x.SecondMethod()),
             };
             var namespaces = transformer.Transform(associations);
 
-            namespaces[0].Name.ShouldEqual(MemberName.FromNamespace("Example"));
-            namespaces[0].Types.ShouldContain(x => x.Name == MemberName.FromType(typeof(Second)));
+            namespaces[0].Name.ShouldEqual(Identifier.FromNamespace("Example"));
+            namespaces[0].Types.ShouldContain(x => x.Name == Identifier.FromType(typeof(Second)));
         }
 
         [Test]
         public void ShouldHaveMethodsInTypes()
         {
-            var associations = new Association[]
+            var associations = new IDocumentationMember[]
             {
               TypeAssociation<Second>(@"<member name=""T:Example.Second"" />"),  
               MethodAssociation<Second>(@"<member name=""M:Example.Second.SecondMethod"" />", x => x.SecondMethod()),
@@ -177,8 +177,8 @@ namespace DrDoc.Tests
             var method2 = Method<Second>(x => x.SecondMethod2(null, 0));
 
             namespaces[0].Types[0].Methods
-                .ShouldContain(x => x.Name == MemberName.FromMethod(method, typeof(Second)))
-                .ShouldContain(x => x.Name == MemberName.FromMethod(method2, typeof(Second)));
+                .ShouldContain(x => x.Name == Identifier.FromMethod(method, typeof(Second)))
+                .ShouldContain(x => x.Name == Identifier.FromMethod(method2, typeof(Second)));
         }
 
         [Test]
@@ -215,7 +215,7 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldHavePropertiesInTypes()
         {
-            var associations = new Association[]
+            var associations = new IDocumentationMember[]
             {
               TypeAssociation<Second>(@"<member name=""T:Example.Second"" />"),
               PropertyAssociation<Second>(@"<member name=""M:Example.Second.SecondProperty"" />", x => x.SecondProperty)
@@ -229,7 +229,7 @@ namespace DrDoc.Tests
         [Test]
         public void ShouldHaveParametersInMethods()
         {
-            var associations = new Association[]
+            var associations = new IDocumentationMember[]
             {
                 TypeAssociation<First>(@"<member name=""T:Example.First"" />"),
                 MethodAssociation<Second>(@"<member name=""M:Example.Second.SecondMethod2(System.String,Example.First)"" />", x => x.SecondMethod3(null, null))

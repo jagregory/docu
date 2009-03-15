@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using DrDoc.Associations;
 using DrDoc.Generation;
+using DrDoc.Model;
 using Example;
 using NUnit.Framework;
 
@@ -75,9 +75,9 @@ namespace DrDoc.Tests
         {
             var type = Type<First>();
 
-            type.Methods.Add(new DocMethod(MemberName.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload)), ""));
-            type.Methods.Add(new DocMethod(MemberName.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload)), ""));
-            type.Methods[1].Parameters.Add(new DocParameter("one", new ExternalReference(MemberName.FromType(typeof(string)))));
+            type.Methods.Add(new DocMethod(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload)), ""));
+            type.Methods.Add(new DocMethod(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload)), ""));
+            type.Methods[1].Parameters.Add(new DocParameter("one", new ExternalReference(Identifier.FromType(typeof(string)))));
             
             var data = new OutputData { Type = type };
             var content = generator.Convert("method.overload", data);

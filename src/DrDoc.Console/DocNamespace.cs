@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using DrDoc.Associations;
+using DrDoc.Model;
 
 namespace DrDoc
 {
@@ -8,12 +8,12 @@ namespace DrDoc
     {
         private readonly List<DocType> types = new List<DocType>();
 
-        public DocNamespace(MemberName name)
+        public DocNamespace(Identifier name)
         {
             Name = name;
         }
 
-        public MemberName Name { get; private set; }
+        public Identifier Name { get; private set; }
 
         public IList<DocType> Types
         {
