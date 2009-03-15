@@ -13,6 +13,7 @@
 	color: #FFF;
 	padding: 10px;
 	font-weight: bold;
+	clear: left;
 }
 
 .header strong {
@@ -28,11 +29,12 @@
 {
 	margin: 0 0 0 30px;
 	padding: 0;
+	list-style: none;
 }
 
 .sub-header ul li {
-	display: inline;
-	margin: 0 10px 0 0;
+	float: left;
+	margin: 0 15px 0 0;
 	padding: 0;
 	text-indent: 0;
 }
@@ -41,30 +43,8 @@
 	color: #333;
 	border-bottom: 1px solid #999;
 	margin: 10px 10px 0 10px;
-}
-
-a.namespace {
-	display: block;
-	background: #CCC;
-	color: #000;
-	border-top: 1px solid #999;
-	border-bottom: 1px solid #999;
-	margin: 10px 0;
-	padding: 2px 10px;
-	font-weight: bold;
-	font-size: 12px;
-	text-decoration: none;
-}
-
-a.type {
-	background: #eef;
-	color: #039;
-	text-decoration: none;
-}
-
-a.type:hover {
-	color: #FFF;
-	background: #039;
+	padding: 10px 0 0 0;
+	clear: left;
 }
 
 div.method 
@@ -98,15 +78,56 @@ div.method .content
 	padding: 5px 10px;
 }
 
-#namespaces ul
+#namespaces, #types
+{
+	width: 50%;
+	float: left;
+	background: #FFF;
+}
+
+h2.fixed {
+	background: #CCC;
+	color: #000;
+	border-top: 1px solid #999;
+	border-bottom: 1px solid #999;
+	margin: 0;
+	padding: 2px 10px;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+div.scroll 
+{
+	overflow: scroll;
+	height: 150px;
+}
+
+#namespaces ul, #types ul
 {
 	list-style: none;
-	margin: 0;
+	margin: 0 0 10px 0;
 	padding: 0;
 }
 
-#namespaces ul li 
+#namespaces ul li, #types ul li
 {
 	text-indent: 0;
 	padding-left: 10px;
+}
+
+a {
+	background: #eef;
+	color: #039;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #FFF;
+	background: #039;
+}
+
+#namespaces a.current, #types a.current {
+	background: #039;
+	color: #FFF;
+	text-decoration: none;
 }

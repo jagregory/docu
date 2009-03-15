@@ -10,6 +10,7 @@ namespace DrDoc.Generation
         string Format(DocReferenceBlock block);
         string Format(DocCodeBlock block);
         string Format(IReferencable reference);
+        string Escape(string value);
 
         string NamespaceUrlFormat { get; set; }
         string TypeUrlFormat { get; set; }

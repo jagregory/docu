@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace DrDoc.Generation
             setup.AddNamespace("DrDoc");
 
             engine = new SparkViewEngine(setup);
-            engine.ViewFolder = new FileSystemViewFolder(Environment.CurrentDirectory);
+            engine.ViewFolder = new FileSystemViewFolder("templates");
             engine.DefaultPageBaseType = typeof(SparkTemplateBase).FullName;
         }
 
@@ -38,8 +39,13 @@ namespace DrDoc.Generation
 
         public string Convert(string templateName, OutputData data)
         {
+            var template = templateName;
+
+            if (template.StartsWith("templates"))
+                template = template.Substring(10);
+
             var descriptor = new SparkViewDescriptor()
-                .AddTemplate(templateName);
+                .AddTemplate(template);
             var view = (SparkTemplateBase)engine.CreateInstance(descriptor);
 
             using (var writer = new StringWriter())

@@ -34,7 +34,7 @@ namespace DrDoc.Generation
 
         public string h(string content)
         {
-            return content.Replace("<", "&lt;").Replace(">", "&gt;");
+            return Formatter.Escape(content);
         }
 
         public string WriteReference(IReferencable reference)

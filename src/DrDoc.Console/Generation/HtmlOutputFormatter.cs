@@ -28,18 +28,28 @@ namespace DrDoc.Generation
                 return Format((ExternalReference)reference);
             
             var url = "";
+            var name = reference.Name.ToString();
 
             if (reference is DocNamespace)
                 url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", reference.Name.ToString()}});
             else if (reference is DocType)
-                url = Format(TypeUrlFormat, new Dictionary<string, string> {{"type.namespace", ((DocType)reference).Namespace.Name.ToString()}, {"type", reference.Name.ToString()}});
+            {
+                var type = (DocType)reference;
+                name = type.PrettyName;
+                url = Format(TypeUrlFormat, new Dictionary<string, string> { { "type.namespace", ((DocType)reference).Namespace.Name.ToString() }, { "type", reference.Name.ToString() } });
+            }
 
-            return "<a href=\"" + url + "\">" + reference.Name + "</a>";
+            return "<a href=\"" + url + "\">" + Escape(name) + "</a>";
+        }
+
+        public string Escape(string value)
+        {
+            return value.Replace("<", "&lt;").Replace(">", "&gt;");
         }
 
         public string Format(ExternalReference reference)
         {
-            return "<span title=\"" + reference.FullName + "\">" + reference.Name + "</span>";
+            return "<span title=\"" + reference.FullName + "\">" + Escape(reference.Name.ToString()) + "</span>";
         }
 
         public string Format(DocCodeBlock block)

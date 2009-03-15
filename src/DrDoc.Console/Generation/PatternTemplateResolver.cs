@@ -17,10 +17,10 @@ namespace DrDoc.Generation
                 current = current.Substring(0, current.IndexOf('\\'));
             }
 
-            return ResolveRecursive(current, path, path, namespaces);
+            return ResolveRecursive(current, path, path, namespaces, new OutputData { Namespaces = namespaces });
         }
 
-        private IList<TemplateMatch> ResolveRecursive(string current, string outputPath, string templatePath, IList<DocNamespace> namespaces)
+        private IList<TemplateMatch> ResolveRecursive(string current, string outputPath, string templatePath, IList<DocNamespace> namespaces, OutputData data)
         {
             var matches = new List<TemplateMatch>();
 
@@ -34,7 +34,7 @@ namespace DrDoc.Generation
                             new TemplateMatch(
                                 outputPath.Replace(".spark", ".htm").Replace("!namespace", ns.Name.ToString()),
                                 templatePath,
-                                new OutputData { Namespaces = namespaces, Namespace = ns }
+                                new OutputData { Namespaces = data.Namespaces, Namespace = ns, Type = data.Type }
                             ));
                     }
                 }
@@ -50,7 +50,7 @@ namespace DrDoc.Generation
                                 new TemplateMatch(
                                     outputPath.Replace(".spark", ".htm").Replace("!type", name),
                                     templatePath,
-                                    new OutputData { Namespaces = namespaces, Namespace = ns, Type = type }
+                                    new OutputData { Namespaces = data.Namespaces, Namespace = ns, Type = type }
                                 ));
                         }
                     }
@@ -60,7 +60,7 @@ namespace DrDoc.Generation
                         new TemplateMatch(
                             outputPath.Replace(".spark", ".htm"),
                             templatePath,
-                            new OutputData { Namespaces = namespaces }
+                            new OutputData { Namespaces = data.Namespaces, Namespace = data.Namespace, Type = data.Type }
                         ));
             }
             else
@@ -69,7 +69,7 @@ namespace DrDoc.Generation
                 {
                     var parts = templatePath.Replace(current, "").Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    matches.AddRange(ResolveRecursive(parts[0], templatePath, templatePath, namespaces));
+                    matches.AddRange(ResolveRecursive(parts[0], templatePath, templatePath, namespaces, new OutputData { Namespaces = data.Namespaces, Namespace = data.Namespace, Type = data.Type }));
                 }
                 else if (current == "!namespace")
                 {
@@ -83,7 +83,7 @@ namespace DrDoc.Generation
 
                         HACK_inNamespace = true;
 
-                        matches.AddRange(ResolveRecursive(parts[0], nsPath, templatePath, new List<DocNamespace> { ns }));
+                        matches.AddRange(ResolveRecursive(parts[0], nsPath, templatePath, new List<DocNamespace> { ns }, new OutputData { Namespaces = data.Namespaces, Namespace = ns, Type = data.Type }));
                     }
 
                     HACK_inNamespace = false;
@@ -98,7 +98,7 @@ namespace DrDoc.Generation
                         {
                             var typePath = templatePath.Replace(current, ns.Name + "." + type.Name);
 
-                            matches.AddRange(ResolveRecursive(parts[0], typePath, templatePath, new List<DocNamespace> { ns }));    
+                            matches.AddRange(ResolveRecursive(parts[0], typePath, templatePath, new List<DocNamespace> { ns }, new OutputData { Namespaces = data.Namespaces, Namespace = ns, Type = type }));    
                         }
                     }
                 }
@@ -111,7 +111,7 @@ namespace DrDoc.Generation
         {
             var path = Path.GetFileNameWithoutExtension(name);
 
-            return path == "!namespace" || path == "!type";
+            return path == "!namespace" || path == "!type" || name == "layouts";
         }
     }
 }

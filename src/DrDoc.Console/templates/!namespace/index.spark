@@ -3,9 +3,11 @@
   <head>
     <title>#{Namespace.Name}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    <link type="text/css" rel="stylesheet" href="main.css" />
+    <link type="text/css" rel="stylesheet" href="../main.css" />
   </head>
   <body>
+	<namespaces />
+    <types />
     <p class="header"><strong>Namespace</strong> ${Namespace.Name}</p>
     <div class="content">
 		<h3 class="section">Types</h3>
