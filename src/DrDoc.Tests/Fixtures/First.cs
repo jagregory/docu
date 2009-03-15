@@ -46,6 +46,12 @@ namespace Example
         void Method();
     }
 
+    public class StaticMethodClass
+    {
+        public static void Method()
+        {}
+    }
+
     /// <summary>
     /// First summary
     /// </summary>

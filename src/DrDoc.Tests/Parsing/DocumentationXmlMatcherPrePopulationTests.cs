@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Xml;
 using DrDoc.Parsing.Model;
 using DrDoc.Parsing;
@@ -13,6 +14,7 @@ namespace DrDoc.Tests.Parsing
     public class DocumentationXmlMatcherPrePopulationTests : BaseFixture
     {
         private DocumentationXmlMatcher matcher;
+        private IList<IDocumentationMember> members;
 
         [SetUp]
         public void CreateAssociator()
@@ -23,9 +25,9 @@ namespace DrDoc.Tests.Parsing
         [Test]
         public void ShouldAddClass()
         {
-            var members = matcher.DocumentMembers(DocMembers(typeof(EmptyType)), new XmlNode[0]);
+            document_member<EmptyType>();
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromType(typeof(EmptyType)));
+            var member = find_member<EmptyType>();
             member.ShouldBeOfType<UndocumentedType>();
             member.Name.ToString().ShouldEqual("EmptyType");
         }
@@ -33,9 +35,9 @@ namespace DrDoc.Tests.Parsing
         [Test]
         public void ShouldAddClassMethods()
         {
-            var members = matcher.DocumentMembers(DocMembers(typeof(SingleMethodType)), new XmlNode[0]);
+            document_member<SingleMethodType>();
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(typeof(SingleMethodType).GetMethod("Method"), typeof(SingleMethodType)));
+            var member = find_member<SingleMethodType>(x => x.Method());
             member.ShouldBeOfType<UndocumentedMethod>();
             member.Name.ToString().ShouldEqual("Method");
         }
@@ -43,36 +45,33 @@ namespace DrDoc.Tests.Parsing
         [Test]
         public void ShouldAddOverloadedClassMethods()
         {
-            var members = matcher.DocumentMembers(DocMembers(typeof(ClassWithOverload)), new XmlNode[0]);
-            var method1 = Method<ClassWithOverload>(x => x.Method());
-            var method2 = Method<ClassWithOverload>(x => x.Method(null));
+            document_member<ClassWithOverload>();
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method1, typeof(ClassWithOverload)));
+            var member = find_member<ClassWithOverload>(x => x.Method());
             member.ShouldBeOfType<UndocumentedMethod>();
             member.Name.ToString().ShouldEqual("Method");
 
-            var member2 = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method2, typeof(ClassWithOverload)));
+            var member2 = find_member<ClassWithOverload>(x => x.Method(null));
             member2.ShouldBeOfType<UndocumentedMethod>();
             member2.Name.ToString().ShouldEqual("Method");
-
             member2.ShouldNotEqual(member);
         }
 
         [Test]
         public void ShouldntAddPropertyMethods()
         {
-            var members = matcher.DocumentMembers(DocMembers(typeof(PropertyType)), new XmlNode[0]);
+            document_member<PropertyType>();
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(typeof(PropertyType).GetMethod("get_Property"), typeof(PropertyType)));
-            member.ShouldBeNull();
+            find_member<PropertyType>("get_Property")
+                .ShouldBeNull();
         }
 
         [Test, Ignore]
         public void ShouldAddExplicitlyImplementedClassMethods()
         {
-            var members = matcher.DocumentMembers(DocMembers(typeof(SingleMethodType)), new XmlNode[0]);
+            document_member<ClassWithExplicitMethodImplementation>();
+            var member = find_member<ClassWithExplicitMethodImplementation>("Method");
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(typeof(ClassWithExplicitMethodImplementation).GetMethod("Method"), typeof(ClassWithExplicitMethodImplementation)));
             member.ShouldBeOfType<UndocumentedMethod>();
             member.Name.ToString().ShouldEqual("Method");
         }
@@ -80,9 +79,9 @@ namespace DrDoc.Tests.Parsing
         [Test]
         public void ShouldAddInterface()
         {
-            var members = matcher.DocumentMembers(DocMembers(typeof(EmptyInterface)), new XmlNode[0]);
+            document_member<EmptyInterface>();
+            var member = find_member<EmptyInterface>();
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromType(typeof(EmptyInterface)));
             member.ShouldBeOfType<UndocumentedType>();
             member.Name.ToString().ShouldEqual("EmptyInterface");
         }
@@ -90,11 +89,52 @@ namespace DrDoc.Tests.Parsing
         [Test]
         public void ShouldAddInterfaceMethods()
         {
-            var members = matcher.DocumentMembers(DocMembers(typeof(SingleMethodInterface)), new XmlNode[0]);
+            document_member<SingleMethodInterface>();
+            var member = find_member<SingleMethodInterface>(x => x.Method());
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(typeof(SingleMethodInterface).GetMethod("Method"), typeof(SingleMethodInterface)));
             member.ShouldBeOfType<UndocumentedMethod>();
             member.Name.ToString().ShouldEqual("Method");
+        }
+
+        [Test]
+        public void should_add_static_methods()
+        {
+            document_member<StaticMethodClass>();
+            var member = find_member<StaticMethodClass>(() => StaticMethodClass.Method());
+
+            member.ShouldBeOfType<UndocumentedMethod>();
+            member.Name.ToString().ShouldEqual("Method");
+        }
+
+        private void document_member<T>()
+        {
+            members = matcher.DocumentMembers(DocMembers(typeof(T)), new XmlNode[0]);
+        }
+
+        private IDocumentationMember find_member<T>()
+        {
+            return members.FirstOrDefault(x => x.Name == Identifier.FromType(typeof(T)));
+        }
+
+        private IDocumentationMember find_member<T>(Expression<Action<T>> methodAction)
+        {
+            var method = ((MethodCallExpression)methodAction.Body).Method;
+
+            return members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(T)));
+        }
+
+        private IDocumentationMember find_member<T>(Expression<Action> methodAction)
+        {
+            var method = ((MethodCallExpression)methodAction.Body).Method;
+
+            return members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(T)));
+        }
+
+        private IDocumentationMember find_member<T>(string methodName)
+        {
+            var method = typeof(T).GetMethod(methodName);
+
+            return members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(T)));
         }
     }
 }
