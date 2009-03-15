@@ -4,6 +4,8 @@ namespace DrDoc.Documentation
 {
     public interface IReferencable
     {
-        Identifier Name { get; }
+        string Name { get; }
+        bool IsIdentifiedBy(Identifier otherIdentifier);
+        IReferencable ToExternalReference();
     }
 }

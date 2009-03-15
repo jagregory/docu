@@ -6,7 +6,7 @@ using DrDoc.Parsing.Model;
 
 namespace DrDoc.Documentation
 {
-    public class DeclaredType : IReferencable
+    public class DeclaredType : BaseDocumentationElement, IReferencable
     {
         private readonly List<Method> methods = new List<Method>();
         private readonly List<Property> properties = new List<Property>();
@@ -19,8 +19,8 @@ namespace DrDoc.Documentation
         }
 
         public DeclaredType(Identifier name)
+            : base(name)
         {
-            Name = name;
             Summary = new List<IComment>();
         }
 
@@ -34,7 +34,6 @@ namespace DrDoc.Documentation
             properties.Add(property);
         }
 
-        public Identifier Name { get; private set; }
         public Namespace Namespace { get; private set; }
         public string PrettyName { get; private set; }
 
@@ -54,6 +53,11 @@ namespace DrDoc.Documentation
         {
             methods.Sort((x, y) => x.Name.CompareTo(y.Name));
             properties.Sort((x, y) => x.Name.CompareTo(y.Name));
+        }
+
+        public IReferencable ToExternalReference()
+        {
+            return new ExternalReference(identifier);
         }
     }
 }

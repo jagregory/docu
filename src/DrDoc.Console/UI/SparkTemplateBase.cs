@@ -23,18 +23,6 @@ namespace DrDoc.UI
     {
         protected readonly IOutputFormatter Formatter = new HtmlOutputFormatter();
 
-        public string flatten(IList<IComment> blocks)
-        {
-            var sb = new StringBuilder();
-
-            foreach (var block in blocks)
-            {
-                sb.Append(block.ToString());
-            }
-
-            return sb.ToString();
-        }
-
         public string h(string content)
         {
             return Formatter.Escape(content);
@@ -67,6 +55,9 @@ namespace DrDoc.UI
                 sb.Append(block.ToString());
                 sb.Append(" ");
             }
+
+            if (sb.Length > 0)
+                sb.Length--; // trim trailing whitespace
 
             return sb.ToString();
         }

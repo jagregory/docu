@@ -3,18 +3,22 @@ using DrDoc.Parsing.Model;
 
 namespace DrDoc.Documentation
 {
-    public class ExternalReference : IReferencable
+    public class ExternalReference : BaseDocumentationElement, IReferencable
     {
         public ExternalReference(Identifier name)
+            : base(name)
         {
-            Name = name;
             FullName = Name.ToString();
 
-            if (Name is TypeIdentifier)
-                FullName = Name.CloneAsNamespace() + "." + Name;
+            if (name is TypeIdentifier)
+                FullName = name.CloneAsNamespace() + "." + Name;
         }
 
-        public Identifier Name { get; private set; }
         public string FullName { get; private set; }
+
+        public IReferencable ToExternalReference()
+        {
+            return new ExternalReference(identifier);
+        }
     }
 }

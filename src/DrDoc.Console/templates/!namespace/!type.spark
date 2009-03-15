@@ -11,7 +11,7 @@
     <namespaces />
     <types />
     <p class="header">
-		<strong>Namespace</strong> ${Namespace.Name.ToString()}<br />
+		<strong>Namespace</strong> ${Namespace.Name}<br />
 		<strong>Type</strong> ${h(Type.PrettyName)}
 	</p>
     <div class="sub-header">
@@ -24,7 +24,7 @@
 		<if condition="Type.Methods.Count > 0">
 			<h3 class="section">Methods</h3>
 			<ul>
-				<li each="var method in Type.Methods"><a href="#${method.Name.ToString()}" class="type">${h(method.PrettyName)}</a></li>
+				<li each="var method in Type.Methods"><a href="#${method.Name}" class="type">${h(method.PrettyName)}</a></li>
 			</ul>
 		</if>
 		

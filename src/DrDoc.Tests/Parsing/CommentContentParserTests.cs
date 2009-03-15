@@ -85,7 +85,7 @@ namespace DrDoc.Tests.Parsing
             blocks.CountShouldEqual(1);
             blocks[0].ShouldBeOfType<See>();
             ((See)blocks[0]).Reference.ShouldBeOfType<UnresolvedReference>();
-            ((See)blocks[0]).Reference.Name.ShouldEqual(Identifier.FromType(typeof(First)));
+            ((See)blocks[0]).Reference.Name.ShouldEqual("First");
         }
 
         [Test]

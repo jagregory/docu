@@ -51,11 +51,11 @@ namespace DrDoc.Documentation
 
                 var namespaceName = Identifier.FromNamespace(association.Property.DeclaringType.Namespace);
                 var typeName = Identifier.FromType(association.Property.DeclaringType);
-                var @namespace = namespaces.Find(x => x.Name == namespaceName);
+                var @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
 
                 if (@namespace == null) continue;
 
-                var type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
+                var type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
 
                 if (type == null) continue;
 
@@ -64,10 +64,20 @@ namespace DrDoc.Documentation
 
             foreach (var block in references)
             {
-                if (matchedAssociations.ContainsKey(block.Reference.Name))
-                    block.Reference = (IReferencable)matchedAssociations[block.Reference.Name];
-                else
-                    block.Reference = new ExternalReference(block.Reference.Name);
+                var set = false;
+
+                foreach (var identifier in matchedAssociations.Keys)
+                {
+                    if (block.Reference.IsIdentifiedBy(identifier))
+                    {
+                        block.Reference = (IReferencable)matchedAssociations[identifier];
+                        set = true;
+                        break;
+                    }
+                }
+
+                if (!set)
+                    block.Reference = block.Reference.ToExternalReference();
             }
 
             Sort(namespaces);
@@ -91,20 +101,20 @@ namespace DrDoc.Documentation
 
             var namespaceName = Identifier.FromNamespace(association.TargetType.Namespace);
             var typeName = Identifier.FromType(association.TargetType);
-            var @namespace = namespaces.Find(x => x.Name == namespaceName);
+            var @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
 
             if (@namespace == null)
             {
                 AddNamespace(namespaces, new DocumentedType(association.Name.CloneAsNamespace(), null, association.TargetType));
-                @namespace = namespaces.Find(x => x.Name == namespaceName);
+                @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
             }
 
-            var type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
+            var type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
 
             if (type == null)
             {
                 AddType(namespaces, references, new DocumentedType(association.Name.CloneAsType(), null, association.TargetType));
-                type = @namespace.Types.FirstOrDefault(x => x.Name == typeName);
+                type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
             }
 
             var prettyName = GetPrettyName(association.Method);
@@ -159,7 +169,7 @@ namespace DrDoc.Documentation
         {
             var @namespace = Identifier.FromNamespace(association.Type.Namespace);
 
-            if (!namespaces.Exists(x => x.Name == @namespace))
+            if (!namespaces.Exists(x => x.IsIdentifiedBy(@namespace)))
             {
                 var doc = new Namespace(@namespace);
                 matchedAssociations.Add(association.Name.CloneAsNamespace(), doc);
@@ -170,7 +180,7 @@ namespace DrDoc.Documentation
         private void AddType(List<Namespace> namespaces, List<IReferrer> references, DocumentedType association)
         {
             var namespaceName = Identifier.FromNamespace(association.Type.Namespace);
-            var @namespace = namespaces.Find(x => x.Name == namespaceName);
+            var @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
             var prettyName = GetPrettyName(association.Type);
             var doc = new DeclaredType(association.Name, prettyName, @namespace);
 

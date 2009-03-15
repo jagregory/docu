@@ -5,16 +5,13 @@ using DrDoc.Parsing.Model;
 
 namespace DrDoc.Documentation
 {
-    public class Namespace : IReferencable
+    public class Namespace : BaseDocumentationElement, IReferencable
     {
         private readonly List<DeclaredType> types = new List<DeclaredType>();
 
         public Namespace(Identifier name)
-        {
-            Name = name;
-        }
-
-        public Identifier Name { get; private set; }
+            : base(name)
+        {}
 
         public IList<DeclaredType> Types
         {
@@ -34,6 +31,11 @@ namespace DrDoc.Documentation
         public void AddType(DeclaredType type)
         {
             types.Add(type);
+        }
+
+        public IReferencable ToExternalReference()
+        {
+            return new ExternalReference(identifier);
         }
     }
 }

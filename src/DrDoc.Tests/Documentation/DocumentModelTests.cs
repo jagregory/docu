@@ -6,7 +6,6 @@ using DrDoc.Documentation;
 using DrDoc.Documentation.Comments;
 using DrDoc.Parsing.Model;
 using DrDoc.Parsing;
-using DrDoc.Parsing.Model;
 using Example;
 using Example.Deep;
 using NUnit.Framework;
@@ -59,8 +58,8 @@ namespace DrDoc.Tests.Documentation
             };
             var namespaces = model.Create(members);
 
-            namespaces.ShouldContain(x => x.Name == Identifier.FromNamespace("Example"));
-            namespaces.ShouldContain(x => x.Name == Identifier.FromNamespace("Example.Deep"));
+            namespaces.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromNamespace("Example")));
+            namespaces.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromNamespace("Example.Deep")));
         }
 
         [Test]
@@ -75,10 +74,10 @@ namespace DrDoc.Tests.Documentation
             var namespaces = model.Create(members);
 
             namespaces[0].Types
-                .ShouldContain(x => x.Name == Identifier.FromType(typeof(First)))
-                .ShouldContain(x => x.Name == Identifier.FromType(typeof(Second)));
+                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(First))))
+                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(Second))));
             namespaces[1].Types
-                .ShouldContain(x => x.Name == Identifier.FromType(typeof(DeepFirst)));
+                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(DeepFirst))));
         }
 
         [Test]
@@ -128,7 +127,7 @@ namespace DrDoc.Tests.Documentation
             var namespaces = model.Create(members);
 
             ((See)namespaces[0].Types[0].Summary[0]).Reference.ShouldBeOfType<ExternalReference>();
-            ((See)namespaces[0].Types[0].Summary[0]).Reference.Name.ShouldEqual(Identifier.FromType(typeof(First)));
+            ((See)namespaces[0].Types[0].Summary[0]).Reference.Name.ShouldEqual("First");
             ((ExternalReference)((See)namespaces[0].Types[0].Summary[0]).Reference).FullName.ShouldEqual("Example.First");
         }
 
@@ -153,8 +152,8 @@ namespace DrDoc.Tests.Documentation
             var members = new[] { Method<Second>(@"<member name=""M:Example.Second.SecondMethod"" />", x => x.SecondMethod()) };
             var namespaces = model.Create(members);
 
-            namespaces[0].Name.ShouldEqual(Identifier.FromNamespace("Example"));
-            namespaces[0].Types.ShouldContain(x => x.Name == Identifier.FromType(typeof(Second)));
+            namespaces[0].Name.ShouldEqual("Example");
+            namespaces[0].Types.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(Second))));
         }
 
         [Test]

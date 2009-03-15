@@ -18,12 +18,12 @@ namespace DrDoc.Tests.Generation
         {
             generator = new HtmlGenerator(new Dictionary<string, string>
             {
-                { "namespace.simple", "${Namespaces[0].Name.ToString()}"},
-                { "namespace.shortcut", "${Namespace.Name.ToString()}"},
-                { "namespace.linq", "<for each=\"var ns in Namespaces.Where(x => x.Name == Identifier.FromNamespace('Test'))\">${ns.Name.ToString()}</for>"},
+                { "namespace.simple", "${Namespaces[0].Name}"},
+                { "namespace.shortcut", "${Namespace.Name}"},
+                { "namespace.linq", "<for each=\"var ns in Namespaces.Where(x => x.Name == 'Test')\">${ns.Name}</for>"},
                 { "summary.simple", "<for each=\"var b in Namespaces[0].Types[0].Summary\">${b}</for>"},
-                { "summary.flattened", "<var test=\"'xxx'\" />${flatten(Namespaces[0].Types[0].Summary)}"},
-                { "method.overload", "<for each=\"var method in Type.Methods\">${method.Name.ToString()}(${OutputMethodParams(method)})</for>"}
+                { "summary.flattened", "<var test=\"'xxx'\" />${WriteSummary(Namespaces[0].Types[0].Summary)}"},
+                { "method.overload", "<for each=\"var method in Type.Methods\">${method.Name}(${OutputMethodParams(method)})</for>"}
             });
         }
 

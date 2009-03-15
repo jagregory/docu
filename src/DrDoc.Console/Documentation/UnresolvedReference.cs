@@ -2,13 +2,15 @@ using DrDoc.Parsing.Model;
 
 namespace DrDoc.Documentation
 {
-    public class UnresolvedReference : IReferencable
+    public class UnresolvedReference : BaseDocumentationElement, IReferencable
     {
         public UnresolvedReference(Identifier name)
-        {
-            Name = name;
-        }
+            : base(name)
+        {}
 
-        public Identifier Name { get; private set; }
+        public IReferencable ToExternalReference()
+        {
+            return new ExternalReference(identifier);
+        }
     }
 }
