@@ -105,7 +105,7 @@ namespace DrDoc.Documentation
                     type.BaseType,
                     Namespace.Unresolved(Identifier.FromNamespace(type.BaseType.Namespace)));
 
-            var interfaces = type.GetInterfaces();
+            var interfaces = GetInterfaces(type);
 
             foreach (var face in interfaces)
             {
@@ -117,6 +117,38 @@ namespace DrDoc.Documentation
             }
 
             return declaredType;
+        }
+
+        private static IEnumerable<Type> GetInterfaces(Type type)
+        {
+            var interfaces = new List<Type>(type.GetInterfaces());
+
+            foreach (var face in type.GetInterfaces())
+            {
+                FilterInterfaces(interfaces, face);
+            }
+
+            if (type.BaseType != null)
+                FilterInterfaces(interfaces, type.BaseType);
+
+            return interfaces;
+        }
+
+        private static void FilterInterfaces(IList<Type> topLevelInterfaces, Type type)
+        {
+            foreach (var face in type.GetInterfaces())
+            {
+                if (topLevelInterfaces.Contains(face))
+                {
+                    topLevelInterfaces.Remove(face);
+                    continue;
+                }
+
+                FilterInterfaces(topLevelInterfaces, face);
+            }
+
+            if (type.BaseType != null)
+                FilterInterfaces(topLevelInterfaces, type.BaseType);
         }
 
         public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Namespace ns)

@@ -121,6 +121,31 @@ namespace DrDoc.Tests.Documentation
         }
 
         [Test]
+        public void ShouldntInheritInterfacesForTypes()
+        {
+            var members = new[]
+            {
+                Type<ClassWithBaseWithInterfaces>(@"<member name=""T:Example.ClassWithBaseWithInterfaces"" />"),  
+            };
+            var namespaces = model.Create(members);
+
+            namespaces[0].Types[0].Interfaces.CountShouldEqual(0);
+        }
+
+        [Test]
+        public void ShouldntShowOnlyDirectInterfacesForTypes()
+        {
+            var members = new[]
+            {
+                Type<ClassWithBaseWithInterfacesAndDirect>(@"<member name=""T:Example.ClassWithBaseWithInterfacesAndDirect"" />"),  
+            };
+            var namespaces = model.Create(members);
+
+            namespaces[0].Types[0].Interfaces.CountShouldEqual(1);
+            namespaces[0].Types[0].Interfaces[0].PrettyName.ShouldEqual("IExample");
+        }
+
+        [Test]
         public void ShouldHavePrettyNamesForGenericTypes()
         {
             var members = new[] { Type(typeof(GenericDefinition<>), @"<member name=""T:Example.GenericDefinition`1"" />") };

@@ -38,6 +38,16 @@ namespace Example
         }
     }
 
+    public class ClassWithBaseWithInterfaces : ClassWithInterfaces
+    {}
+
+    public class ClassWithBaseWithInterfacesAndDirect : ClassWithInterfaces, IExample
+    { }
+
+    public interface IExample
+    {
+    }
+
     public class ClassWithExplicitMethodImplementation : InterfaceForExplicitImplementation
     {
         void InterfaceForExplicitImplementation.Method()
