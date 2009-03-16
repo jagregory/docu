@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using DrDoc.Documentation.Comments;
 using DrDoc.Documentation;
 using DrDoc.Documentation.Comments;
@@ -50,22 +47,22 @@ namespace DrDoc.Documentation
                 AddProperty(namespaces, references, association);
             }
 
-            foreach (var block in references)
+            foreach (var referrer in references)
             {
                 var set = false;
 
                 foreach (var identifier in matchedAssociations.Keys)
                 {
-                    if (block.Reference.IsIdentifiedBy(identifier))
+                    if (referrer.Reference.IsIdentifiedBy(identifier))
                     {
-                        block.Reference = (IReferencable)matchedAssociations[identifier];
+                        referrer.Reference = (IReferencable)matchedAssociations[identifier];
                         set = true;
                         break;
                     }
                 }
 
                 if (!set)
-                    block.Reference = block.Reference.ToExternalReference();
+                    referrer.Reference = referrer.Reference.ToExternalReference();
             }
 
             Sort(namespaces);
@@ -105,7 +102,7 @@ namespace DrDoc.Documentation
                 type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
             }
 
-            var prettyName = GetPrettyName(association.Method);
+            var prettyName = association.Method.GetPrettyName();
             var doc = new Method(Identifier.FromMethod(association.Method, association.TargetType), prettyName);
 
             if (association.Xml != null)
@@ -124,7 +121,7 @@ namespace DrDoc.Documentation
 
             foreach (var parameter in association.Method.GetParameters())
             {
-                var reference = new UnresolvedReference(Identifier.FromType(parameter.ParameterType));
+                var reference = new UnresolvedReference(Identifier.FromType(parameter.ParameterType), parameter.ParameterType);
                 var docParam = new MethodParameter(parameter.Name, reference);
 
                 references.Add(docParam);
@@ -210,7 +207,7 @@ namespace DrDoc.Documentation
         {
             var namespaceName = Identifier.FromNamespace(association.Type.Namespace);
             var @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
-            var prettyName = GetPrettyName(association.Type);
+            var prettyName = association.Type.GetPrettyName();
             var doc = new DeclaredType(association.Name, prettyName, @namespace);
 
             if (association.Xml != null)
@@ -232,59 +229,6 @@ namespace DrDoc.Documentation
 
             matchedAssociations.Add(association.Name, doc);
             @namespace.AddType(doc);
-        }
-
-        private string GetPrettyName(System.Type type)
-        {
-            if (type.IsNested) return type.Name;
-            if (type.IsGenericType)
-            {
-                var sb = new StringBuilder();
-
-                sb.Append(type.Name.Substring(0, type.Name.IndexOf('`')));
-                sb.Append("<");
-
-                foreach (var argument in type.GetGenericArguments())
-                {
-                    sb.Append(argument.Name);
-                    sb.Append(", ");
-                }
-
-                sb.Length -= 2;
-                sb.Append(">");
-
-                return sb.ToString();
-            }
-
-            return type.Name;
-        }
-
-        private string GetPrettyName(MethodInfo method)
-        {
-            if (method.IsGenericMethod)
-            {
-                var sb = new StringBuilder();
-                var name = method.Name;
-
-                if (name.Contains("`"))
-                    name = method.Name.Substring(0, method.Name.IndexOf('`'));
-
-                sb.Append(name);
-                sb.Append("<");
-
-                foreach (var argument in method.GetGenericArguments())
-                {
-                    sb.Append(argument.Name);
-                    sb.Append(", ");
-                }
-
-                sb.Length -= 2;
-                sb.Append(">");
-
-                return sb.ToString();
-            }
-
-            return method.Name;
         }
     }
 }

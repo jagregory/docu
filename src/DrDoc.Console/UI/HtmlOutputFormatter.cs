@@ -30,16 +30,12 @@ namespace DrDoc.UI
                 return Format((ExternalReference)reference);
             
             var url = "";
-            var name = reference.Name.ToString();
+            var name = reference.PrettyName;
 
             if (reference is Namespace)
-                url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", reference.Name.ToString()}});
+                url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", reference.Name}});
             else if (reference is DeclaredType)
-            {
-                var type = (DeclaredType)reference;
-                name = type.PrettyName;
-                url = Format(TypeUrlFormat, new Dictionary<string, string> { { "type.namespace", ((DeclaredType)reference).Namespace.Name.ToString() }, { "type", reference.Name.ToString() } });
-            }
+                url = Format(TypeUrlFormat, new Dictionary<string, string> { { "type.namespace", ((DeclaredType)reference).Namespace.Name }, { "type", reference.Name } });
 
             return "<a href=\"" + url + "\">" + Escape(name) + "</a>";
         }

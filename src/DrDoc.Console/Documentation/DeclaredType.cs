@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DrDoc.Documentation.Comments;
 using DrDoc.Documentation;
@@ -57,7 +58,7 @@ namespace DrDoc.Documentation
 
         public IReferencable ToExternalReference()
         {
-            return new ExternalReference(identifier);
+            throw new InvalidOperationException();
         }
     }
 }

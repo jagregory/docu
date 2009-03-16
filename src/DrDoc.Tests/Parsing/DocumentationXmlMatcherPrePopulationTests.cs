@@ -66,7 +66,6 @@ namespace DrDoc.Tests.Parsing
                 .ShouldBeNull();
         }
 
-        [Test, Ignore]
         public void ShouldAddExplicitlyImplementedClassMethods()
         {
             document_member<ClassWithExplicitMethodImplementation>();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using DrDoc.Documentation;
@@ -9,8 +10,8 @@ namespace DrDoc.Documentation
     {
         private readonly List<DeclaredType> types = new List<DeclaredType>();
 
-        public Namespace(Identifier name)
-            : base(name)
+        public Namespace(Identifier identifier)
+            : base(identifier)
         {}
 
         public IList<DeclaredType> Types
@@ -33,9 +34,14 @@ namespace DrDoc.Documentation
             types.Add(type);
         }
 
+        public string PrettyName
+        {
+            get { return Name; }
+        }
+
         public IReferencable ToExternalReference()
         {
-            return new ExternalReference(identifier);
+            throw new InvalidOperationException();
         }
     }
 }

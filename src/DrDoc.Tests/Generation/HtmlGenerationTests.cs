@@ -89,7 +89,7 @@ namespace DrDoc.Tests.Generation
 
             type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload)), ""));
             type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload)), ""));
-            type.Methods[1].Parameters.Add(new MethodParameter("one", new ExternalReference(Identifier.FromType(typeof(string)))));
+            type.Methods[1].Parameters.Add(new MethodParameter("one", new ExternalReference(Identifier.FromType(typeof(string)), typeof(string))));
             
             var data = new OutputData { Type = type };
             var content = generator.Convert("method.overload", data);

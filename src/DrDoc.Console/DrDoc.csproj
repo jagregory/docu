@@ -81,6 +81,7 @@
     <Compile Include="ContainerBootstrapper.cs" />
     <Compile Include="DefaultRegistry.cs" />
     <Compile Include="Documentation\BaseDocumentationElement.cs" />
+    <Compile Include="Documentation\PrettyNameExtensions.cs" />
     <Compile Include="IDocumentationGenerator.cs" />
     <Compile Include="IO\AssemblyLoader.cs" />
     <Compile Include="DocumentationGenerator.cs" />
