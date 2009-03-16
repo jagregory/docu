@@ -52,6 +52,7 @@ namespace DrDoc.Documentation
         }
 
         public IList<IComment> Summary { get; internal set; }
+        public IReferencable ParentType { get; set; }
 
         public void Sort()
         {
@@ -71,6 +72,13 @@ namespace DrDoc.Documentation
 
                 Namespace = type.Namespace;
                 representedType = type.representedType;
+                ParentType = type.ParentType;
+
+                if (!Namespace.IsResolved)
+                    Namespace.Resolve(referencables);
+                if (ParentType != null && !ParentType.IsResolved)
+                    ParentType.Resolve(referencables);
+                
                 IsResolved = true;
             }
             else
@@ -79,7 +87,15 @@ namespace DrDoc.Documentation
 
         public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Type type, Namespace ns)
         {
-            return new DeclaredType(typeIdentifier, ns) { IsResolved = false, representedType = type };
+            var declaredType = new DeclaredType(typeIdentifier, ns) { IsResolved = false, representedType = type };
+
+            if (type.BaseType != null)
+                declaredType.ParentType = Unresolved(
+                    Identifier.FromType(type.BaseType),
+                    type.BaseType,
+                    Namespace.Unresolved(Identifier.FromNamespace(type.BaseType.Namespace)));
+
+            return declaredType;
         }
 
         public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Namespace ns)

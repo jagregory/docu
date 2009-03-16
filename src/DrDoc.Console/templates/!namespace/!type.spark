@@ -12,7 +12,8 @@
     <types />
     <p class="header">
 		<strong>Namespace</strong> ${Namespace.Name}<br />
-		<strong>Type</strong> ${h(Type.PrettyName)}
+		<strong>Type</strong> ${h(Type.PrettyName)}<br />
+		<if condition="Type.ParentType != null && Type.ParentType.PrettyName != 'object'"><strong>Parent</strong> ${WriteReference(Type.ParentType)}</if>
 	</p>
     <div class="sub-header">
 		<if condition="Type.Summary.Count > 0">

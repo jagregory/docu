@@ -81,6 +81,32 @@ namespace DrDoc.Tests.Documentation
         }
 
         [Test]
+        public void ShouldHaveParentForTypes()
+        {
+            var members = new[]
+            {
+                Type<First>(@"<member name=""T:Example.First"" />"),  
+            };
+            var namespaces = model.Create(members);
+
+            namespaces[0].Types[0].ParentType.ShouldNotBeNull();
+            namespaces[0].Types[0].ParentType.PrettyName.ShouldEqual("object");
+        }
+
+        [Test]
+        public void ShouldHaveParentForTypes_WithDocumentedParent()
+        {
+            var members = new[]
+            {
+                Type<FirstChild>(@"<member name=""T:Example.FirstChild"" />"),  
+            };
+            var namespaces = model.Create(members);
+
+            namespaces[0].Types[0].ParentType.ShouldNotBeNull();
+            namespaces[0].Types[0].ParentType.PrettyName.ShouldEqual("First");
+        }
+
+        [Test]
         public void ShouldHavePrettyNamesForGenericTypes()
         {
             var members = new[] { Type(typeof(GenericDefinition<>), @"<member name=""T:Example.GenericDefinition`1"" />") };

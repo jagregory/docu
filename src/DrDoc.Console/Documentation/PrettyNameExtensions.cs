@@ -20,6 +20,7 @@ namespace DrDoc.Documentation
             if (type == typeof(ushort)) return "ushort";
             if (type == typeof(void)) return "void";
             if (type == typeof(bool)) return "bool";
+            if (type == typeof(object)) return "object";
 
             return null;
         }

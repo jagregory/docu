@@ -21,6 +21,18 @@
 	font-weight: normal;
 }
 
+.header a 
+{
+	background: transparent;
+	color: #FFF;
+}
+
+.header a:hover
+{
+	background: #FFF;
+	color: #039;
+}
+
 .sub-header {
 	margin:  0 20px;
 }

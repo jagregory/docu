@@ -72,6 +72,10 @@ namespace Example
     {
     }
 
+    public class FirstChild : First
+    {
+    }
+
     public class GenericDefinition<T>
     {
         public void AMethod()

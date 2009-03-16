@@ -90,7 +90,10 @@ namespace DrDoc.Documentation
                 type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
             }
 
-            var methodReturnType = DeclaredType.Unresolved(Identifier.FromType(association.Method.ReturnType), association.Method.ReturnType, Namespace.Unresolved(Identifier.FromNamespace(association.Method.ReturnType.Namespace)));
+            var methodReturnType = DeclaredType.Unresolved(
+                Identifier.FromType(association.Method.ReturnType),
+                association.Method.ReturnType,
+                Namespace.Unresolved(Identifier.FromNamespace(association.Method.ReturnType.Namespace)));
             var doc = Method.Unresolved(Identifier.FromMethod(association.Method, association.TargetType), association.Method, methodReturnType);
 
             references.Add(methodReturnType);
