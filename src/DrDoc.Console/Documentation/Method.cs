@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using DrDoc.Documentation.Comments;
 using DrDoc.Documentation;
 using DrDoc.Documentation.Comments;
@@ -6,14 +8,14 @@ using DrDoc.Parsing.Model;
 
 namespace DrDoc.Documentation
 {
-    public class Method : BaseDocumentationElement
+    public class Method : BaseDocumentationElement, IReferencable
     {
         private readonly IList<MethodParameter> parameters = new List<MethodParameter>();
+        private MethodInfo representedMethod;
 
-        public Method(MethodIdentifier identifier, string prettyName)
+        public Method(MethodIdentifier identifier)
             : base(identifier)
         {
-            PrettyName = prettyName;
             Summary = new List<IComment>();
         }
 
@@ -22,7 +24,16 @@ namespace DrDoc.Documentation
             parameters.Add(parameter);
         }
 
-        public string PrettyName { get; set; }
+        public string FullName
+        {
+            get { return Name; }
+        }
+
+        public string PrettyName
+        {
+            get { return representedMethod == null ? Name : representedMethod.GetPrettyName(); }
+        }
+
         public IList<MethodParameter> Parameters
         {
             get { return parameters; }
@@ -38,6 +49,35 @@ namespace DrDoc.Documentation
             get { return ((MethodIdentifier)identifier).IsStatic; }
         }
 
+        public IReferencable ReturnType { get; set; }
         public IList<IComment> Summary { get; internal set; }
+
+        public void Resolve(IDictionary<Identifier, IReferencable> referencables)
+        {
+            if (referencables.ContainsKey(identifier))
+            {
+                var referencable = referencables[identifier];
+                var method = referencable as Method;
+
+                if (method == null)
+                    throw new InvalidOperationException("Cannot resolve to '" + referencable.GetType().FullName + "'");
+
+                ReturnType = method.ReturnType;
+                representedMethod = method.representedMethod;
+                IsResolved = true;
+            }
+
+            ConvertToExternalReference();
+        }
+
+        public static Method Unresolved(MethodIdentifier methodIdentifier)
+        {
+            return new Method(methodIdentifier) { IsResolved = false };
+        }
+
+        public static Method Unresolved(MethodIdentifier methodIdentifier, MethodInfo representedMethod, IReferencable returnType)
+        {
+            return new Method(methodIdentifier) { IsResolved = false, representedMethod = representedMethod, ReturnType = returnType };
+        }
     }
 }

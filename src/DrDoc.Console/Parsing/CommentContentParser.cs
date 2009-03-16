@@ -68,8 +68,14 @@ namespace DrDoc.Parsing
         private IComment ParseSee(XmlNode content)
         {
             var referenceTarget = Identifier.FromString(content.Attributes["cref"].Value);
+            IReferencable reference = null;
 
-            return new See(new UnresolvedReference(referenceTarget));
+            if (referenceTarget is TypeIdentifier)
+                reference = DeclaredType.Unresolved((TypeIdentifier)referenceTarget, Namespace.Unresolved(referenceTarget.CloneAsNamespace()));
+            else if (referenceTarget is MethodIdentifier)
+                reference = Method.Unresolved((MethodIdentifier)referenceTarget);
+
+            return new See(reference);
         }
 
         private IComment ParseParagraph(XmlNode content)

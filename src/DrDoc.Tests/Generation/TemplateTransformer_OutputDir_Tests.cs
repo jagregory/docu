@@ -74,8 +74,8 @@ namespace DrDoc.Tests.Generation
             var transformer = new PageWriter(generator, writer, resolver);
             var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(Type<First>());
-            namespaces[1].AddType(Type<Second>());
+            Type<First>(namespaces[0]);
+            Type<Second>(namespaces[1]);
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
@@ -137,8 +137,8 @@ namespace DrDoc.Tests.Generation
             var transformer = new PageWriter(generator, writer, resolver);
             var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(Type<First>());
-            namespaces[1].AddType(Type<Second>());
+            Type<First>(namespaces[0]);
+            Type<Second>(namespaces[1]);
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()

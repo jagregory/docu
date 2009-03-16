@@ -116,8 +116,8 @@ namespace DrDoc.Tests.Documentation
             };
             var namespaces = model.Create(members);
 
-            ((See)namespaces[0].Types[1].Summary[0]).Reference.ShouldNotBeOfType<UnresolvedReference>();
             ((See)namespaces[0].Types[1].Summary[0]).Reference.ShouldNotBeNull();
+            ((See)namespaces[0].Types[1].Summary[0]).Reference.IsResolved.ShouldBeTrue();
         }
 
         [Test]
@@ -126,9 +126,9 @@ namespace DrDoc.Tests.Documentation
             var members = new[] { Type<Second>(@"<member name=""T:Example.Second""><summary><see cref=""T:Example.First"" /></summary></member>") };
             var namespaces = model.Create(members);
 
-            ((See)namespaces[0].Types[0].Summary[0]).Reference.ShouldBeOfType<ExternalReference>();
+            ((See)namespaces[0].Types[0].Summary[0]).Reference.IsExternal.ShouldBeTrue();
             ((See)namespaces[0].Types[0].Summary[0]).Reference.Name.ShouldEqual("First");
-            ((ExternalReference)((See)namespaces[0].Types[0].Summary[0]).Reference).FullName.ShouldEqual("Example.First");
+            ((See)namespaces[0].Types[0].Summary[0]).Reference.FullName.ShouldEqual("Example.First");
         }
 
         [Test]
@@ -246,7 +246,7 @@ namespace DrDoc.Tests.Documentation
 
             method.Parameters.CountShouldEqual(2);
             method.Parameters[0].Name.ShouldEqual("one");
-            method.Parameters[0].Reference.ShouldBeOfType<ExternalReference>();
+            method.Parameters[0].Reference.IsExternal.ShouldBeTrue();
             method.Parameters[1].Name.ShouldEqual("two");
             method.Parameters[1].Reference.ShouldBeOfType<DeclaredType>();
         }

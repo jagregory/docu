@@ -23,7 +23,8 @@ namespace DrDoc.Tests.Generation
                 { "namespace.linq", "<for each=\"var ns in Namespaces.Where(x => x.Name == 'Test')\">${ns.Name}</for>"},
                 { "summary.simple", "<for each=\"var b in Namespaces[0].Types[0].Summary\">${b}</for>"},
                 { "summary.flattened", "<var test=\"'xxx'\" />${WriteSummary(Namespaces[0].Types[0].Summary)}"},
-                { "method.overload", "<for each=\"var method in Type.Methods\">${method.Name}(${OutputMethodParams(method)})</for>"}
+                { "method.overload", "<for each=\"var method in Type.Methods\">${method.Name}(${OutputMethodParams(method)})</for>"},
+                { "method.returnType", "<for each=\"var method in Type.Methods\">${method.ReturnType.PrettyName}</for>"},
             });
         }
 
@@ -58,9 +59,8 @@ namespace DrDoc.Tests.Generation
         public void ShouldOutputSimpleSummary()
         {
             var ns = Namespace("Example");
-            var type = Type<First>();
+            var type = Type<First>(ns);
             type.Summary.Add(new InlineText("Hello world!"));
-            ns.AddType(type);
             var data = new OutputData { Namespaces = new List<Namespace> { ns } };
 
             var content = generator.Convert("summary.simple", data);
@@ -72,9 +72,8 @@ namespace DrDoc.Tests.Generation
         public void ShouldOutputFlattenedSummary()
         {
             var ns = Namespace("Example");
-            var type = Type<First>();
+            var type = Type<First>(ns);
             type.Summary.Add(new InlineText("Hello world!"));
-            ns.AddType(type);
             var data = new OutputData { Namespaces = new List<Namespace> { ns } };
 
             var content = generator.Convert("summary.flattened", data);
@@ -85,16 +84,34 @@ namespace DrDoc.Tests.Generation
         [Test]
         public void ShouldOutputOverloadedMethods()
         {
-            var type = Type<First>();
+            var ns = Namespace("Example");
+            var type = Type<ClassWithOverload>(ns);
+            var parameterType = DeclaredType.Unresolved(Identifier.FromType(typeof(string)), typeof(string), Namespace("System"));
 
-            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload)), ""));
-            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload)), ""));
-            type.Methods[1].Parameters.Add(new MethodParameter("one", new ExternalReference(Identifier.FromType(typeof(string)), typeof(string))));
+            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload))));
+            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload))));
+            type.Methods[1].Parameters.Add(new MethodParameter("one", parameterType));
             
             var data = new OutputData { Type = type };
             var content = generator.Convert("method.overload", data);
 
             content.ShouldEqual("Method()Method(string one)"); // nasty, I know
+        }
+
+        [Test]
+        public void ShouldOutputMethodReturnType()
+        {
+            var ns = Namespace("Example");
+            var type = Type<ReturnMethodClass>(ns);
+            var returnType = DeclaredType.Unresolved(Identifier.FromType(typeof(string)), typeof(string), Namespace("System"));
+
+            type.Methods.Add(new Method(Identifier.FromMethod(Method<ReturnMethodClass>(x => x.Method()), typeof(ReturnMethodClass))));
+            type.Methods[0].ReturnType = returnType;
+
+            var data = new OutputData { Type = type };
+            var content = generator.Convert("method.returnType", data);
+
+            content.ShouldEqual("string");
         }
     }
 }

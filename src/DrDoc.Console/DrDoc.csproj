@@ -114,7 +114,6 @@
     <Compile Include="Documentation\Comments\See.cs" />
     <Compile Include="Documentation\Comments\InlineText.cs" />
     <Compile Include="Documentation\DeclaredType.cs" />
-    <Compile Include="Documentation\ExternalReference.cs" />
     <Compile Include="Generation\BulkPageWriter.cs" />
     <Compile Include="Generation\HtmlGenerator.cs" />
     <Compile Include="UI\HtmlOutputFormatter.cs" />
@@ -140,7 +139,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Documentation\DocumentModel.cs" />
-    <Compile Include="Documentation\UnresolvedReference.cs" />
     <Compile Include="IO\XmlLoader.cs" />
     <Compile Include="Generation\UntransformableResourceManager.cs" />
   </ItemGroup>
@@ -183,6 +181,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="templates\!namespace\_methods.spark">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="utils\ilmerge.bat" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

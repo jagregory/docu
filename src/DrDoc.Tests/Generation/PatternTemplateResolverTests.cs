@@ -41,8 +41,8 @@ namespace DrDoc.Tests.Generation
             var resolver = new PatternTemplateResolver();
             var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First))));
-            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second))));
+            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
+            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
 
             var results = resolver.Resolve("!type.spark", namespaces);
 
@@ -99,8 +99,8 @@ namespace DrDoc.Tests.Generation
             var resolver = new PatternTemplateResolver();
             var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First))));
-            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second))));
+            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
+            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
 
             var results = resolver.Resolve("!type\\template.spark", namespaces);
 
@@ -117,10 +117,10 @@ namespace DrDoc.Tests.Generation
             var resolver = new PatternTemplateResolver();
             var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First))));
-            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(Second))));
-            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(First))));
-            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second))));
+            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
+            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[0]));
+            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[1]));
+            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
 
             var results = resolver.Resolve("!namespace\\!type.spark", namespaces);
 

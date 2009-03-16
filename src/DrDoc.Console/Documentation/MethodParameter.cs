@@ -29,10 +29,10 @@ namespace DrDoc.Documentation
                 if (methodReference != null)
                     return methodReference.PrettyName;
 
-                var externalReference = Reference as ExternalReference;
+                //var externalReference = Reference as ExternalReference;
 
-                if (externalReference != null)
-                    return externalReference.PrettyName;
+                //if (externalReference != null)
+                //    return externalReference.PrettyName;
 
                 return Name;
             }

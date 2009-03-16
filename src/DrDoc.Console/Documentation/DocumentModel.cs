@@ -13,7 +13,7 @@ namespace DrDoc.Documentation
     public class DocumentModel : IDocumentModel
     {
         private readonly ICommentContentParser commentContentParser;
-        private readonly IDictionary<Identifier, object> matchedAssociations = new Dictionary<Identifier, object>();
+        private readonly IDictionary<Identifier, IReferencable> matchedAssociations = new Dictionary<Identifier, IReferencable>();
 
         public DocumentModel(ICommentContentParser commentContentParser)
         {
@@ -23,7 +23,7 @@ namespace DrDoc.Documentation
         public IList<Namespace> Create(IEnumerable<IDocumentationMember> members)
         {
             var namespaces = new List<Namespace>();
-            var references = new List<IReferrer>();
+            var references = new List<IReferencable>();
 
             matchedAssociations.Clear();
 
@@ -47,22 +47,10 @@ namespace DrDoc.Documentation
                 AddProperty(namespaces, references, association);
             }
 
-            foreach (var referrer in references)
+            foreach (var referencable in references)
             {
-                var set = false;
-
-                foreach (var identifier in matchedAssociations.Keys)
-                {
-                    if (referrer.Reference.IsIdentifiedBy(identifier))
-                    {
-                        referrer.Reference = (IReferencable)matchedAssociations[identifier];
-                        set = true;
-                        break;
-                    }
-                }
-
-                if (!set)
-                    referrer.Reference = referrer.Reference.ToExternalReference();
+                if (!referencable.IsResolved)
+                    referencable.Resolve(matchedAssociations);
             }
 
             Sort(namespaces);
@@ -80,7 +68,7 @@ namespace DrDoc.Documentation
             }
         }
 
-        private void AddMethod(List<Namespace> namespaces, List<IReferrer> references, DocumentedMethod association)
+        private void AddMethod(List<Namespace> namespaces, List<IReferencable> references, DocumentedMethod association)
         {
             if (association.Method == null) return;
 
@@ -102,8 +90,10 @@ namespace DrDoc.Documentation
                 type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
             }
 
-            var prettyName = association.Method.GetPrettyName();
-            var doc = new Method(Identifier.FromMethod(association.Method, association.TargetType), prettyName);
+            var methodReturnType = DeclaredType.Unresolved(Identifier.FromType(association.Method.ReturnType), association.Method.ReturnType, Namespace.Unresolved(Identifier.FromNamespace(association.Method.ReturnType.Namespace)));
+            var doc = Method.Unresolved(Identifier.FromMethod(association.Method, association.TargetType), association.Method, methodReturnType);
+
+            references.Add(methodReturnType);
 
             if (association.Xml != null)
             {
@@ -112,19 +102,15 @@ namespace DrDoc.Documentation
                 if (summaryNode != null)
                     doc.Summary = commentContentParser.Parse(summaryNode);
 
-                foreach (var block in doc.Summary)
-                {
-                    if (block is See)
-                        references.Add((See)block);
-                }
+                GetReferencesFromComment(references, doc.Summary);
             }
 
             foreach (var parameter in association.Method.GetParameters())
             {
-                var reference = new UnresolvedReference(Identifier.FromType(parameter.ParameterType), parameter.ParameterType);
+                var reference = DeclaredType.Unresolved(Identifier.FromType(parameter.ParameterType), parameter.ParameterType, @namespace);
                 var docParam = new MethodParameter(parameter.Name, reference);
 
-                references.Add(docParam);
+                references.Add(reference);
 
                 if (association.Xml != null)
                 {
@@ -133,11 +119,7 @@ namespace DrDoc.Documentation
                     if (paramNode != null)
                         docParam.Summary = commentContentParser.Parse(paramNode);
 
-                    foreach (var block in docParam.Summary)
-                    {
-                        if (block is See)
-                            references.Add((See)block);
-                    }
+                    GetReferencesFromComment(references, docParam.Summary);
                 }
 
                 doc.AddParameter(docParam);
@@ -146,11 +128,21 @@ namespace DrDoc.Documentation
             if (matchedAssociations.ContainsKey(association.Name))
                 return; // weird case when a type has the same method declared twice
 
+            references.Add(doc);
             matchedAssociations.Add(association.Name, doc);
             type.AddMethod(doc);
         }
 
-        private void AddProperty(List<Namespace> namespaces, List<IReferrer> references, DocumentedProperty association)
+        private void GetReferencesFromComment(List<IReferencable> references, IList<IComment> comments)
+        {
+            foreach (var comment in comments)
+            {
+                if (comment is IReferrer)
+                    references.Add(((IReferrer)comment).Reference);
+            }
+        }
+
+        private void AddProperty(List<Namespace> namespaces, List<IReferencable> references, DocumentedProperty association)
         {
             if (association.Property == null) return;
 
@@ -181,11 +173,7 @@ namespace DrDoc.Documentation
                 if (summaryNode != null)
                     doc.Summary = commentContentParser.Parse(summaryNode);
 
-                foreach (var block in doc.Summary)
-                {
-                    if (block is See)
-                        references.Add((See)block);
-                }
+                GetReferencesFromComment(references, doc.Summary);
             }
 
             type.AddProperty(doc);
@@ -203,12 +191,11 @@ namespace DrDoc.Documentation
             }
         }
 
-        private void AddType(List<Namespace> namespaces, List<IReferrer> references, DocumentedType association)
+        private void AddType(List<Namespace> namespaces, List<IReferencable> references, DocumentedType association)
         {
             var namespaceName = Identifier.FromNamespace(association.Type.Namespace);
             var @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
-            var prettyName = association.Type.GetPrettyName();
-            var doc = new DeclaredType(association.Name, prettyName, @namespace);
+            var doc = DeclaredType.Unresolved((TypeIdentifier)association.Name, association.Type, @namespace);
 
             if (association.Xml != null)
             {
@@ -217,16 +204,13 @@ namespace DrDoc.Documentation
                 if (summaryNode != null)
                     doc.Summary = commentContentParser.Parse(summaryNode);
 
-                foreach (var block in doc.Summary)
-                {
-                    if (block is See)
-                        references.Add((See)block);
-                }
+                GetReferencesFromComment(references, doc.Summary);
             }
 
             if (matchedAssociations.ContainsKey(association.Name))
                 return; // weird case when a type has the same method declared twice
 
+            references.Add(doc);
             matchedAssociations.Add(association.Name, doc);
             @namespace.AddType(doc);
         }

@@ -17,18 +17,15 @@ namespace DrDoc.UI
             var url = "";
 
             if (block.Reference is Namespace)
-                url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", block.Reference.Name.ToString()}});
+                url = Format(NamespaceUrlFormat, new Dictionary<string, string> {{"namespace", block.Reference.Name}});
             else if (block.Reference is DeclaredType)
-                url = Format(TypeUrlFormat, new Dictionary<string, string> {{"type.namespace", ((DeclaredType)block.Reference).Namespace.Name.ToString()}, {"type", block.Reference.Name.ToString()}});
+                url = Format(TypeUrlFormat, new Dictionary<string, string> {{"type.namespace", ((DeclaredType)block.Reference).Namespace.Name}, {"type", block.Reference.Name.ToString()}});
 
             return "<a href=\"" + url + "\">" + block.Reference.Name + "</a>";
         }
 
         public string Format(IReferencable reference)
         {
-            if (reference is ExternalReference)
-                return Format((ExternalReference)reference);
-            
             var url = "";
             var name = reference.PrettyName;
 
@@ -37,17 +34,15 @@ namespace DrDoc.UI
             else if (reference is DeclaredType)
                 url = Format(TypeUrlFormat, new Dictionary<string, string> { { "type.namespace", ((DeclaredType)reference).Namespace.Name }, { "type", reference.Name } });
 
+            if (reference.IsExternal)
+                return "<span title=\"" + reference.FullName + "\">" + Escape(reference.PrettyName) + "</span>";
+
             return "<a href=\"" + url + "\">" + Escape(name) + "</a>";
         }
 
         public string Escape(string value)
         {
             return value.Replace("<", "&lt;").Replace(">", "&gt;");
-        }
-
-        public string Format(ExternalReference reference)
-        {
-            return "<span title=\"" + reference.FullName + "\">" + Escape(reference.PrettyName) + "</span>";
         }
 
         public string Format(InlineCode block)

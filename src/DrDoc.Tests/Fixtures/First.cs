@@ -23,6 +23,11 @@ namespace Example
     {
         public void Method() { }
         public void Method(string one) { }
+
+        public string MethodWithReturn()
+        {
+            return "";
+        }
     }
 
     public class ClassWithExplicitMethodImplementation : InterfaceForExplicitImplementation
@@ -50,6 +55,14 @@ namespace Example
     {
         public static void Method()
         {}
+    }
+
+    public class ReturnMethodClass
+    {
+        public string Method()
+        {
+            return "";
+        }
     }
 
     /// <summary>

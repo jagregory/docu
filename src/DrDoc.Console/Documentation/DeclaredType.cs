@@ -11,17 +11,12 @@ namespace DrDoc.Documentation
     {
         private readonly List<Method> methods = new List<Method>();
         private readonly List<Property> properties = new List<Property>();
+        private Type representedType;
 
-        public DeclaredType(Identifier name, string prettyName, Namespace ns)
-            : this(name)
-        {
-            PrettyName = prettyName;
-            Namespace = ns;
-        }
-
-        public DeclaredType(Identifier name)
+        public DeclaredType(TypeIdentifier name, Namespace ns)
             : base(name)
         {
+            Namespace = ns;
             Summary = new List<IComment>();
         }
 
@@ -36,18 +31,26 @@ namespace DrDoc.Documentation
         }
 
         public Namespace Namespace { get; private set; }
-        public string PrettyName { get; private set; }
+        public string PrettyName
+        {
+            get { return representedType == null ? Name : representedType.GetPrettyName(); }
+        }
+
+        public string FullName
+        {
+            get { return (Namespace == null ? "" : Namespace.FullName + ".") + PrettyName; }
+        }
 
         public IList<Method> Methods
         {
             get { return methods; }
         }
-        
+
         public IList<Property> Properties
         {
             get { return properties; }
         }
-        
+
         public IList<IComment> Summary { get; internal set; }
 
         public void Sort()
@@ -56,9 +59,32 @@ namespace DrDoc.Documentation
             properties.Sort((x, y) => x.Name.CompareTo(y.Name));
         }
 
-        public IReferencable ToExternalReference()
+        public void Resolve(IDictionary<Identifier, IReferencable> referencables)
         {
-            throw new InvalidOperationException();
+            if (referencables.ContainsKey(identifier))
+            {
+                var referencable = referencables[identifier];
+                var type = referencable as DeclaredType;
+
+                if (type == null)
+                    throw new InvalidOperationException("Cannot resolve to '" + referencable.GetType().FullName + "'");
+
+                Namespace = type.Namespace;
+                representedType = type.representedType;
+                IsResolved = true;
+            }
+            else
+                ConvertToExternalReference();
+        }
+
+        public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Type type, Namespace ns)
+        {
+            return new DeclaredType(typeIdentifier, ns) { IsResolved = false, representedType = type };
+        }
+
+        public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Namespace ns)
+        {
+            return new DeclaredType(typeIdentifier, ns) { IsResolved = false };
         }
     }
 }

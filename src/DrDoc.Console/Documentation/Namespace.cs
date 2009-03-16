@@ -34,14 +34,24 @@ namespace DrDoc.Documentation
             types.Add(type);
         }
 
+        public string FullName
+        {
+            get { return Name; }
+        }
+
         public string PrettyName
         {
             get { return Name; }
         }
 
-        public IReferencable ToExternalReference()
+        public void Resolve(IDictionary<Identifier, IReferencable> referencables)
         {
-            throw new InvalidOperationException();
+            throw new System.NotImplementedException();
+        }
+
+        public static Namespace Unresolved(NamespaceIdentifier namespaceIdentifier)
+        {
+            return new Namespace(namespaceIdentifier) { IsResolved = false };
         }
     }
 }

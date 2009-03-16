@@ -42,9 +42,13 @@ namespace DrDoc.Tests
             return new Namespace(Identifier.FromNamespace(ns));
         }
 
-        protected DeclaredType Type<T>()
+        protected DeclaredType Type<T>(Namespace ns)
         {
-            return new DeclaredType(Identifier.FromType(typeof(T)));
+            var type = new DeclaredType(Identifier.FromType(typeof(T)), ns);
+
+            ns.AddType(type);
+
+            return type;
         }
 
         protected IList<IDocumentationMember> DocMembers(params System.Type[] types)
