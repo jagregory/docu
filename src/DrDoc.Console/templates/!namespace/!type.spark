@@ -10,11 +10,12 @@
   <body>
     <namespaces />
     <types />
-    <p class="header">
+    <div class="header">
 		<strong>Namespace</strong> ${Namespace.Name}<br />
 		<strong>Type</strong> ${h(Type.PrettyName)}<br />
 		<if condition="Type.ParentType != null && Type.ParentType.PrettyName != 'object'"><strong>Parent</strong> ${WriteReference(Type.ParentType)}</if>
-	</p>
+		<if condition="Type.Interfaces.Count > 0"><strong>Interfaces</strong> ${WriteInterfaces(Type.Interfaces)}</if>
+	</div>
     <div class="sub-header">
 		<if condition="Type.Summary.Count > 0">
 			<div id="summary">

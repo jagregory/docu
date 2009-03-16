@@ -62,6 +62,22 @@ namespace DrDoc.UI
             return sb.ToString();
         }
 
+        public string WriteInterfaces(IList<IReferencable> interfaces)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var face in interfaces)
+            {
+                sb.Append(WriteReference(face));
+                sb.Append(", ");
+            }
+
+            if (sb.Length > 0)
+                sb.Length -= 2;
+
+            return sb.ToString();
+        }
+
         public string OutputMethodParams(Method method)
         {
             var sb = new StringBuilder();

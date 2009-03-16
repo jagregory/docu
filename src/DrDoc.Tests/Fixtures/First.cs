@@ -30,6 +30,14 @@ namespace Example
         }
     }
 
+    public class ClassWithInterfaces : EmptyInterface, IDisposable
+    {
+        public void Dispose()
+        {
+            
+        }
+    }
+
     public class ClassWithExplicitMethodImplementation : InterfaceForExplicitImplementation
     {
         void InterfaceForExplicitImplementation.Method()

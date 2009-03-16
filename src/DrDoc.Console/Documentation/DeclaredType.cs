@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using DrDoc.Documentation.Comments;
 using DrDoc.Documentation;
 using DrDoc.Documentation.Comments;
@@ -18,6 +19,7 @@ namespace DrDoc.Documentation
         {
             Namespace = ns;
             Summary = new List<IComment>();
+            Interfaces = new List<IReferencable>();
         }
 
         internal void AddMethod(Method method)
@@ -53,6 +55,7 @@ namespace DrDoc.Documentation
 
         public IList<IComment> Summary { get; internal set; }
         public IReferencable ParentType { get; set; }
+        public IList<IReferencable> Interfaces { get; set; }
 
         public void Sort()
         {
@@ -73,11 +76,18 @@ namespace DrDoc.Documentation
                 Namespace = type.Namespace;
                 representedType = type.representedType;
                 ParentType = type.ParentType;
+                Interfaces = type.Interfaces;
 
                 if (!Namespace.IsResolved)
                     Namespace.Resolve(referencables);
                 if (ParentType != null && !ParentType.IsResolved)
                     ParentType.Resolve(referencables);
+
+                foreach (var face in Interfaces)
+                {
+                    if (!face.IsResolved)
+                        face.Resolve(referencables);
+                }
                 
                 IsResolved = true;
             }
@@ -94,6 +104,17 @@ namespace DrDoc.Documentation
                     Identifier.FromType(type.BaseType),
                     type.BaseType,
                     Namespace.Unresolved(Identifier.FromNamespace(type.BaseType.Namespace)));
+
+            var interfaces = type.GetInterfaces();
+
+            foreach (var face in interfaces)
+            {
+                declaredType.Interfaces.Add(
+                    Unresolved(
+                        Identifier.FromType(face),
+                        face,
+                        Namespace.Unresolved(Identifier.FromNamespace(face.Namespace))));
+            }
 
             return declaredType;
         }

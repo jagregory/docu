@@ -107,6 +107,20 @@ namespace DrDoc.Tests.Documentation
         }
 
         [Test]
+        public void ShouldHaveInterfacesForTypes()
+        {
+            var members = new[]
+            {
+                Type<ClassWithInterfaces>(@"<member name=""T:Example.ClassWithInterfaces"" />"),  
+            };
+            var namespaces = model.Create(members);
+
+            namespaces[0].Types[0].Interfaces.CountShouldEqual(2);
+            namespaces[0].Types[0].Interfaces[0].PrettyName.ShouldEqual("EmptyInterface");
+            namespaces[0].Types[0].Interfaces[1].PrettyName.ShouldEqual("IDisposable");
+        }
+
+        [Test]
         public void ShouldHavePrettyNamesForGenericTypes()
         {
             var members = new[] { Type(typeof(GenericDefinition<>), @"<member name=""T:Example.GenericDefinition`1"" />") };
