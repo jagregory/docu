@@ -25,6 +25,7 @@ namespace DrDoc.Tests.Generation
                 { "summary.flattened", "<var test=\"'xxx'\" />${WriteSummary(Namespaces[0].Types[0].Summary)}"},
                 { "method.overload", "<for each=\"var method in Type.Methods\">${method.Name}(${OutputMethodParams(method)})</for>"},
                 { "method.returnType", "<for each=\"var method in Type.Methods\">${method.ReturnType.PrettyName}</for>"},
+                { "property.returnType", "<for each=\"var property in Type.Properties\">${property.ReturnType.PrettyName}</for>"},
             });
         }
 
@@ -110,6 +111,22 @@ namespace DrDoc.Tests.Generation
 
             var data = new OutputData { Type = type };
             var content = generator.Convert("method.returnType", data);
+
+            content.ShouldEqual("string");
+        }
+
+        [Test]
+        public void ShouldOutputPropertyReturnType()
+        {
+            var ns = Namespace("Example");
+            var type = Type<PropertyType>(ns);
+            var returnType = DeclaredType.Unresolved(Identifier.FromType(typeof(string)), typeof(string), Namespace("System"));
+
+            type.Properties.Add(new Property(Identifier.FromProperty(Property<PropertyType>(x => x.Property), typeof(PropertyType))));
+            type.Properties[0].ReturnType = returnType;
+
+            var data = new OutputData { Type = type };
+            var content = generator.Convert("property.returnType", data);
 
             content.ShouldEqual("string");
         }

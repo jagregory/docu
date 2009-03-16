@@ -164,7 +164,10 @@ namespace DrDoc.Documentation
                 type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
             }
 
-            var doc = new Property(Identifier.FromProperty(association.Property, association.TargetType));
+            var propertyReturnType = DeclaredType.Unresolved(Identifier.FromType(association.Property.PropertyType), association.Property.PropertyType, Namespace.Unresolved(Identifier.FromNamespace(association.Property.PropertyType.Namespace)));
+            var doc = Property.Unresolved(Identifier.FromProperty(association.Property, association.TargetType), propertyReturnType);
+
+            references.Add(propertyReturnType);
 
             if (association.Xml != null)
             {
@@ -176,6 +179,7 @@ namespace DrDoc.Documentation
                 GetReferencesFromComment(references, doc.Summary);
             }
 
+            references.Add(doc);
             type.AddProperty(doc);
         }
 

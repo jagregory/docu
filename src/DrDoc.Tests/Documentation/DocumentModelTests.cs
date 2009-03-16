@@ -210,13 +210,26 @@ namespace DrDoc.Tests.Documentation
         {
             var members = new IDocumentationMember[]
             {
-                Type<Second>(@"<member name=""T:Example.Second"" />"),
-                Property<Second>(@"<member name=""M:Example.Second.SecondProperty"" />", x => x.SecondProperty)
+                Property<Second>(@"<member name=""P:Example.Second.SecondProperty"" />", x => x.SecondProperty)
             };
             var namespaces = model.Create(members);
 
             namespaces[0].Types[0].Properties
                 .ShouldContain(x => x.Name == "SecondProperty");
+        }
+
+        [Test]
+        public void ShouldHaveReturnTypeInProperties()
+        {
+            var members = new IDocumentationMember[]
+            {
+                Property<Second>(@"<member name=""P:Example.Second.SecondProperty"" />", x => x.SecondProperty)
+            };
+            var namespaces = model.Create(members);
+            var property = namespaces[0].Types[0].Properties[0];
+
+            property.ReturnType.ShouldNotBeNull();
+            property.ReturnType.PrettyName.ShouldEqual("string");
         }
 
         [Test]
@@ -268,6 +281,20 @@ namespace DrDoc.Tests.Documentation
             ((InlineText)namespaces[0].Types[0].Methods[0].Parameters[0].Summary[0]).Text.ShouldEqual("First parameter");
             namespaces[0].Types[0].Methods[0].Parameters[1].Summary.CountShouldEqual(1);
             ((InlineText)namespaces[0].Types[0].Methods[0].Parameters[1].Summary[0]).Text.ShouldEqual("Second parameter");
+        }
+
+        [Test]
+        public void ShouldHaveReturnTypeInMethods()
+        {
+            var members = new IDocumentationMember[]
+            {
+                Method<Second>(@"<member name=""M:Example.Second.ReturnType"" />", x => x.ReturnType())
+            };
+            var namespaces = model.Create(members);
+            var method = namespaces[0].Types[0].Methods[0];
+
+            method.ReturnType.ShouldNotBeNull();
+            method.ReturnType.PrettyName.ShouldEqual("string");
         }
 
         [Test]

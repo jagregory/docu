@@ -36,6 +36,13 @@ namespace DrDoc.Tests.UI
         }
 
         [Test]
+        public void should_output_lowercase_for_bool()
+        {
+            typeof(bool).GetPrettyName()
+                .ShouldEqual("bool");
+        }
+
+        [Test]
         public void should_output_name_with_generic_args_for_generic_type_definition()
         {
             typeof(Action<>).GetPrettyName()

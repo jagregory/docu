@@ -17,6 +17,11 @@ namespace Example
 
         }
 
+        public string ReturnType()
+        {
+            return "";
+        }
+
         public string SecondProperty { get; set; }
     }
 }

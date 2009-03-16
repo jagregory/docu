@@ -42,15 +42,6 @@
 	<var publicStaticMethods="Type.Methods.Where(x => x.IsPublic && x.IsStatic)" />
 	<methods methods="publicStaticMethods" title="'Public static methods'" />
 	
-	<if condition="Type.Properties.Count() > 0">
-		<h3 class="section">Public properties</h3>
-		
-		<div id="${property.Name}" class="method" each="var property in Type.Properties">
-			<h4><strong>${h(property.Name)}</strong> <if condition="property.HasGet">get;</if> <if condition="property.HasSet">set;</if></h4>
-			<div class="content">
-				${WriteSummary(property.Summary)}
-			</div>
-		</div>
-	</if>
+	<properties properties="Type.Properties" title="'Public properties'" />
   </body>
 </html>
