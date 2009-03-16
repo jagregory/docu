@@ -118,7 +118,7 @@ namespace DrDoc.Documentation
             }
 
             var prettyName = GetPrettyName(association.Method);
-            var doc = new Method((MethodIdentifier)association.Name, prettyName);
+            var doc = new Method(Identifier.FromMethod(association.Method, association.TargetType), prettyName);
 
             if (association.Xml != null)
             {

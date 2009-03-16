@@ -170,8 +170,8 @@ namespace DrDoc.Tests.Documentation
             var method2 = Method<Second>(x => x.SecondMethod2(null, 0));
 
             namespaces[0].Types[0].Methods
-                .ShouldContain(x => x.Name == Identifier.FromMethod(method, typeof(Second)))
-                .ShouldContain(x => x.Name == Identifier.FromMethod(method2, typeof(Second)));
+                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromMethod(method, typeof(Second))))
+                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromMethod(method2, typeof(Second))));
         }
 
         [Test]

@@ -31,7 +31,7 @@ namespace DrDoc.Parsing.Model
                 parameters.Add(FromType(param.ParameterType));
             }
 
-            return new MethodIdentifier(name, parameters.ToArray(), FromType(type));
+            return new MethodIdentifier(name, parameters.ToArray(), method.IsStatic, method.IsPublic, FromType(type));
         }
 
         public static Identifier FromProperty(PropertyInfo property, Type type)
@@ -74,7 +74,7 @@ namespace DrDoc.Parsing.Model
             var methodName = GetMethodName(name);
             var parameters = GetMethodParameters(name);
 
-            return new MethodIdentifier(methodName, parameters.ToArray(), FromTypeString(typeName));
+            return new MethodIdentifier(methodName, parameters.ToArray(), false, false, FromTypeString(typeName));
         }
 
         private static TypeIdentifier FromTypeString(string name)

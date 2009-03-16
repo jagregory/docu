@@ -9,11 +9,11 @@
 	<namespaces />
     <types />
     <p class="header"><strong>Namespace</strong> ${Namespace.Name}</p>
-    <div class="content">
+    <div class="sub-header">
 		<h3 class="section">Types</h3>
 		<ul>
 			<for each="var type in Namespace.Types">
-				<li>${h(type.PrettyName)}</li>
+				<li><a href="${type.Name}.htm">${h(type.PrettyName)}</a></li>
 			</for>
 		</ul>
 	</div>

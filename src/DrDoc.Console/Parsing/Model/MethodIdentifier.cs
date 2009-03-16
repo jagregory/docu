@@ -4,12 +4,26 @@ namespace DrDoc.Parsing.Model
     {
         private readonly TypeIdentifier typeId;
         private readonly TypeIdentifier[] parameters;
+        private readonly bool isStatic;
+        private readonly bool isPublic;
 
-        public MethodIdentifier(string name, TypeIdentifier[] parameters, TypeIdentifier typeId)
+        public MethodIdentifier(string name, TypeIdentifier[] parameters, bool isStatic, bool isPublic, TypeIdentifier typeId)
             : base(name)
         {
             this.typeId = typeId;
             this.parameters = parameters;
+            this.isStatic = isStatic;
+            this.isPublic = isPublic;
+        }
+
+        public bool IsStatic
+        {
+            get { return isStatic; }
+        }
+
+        public bool IsPublic
+        {
+            get { return isPublic; }
         }
 
         public override NamespaceIdentifier CloneAsNamespace()

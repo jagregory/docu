@@ -1,4 +1,5 @@
-﻿using DrDoc.Console;
+﻿using System.Diagnostics;
+using DrDoc.Console;
 
 namespace DrDoc
 {
