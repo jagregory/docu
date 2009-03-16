@@ -48,7 +48,7 @@ namespace DrDoc.Parsing
                 var propertyMember = members[i] as UndocumentedProperty;
 
                 if (propertyMember != null && propertyMember.Match(member))
-                    members[i] = new DocumentedProperty(member, node, propertyMember.Property);
+                    members[i] = new DocumentedProperty(member, node, propertyMember.Property, propertyMember.TargetType);
             }
         }
 

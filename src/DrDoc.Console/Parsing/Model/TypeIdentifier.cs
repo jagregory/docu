@@ -17,7 +17,7 @@ namespace DrDoc.Parsing.Model
 
         public override TypeIdentifier CloneAsType()
         {
-            throw new System.NotImplementedException();
+            return this;
         }
 
         public override int CompareTo(Identifier other)

@@ -1,12 +1,22 @@
+using System.Collections.Generic;
+using DrDoc.Documentation.Comments;
+using DrDoc.Parsing.Model;
+
 namespace DrDoc.Documentation
 {
-    public class Property
+    public class Property : BaseDocumentationElement
     {
-        public Property(string name)
+        public Property(PropertyIdentifier identifier)
+            : base(identifier)
         {
-            Name = name;
+            Summary = new List<IComment>();
+            HasGet = identifier.HasGet;
+            HasSet = identifier.HasSet;
         }
 
-        public string Name { get; private set; }
+        public bool HasGet { get; private set; }
+        public bool HasSet { get; private set; }
+
+        public IList<IComment> Summary { get; internal set; }
     }
 }

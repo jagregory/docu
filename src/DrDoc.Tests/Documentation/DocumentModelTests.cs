@@ -41,11 +41,11 @@ namespace DrDoc.Tests.Documentation
             return new DocumentedMethod(Identifier.FromMethod(method, typeof(T)), xml.ToNode(), method, typeof(T));
         }
 
-        private DocumentedProperty PropertyAssociation<T>(string xml, Expression<Func<T, object>> propertyAction)
+        private DocumentedProperty Property<T>(string xml, Expression<Func<T, object>> propertyAction)
         {
             var property = ((MemberExpression)propertyAction.Body).Member as PropertyInfo;
 
-            return new DocumentedProperty(Identifier.FromProperty(property, typeof(T)), xml.ToNode(), property);
+            return new DocumentedProperty(Identifier.FromProperty(property, typeof(T)), xml.ToNode(), property, typeof(T));
         }
 
         [Test]
@@ -211,12 +211,25 @@ namespace DrDoc.Tests.Documentation
             var members = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),
-                PropertyAssociation<Second>(@"<member name=""M:Example.Second.SecondProperty"" />", x => x.SecondProperty)
+                Property<Second>(@"<member name=""M:Example.Second.SecondProperty"" />", x => x.SecondProperty)
             };
             var namespaces = model.Create(members);
 
             namespaces[0].Types[0].Properties
                 .ShouldContain(x => x.Name == "SecondProperty");
+        }
+
+        [Test]
+        public void ShouldHaveSummaryForProperties()
+        {
+            var members = new[]
+            {
+                Property<Second>(@"<member name=""P:Example.Second.SecondProperty""><summary>Second property</summary></member>", x => x.SecondProperty),
+            };
+            var namespaces = model.Create(members);
+
+            namespaces[0].Types[0].Properties[0].Summary.CountShouldEqual(1);
+            ((InlineText)namespaces[0].Types[0].Properties[0].Summary[0]).Text.ShouldEqual("Second property");
         }
 
         [Test]

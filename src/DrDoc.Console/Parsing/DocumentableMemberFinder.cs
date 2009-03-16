@@ -25,7 +25,7 @@ namespace DrDoc.Parsing
 
                 foreach (var property in type.GetProperties())
                 {
-                    members.Add(new UndocumentedProperty(Identifier.FromProperty(property, type), property));
+                    members.Add(new UndocumentedProperty(Identifier.FromProperty(property, type), property, type));
                 }
             }
 

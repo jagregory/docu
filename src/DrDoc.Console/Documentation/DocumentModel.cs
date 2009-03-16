@@ -47,19 +47,7 @@ namespace DrDoc.Documentation
 
             foreach (DocumentedProperty association in members.Where(x => x is DocumentedProperty))
             {
-                if (association.Property == null) continue;
-
-                var namespaceName = Identifier.FromNamespace(association.Property.DeclaringType.Namespace);
-                var typeName = Identifier.FromType(association.Property.DeclaringType);
-                var @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
-
-                if (@namespace == null) continue;
-
-                var type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
-
-                if (type == null) continue;
-
-                type.AddProperty(new Property(association.Property.Name));
+                AddProperty(namespaces, references, association);
             }
 
             foreach (var block in references)
@@ -163,6 +151,47 @@ namespace DrDoc.Documentation
 
             matchedAssociations.Add(association.Name, doc);
             type.AddMethod(doc);
+        }
+
+        private void AddProperty(List<Namespace> namespaces, List<IReferrer> references, DocumentedProperty association)
+        {
+            if (association.Property == null) return;
+
+            var namespaceName = Identifier.FromNamespace(association.TargetType.Namespace);
+            var typeName = Identifier.FromType(association.TargetType);
+            var @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
+
+            if (@namespace == null)
+            {
+                AddNamespace(namespaces, new DocumentedType(association.Name.CloneAsNamespace(), null, association.TargetType));
+                @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
+            }
+
+            var type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
+
+            if (type == null)
+            {
+                AddType(namespaces, references, new DocumentedType(association.Name.CloneAsType(), null, association.TargetType));
+                type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
+            }
+
+            var doc = new Property(Identifier.FromProperty(association.Property, association.TargetType));
+
+            if (association.Xml != null)
+            {
+                var summaryNode = association.Xml.SelectSingleNode("summary");
+
+                if (summaryNode != null)
+                    doc.Summary = commentContentParser.Parse(summaryNode);
+
+                foreach (var block in doc.Summary)
+                {
+                    if (block is See)
+                        references.Add((See)block);
+                }
+            }
+
+            type.AddProperty(doc);
         }
 
         private void AddNamespace(List<Namespace> namespaces, DocumentedType association)

@@ -68,7 +68,7 @@ namespace DrDoc.UI
 
             foreach (var parameter in method.Parameters)
             {
-                sb.Append(parameter.Reference.Name.ToString());
+                sb.Append(parameter.Reference.Name);
                 sb.Append(" ");
                 sb.Append(parameter.Name);
                 sb.Append(", ");

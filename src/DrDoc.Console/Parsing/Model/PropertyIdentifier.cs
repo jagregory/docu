@@ -4,20 +4,25 @@ namespace DrDoc.Parsing.Model
     {
         private readonly Identifier typeId;
 
-        public PropertyIdentifier(string name, TypeIdentifier typeId)
+        public PropertyIdentifier(string name, bool hasGet, bool hasSet, TypeIdentifier typeId)
             : base(name)
         {
             this.typeId = typeId;
+            HasGet = hasGet;
+            HasSet = hasSet;
         }
+
+        public bool HasGet { get; private set; }
+        public bool HasSet { get; private set; }
 
         public override NamespaceIdentifier CloneAsNamespace()
         {
-            throw new System.NotImplementedException();
+            return typeId.CloneAsNamespace();
         }
 
         public override TypeIdentifier CloneAsType()
         {
-            throw new System.NotImplementedException();
+            return typeId.CloneAsType();
         }
 
         public override int CompareTo(Identifier other)
