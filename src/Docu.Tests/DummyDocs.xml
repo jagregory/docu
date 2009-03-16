@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Docu.Tests</name>
+    </assembly>
+    <members>
+        <member name="T:FluentNHibernate.Mapping.IHasAttributes">
+            <summary>
+            Dictates whether a element can have attributes set on it.
+            </summary>
+        </member>
+    </members>
+</doc>
