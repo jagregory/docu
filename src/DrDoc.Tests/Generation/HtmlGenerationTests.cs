@@ -94,7 +94,7 @@ namespace DrDoc.Tests.Generation
             var data = new OutputData { Type = type };
             var content = generator.Convert("method.overload", data);
 
-            content.ShouldEqual("Method()Method(String one)"); // nasty, I know
+            content.ShouldEqual("Method()Method(string one)"); // nasty, I know
         }
     }
 }

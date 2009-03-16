@@ -82,6 +82,7 @@
     <Compile Include="Generation\HtmlGenerationTests.cs" />
     <Compile Include="Parsing\AssemblyXmlParserTests.cs" />
     <Compile Include="Generation\PatternTemplateResolverTests.cs" />
+    <Compile Include="UI\PrettyNameTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Documentation\DocumentModelTests.cs" />
     <Compile Include="Generation\TemplateTransformer_OutputDir_Tests.cs" />

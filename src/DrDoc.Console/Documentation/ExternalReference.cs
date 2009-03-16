@@ -15,7 +15,7 @@ namespace DrDoc.Documentation
             FullName = Name;
 
             if (name is TypeIdentifier)
-                FullName = name.CloneAsNamespace() + "." + Name;
+                FullName = name.CloneAsNamespace() + "." + PrettyName;
         }
 
         public string FullName { get; private set; }

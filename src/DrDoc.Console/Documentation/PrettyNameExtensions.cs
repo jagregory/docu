@@ -6,8 +6,27 @@ namespace DrDoc.Documentation
 {
     public static class PrettyNameExtensions
     {
+        public static string GetSpecialName(Type type)
+        {
+            if (type == typeof(string)) return "string";
+            if (type == typeof(int)) return "int";
+            if (type == typeof(uint)) return "uint";
+            if (type == typeof(long)) return "long";
+            if (type == typeof(ulong)) return "ulong";
+            if (type == typeof(double)) return "double";
+            if (type == typeof(float)) return "float";
+            if (type == typeof(decimal)) return "decimal";
+            if (type == typeof(short)) return "short";
+            if (type == typeof(ushort)) return "ushort";
+
+            return null;
+        }
+
         public static string GetPrettyName(this Type type)
         {
+            var specialName = GetSpecialName(type);
+            
+            if (specialName != null) return specialName;
             if (type.IsNested) return type.Name;
             if (type.IsGenericType)
             {
@@ -18,7 +37,7 @@ namespace DrDoc.Documentation
 
                 foreach (var argument in type.GetGenericArguments())
                 {
-                    sb.Append(argument.Name);
+                    sb.Append(argument.GetPrettyName());
                     sb.Append(", ");
                 }
 

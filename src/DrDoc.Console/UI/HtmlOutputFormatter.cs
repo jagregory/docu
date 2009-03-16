@@ -47,7 +47,7 @@ namespace DrDoc.UI
 
         public string Format(ExternalReference reference)
         {
-            return "<span title=\"" + reference.FullName + "\">" + Escape(reference.Name.ToString()) + "</span>";
+            return "<span title=\"" + reference.FullName + "\">" + Escape(reference.PrettyName) + "</span>";
         }
 
         public string Format(InlineCode block)
