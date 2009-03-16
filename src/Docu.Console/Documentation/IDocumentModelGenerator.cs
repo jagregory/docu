@@ -3,7 +3,7 @@ using Docu.Parsing.Model;
 
 namespace Docu.Documentation
 {
-    public interface IDocumentModel
+    public interface IDocumentModelGenerator
     {
         IList<Namespace> Create(IEnumerable<IDocumentationMember> members);
     }

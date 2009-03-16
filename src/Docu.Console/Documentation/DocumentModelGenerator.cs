@@ -8,14 +8,14 @@ using Docu.Parsing.Model;
 
 namespace Docu.Documentation
 {
-    public class DocumentModel : IDocumentModel
+    public class DocumentModelGenerator : IDocumentModelGenerator
     {
         private readonly ICommentContentParser commentContentParser;
 
         private readonly IDictionary<Identifier, IReferencable> matchedAssociations =
             new Dictionary<Identifier, IReferencable>();
 
-        public DocumentModel(ICommentContentParser commentContentParser)
+        public DocumentModelGenerator(ICommentContentParser commentContentParser)
         {
             this.commentContentParser = commentContentParser;
         }
