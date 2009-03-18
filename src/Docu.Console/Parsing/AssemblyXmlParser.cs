@@ -10,22 +10,22 @@ namespace Docu.Parsing
     public class AssemblyXmlParser : IAssemblyXmlParser
     {
         private readonly IDocumentableMemberFinder documentableMembers;
-        private readonly IDocumentModelGenerator documentModelGenerator;
+        private readonly IDocumentModel documentModel;
         private readonly IDocumentationXmlMatcher xmlMatcher;
 
-        public AssemblyXmlParser(IDocumentationXmlMatcher xmlMatcher, IDocumentModelGenerator documentModelGenerator,
+        public AssemblyXmlParser(IDocumentationXmlMatcher xmlMatcher, IDocumentModel documentModel,
                                  IDocumentableMemberFinder documentableMembers)
         {
             this.xmlMatcher = xmlMatcher;
-            this.documentModelGenerator = documentModelGenerator;
+            this.documentModel = documentModel;
             this.documentableMembers = documentableMembers;
         }
 
-        public IList<Namespace> CreateDocumentModel(IEnumerable<Assembly> assemblies, IEnumerable<string> xml)
+        public IList<AssemblyDoc> CreateDocumentModel(IEnumerable<Assembly> assemblies, IEnumerable<string> xml)
         {
             IEnumerable<IDocumentationMember> members = GetAssociations(assemblies, xml);
 
-            return documentModelGenerator.Create(members);
+            return documentModel.Create(members);
         }
 
         private IEnumerable<IDocumentationMember> GetAssociations(IEnumerable<Assembly> assemblies,

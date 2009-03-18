@@ -3,16 +3,8 @@ using Docu.Documentation;
 using Docu.Documentation.Comments;
 using Docu.Generation;
 using Docu.Parsing.Model;
-using Docu.Documentation;
-using Docu.Documentation.Comments;
-using Docu.Generation;
-using Docu.Parsing.Model;
 using Example;
 using NUnit.Framework;
-using DeclaredType=Docu.Documentation.DeclaredType;
-using Method=Docu.Documentation.Method;
-using MethodParameter=Docu.Documentation.MethodParameter;
-using Namespace=Docu.Documentation.Namespace;
 
 namespace Docu.Tests.Generation
 {
@@ -29,8 +21,7 @@ namespace Docu.Tests.Generation
                 { "namespace.simple", "${Namespaces[0].Name}"},
                 { "namespace.shortcut", "${Namespace.Name}"},
                 { "namespace.linq", "<for each=\"var ns in Namespaces.Where(x => x.Name == 'Test')\">${ns.Name}</for>"},
-                { "summary.simple", "<for each=\"var b in Namespaces[0].Types[0].Summary\">${b}</for>"},
-                { "summary.flattened", "<var test=\"'xxx'\" />${WriteSummary(Namespaces[0].Types[0].Summary)}"},
+                { "summary.simple", "${WriteSummary(Type.Summary)}"},
                 { "method.overload", "<for each=\"var method in Type.Methods\">${method.Name}(${OutputMethodParams(method)})</for>"},
                 { "method.returnType", "<for each=\"var method in Type.Methods\">${method.ReturnType.PrettyName}</for>"},
                 { "property.returnType", "<for each=\"var property in Type.Properties\">${property.ReturnType.PrettyName}</for>"},
@@ -40,7 +31,7 @@ namespace Docu.Tests.Generation
         [Test]
         public void ShouldOutputSimpleNamespace()
         {
-            var data = new OutputData { Namespaces = Namespaces("Example") };
+            var data = new OutputData { Assemblies = new[] { AssemblyNamespaces("Assembly", "Example") } };
             var content = generator.Convert("namespace.simple", data);
 
             content.ShouldEqual("Example");
@@ -58,7 +49,7 @@ namespace Docu.Tests.Generation
         [Test]
         public void ShouldOutputNamespaceThatUsesLinq()
         {
-            var data = new OutputData { Namespaces = Namespaces("Example", "Test") };
+            var data = new OutputData { Assemblies = new[] { AssemblyNamespaces("Assembly", "Example", "Test") } };
             var content = generator.Convert("namespace.linq", data);
 
             content.ShouldEqual("Test");
@@ -70,22 +61,9 @@ namespace Docu.Tests.Generation
             var ns = Namespace("Example");
             var type = Type<First>(ns);
             type.Summary.Add(new InlineText("Hello world!"));
-            var data = new OutputData { Namespaces = new List<Docu.Documentation.Namespace> { ns } };
+            var data = new OutputData { Type = type };
 
             var content = generator.Convert("summary.simple", data);
-
-            content.ShouldEqual("Hello world!");
-        }
-
-        [Test]
-        public void ShouldOutputFlattenedSummary()
-        {
-            var ns = Namespace("Example");
-            var type = Type<First>(ns);
-            type.Summary.Add(new InlineText("Hello world!"));
-            var data = new OutputData { Namespaces = new List<Namespace> { ns } };
-
-            var content = generator.Convert("summary.flattened", data);
 
             content.ShouldEqual("Hello world!");
         }

@@ -6,6 +6,6 @@ namespace Docu.Parsing
 {
     public interface IAssemblyXmlParser
     {
-        IList<Namespace> CreateDocumentModel(IEnumerable<Assembly> assemblies, IEnumerable<string> xml);
+        IList<AssemblyDoc> CreateDocumentModel(IEnumerable<Assembly> assemblies, IEnumerable<string> xml);
     }
 }

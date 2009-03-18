@@ -6,10 +6,10 @@ namespace Docu.Documentation
     {
         protected readonly Identifier identifier;
 
-        protected BaseDocumentationElement(Identifier name)
+        protected BaseDocumentationElement(Identifier identifier)
         {
-            Name = name.ToString();
-            identifier = name;
+            Name = identifier.ToString();
+            this.identifier = identifier;
             IsResolved = true;
         }
 

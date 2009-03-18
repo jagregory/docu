@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
@@ -24,7 +25,9 @@ namespace Docu.UI
 
         public IList<Namespace> Namespaces
         {
-            get { return ViewData.Namespaces; }
+            get { return (from a in ViewData.Assemblies
+                          from n in a.Namespaces
+                          select n).ToList(); }
         }
 
         public Namespace Namespace

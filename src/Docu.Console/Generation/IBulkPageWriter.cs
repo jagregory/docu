@@ -5,6 +5,6 @@ namespace Docu.Generation
 {
     public interface IBulkPageWriter
     {
-        void CreatePagesFromDirectory(string templatePath, string destination, IList<Namespace> namespaces);
+        void CreatePagesFromDirectory(string templatePath, string destination, IList<AssemblyDoc> assemblies);
     }
 }

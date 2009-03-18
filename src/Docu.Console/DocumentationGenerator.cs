@@ -67,7 +67,7 @@ namespace Docu
 
         public void Generate()
         {
-            IList<Namespace> documentModel = parser.CreateDocumentModel(assemblies, xmls);
+            var documentModel = parser.CreateDocumentModel(assemblies, xmls);
 
             writer.CreatePagesFromDirectory(templatePath, outputPath, documentModel);
 

@@ -13,7 +13,7 @@ namespace Docu.Generation
             this.writer = writer;
         }
 
-        public void CreatePagesFromDirectory(string templatePath, string destination, IList<Namespace> namespaces)
+        public void CreatePagesFromDirectory(string templatePath, string destination, IList<AssemblyDoc> assemblies)
         {
             writer.SetTemplatePath(templatePath);
 
@@ -21,7 +21,7 @@ namespace Docu.Generation
             {
                 if (IsPartial(file)) continue;
 
-                writer.CreatePages(file, destination, namespaces);
+                writer.CreatePages(file, destination, assemblies);
             }
         }
 

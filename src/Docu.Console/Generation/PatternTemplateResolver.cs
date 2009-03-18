@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Docu.Documentation;
 
 namespace Docu.Generation
@@ -9,20 +10,17 @@ namespace Docu.Generation
     {
         private bool HACK_inNamespace;
 
-        public IList<TemplateMatch> Resolve(string path, IList<Namespace> namespaces)
+        public IList<TemplateMatch> Resolve(string path, IList<AssemblyDoc> assemblies)
         {
-            string current = path;
+            var current = path;
 
             if (current.Contains("\\"))
-            {
                 current = current.Substring(0, current.IndexOf('\\'));
-            }
 
-            return ResolveRecursive(current, path, path, namespaces, new OutputData { Namespaces = namespaces });
+            return ResolveRecursive(current, path, path, assemblies, new OutputData { Assemblies = assemblies });
         }
 
-        private IList<TemplateMatch> ResolveRecursive(string current, string outputPath, string templatePath,
-                                                      IList<Namespace> namespaces, OutputData data)
+        private IList<TemplateMatch> ResolveRecursive(string current, string outputPath, string templatePath, IEnumerable<AssemblyDoc> assemblies, OutputData data)
         {
             var matches = new List<TemplateMatch>();
 
@@ -30,31 +28,33 @@ namespace Docu.Generation
             {
                 if (current == "!namespace.spark")
                 {
-                    foreach (Namespace ns in namespaces)
+                    foreach (var ns in from a in assemblies
+                                       from n in a.Namespaces
+                                       select n)
                     {
                         matches.Add(
                             new TemplateMatch(
                                 outputPath.Replace(".spark", ".htm").Replace("!namespace", ns.Name),
                                 templatePath,
-                                new OutputData { Namespaces = data.Namespaces, Namespace = ns, Type = data.Type }
+                                new OutputData { Assemblies = data.Assemblies, Namespace = ns, Type = data.Type }
                                 ));
                     }
                 }
                 else if (current == "!type.spark")
                 {
-                    foreach (Namespace ns in namespaces)
+                    foreach (var found in from a in assemblies
+                                       from n in a.Namespaces
+                                       from t in n.Types
+                                       select new { Type = t, Namespace = n})
                     {
-                        foreach (DeclaredType type in ns.Types)
-                        {
-                            string name = HACK_inNamespace ? type.Name : ns.Name + "." + type.Name;
+                        string name = HACK_inNamespace ? found.Type.Name : found.Namespace.Name + "." + found.Type.Name;
 
-                            matches.Add(
-                                new TemplateMatch(
-                                    outputPath.Replace(".spark", ".htm").Replace("!type", name),
-                                    templatePath,
-                                    new OutputData { Namespaces = data.Namespaces, Namespace = ns, Type = type }
-                                    ));
-                        }
+                        matches.Add(
+                            new TemplateMatch(
+                                outputPath.Replace(".spark", ".htm").Replace("!type", name),
+                                templatePath,
+                                new OutputData { Assemblies = data.Assemblies, Namespace = found.Namespace, Type = found.Type }
+                                ));
                     }
                 }
                 else
@@ -63,7 +63,7 @@ namespace Docu.Generation
                             outputPath.Replace(".spark", ".htm"),
                             templatePath,
                             new OutputData
-                            { Namespaces = data.Namespaces, Namespace = data.Namespace, Type = data.Type }
+                            { Assemblies = data.Assemblies, Namespace = data.Namespace, Type = data.Type }
                             ));
             }
             else
@@ -73,10 +73,10 @@ namespace Docu.Generation
                     string[] parts = templatePath.Replace(current, "").Split(new[] { '\\' },
                                                                              StringSplitOptions.RemoveEmptyEntries);
 
-                    matches.AddRange(ResolveRecursive(parts[0], templatePath, templatePath, namespaces,
+                    matches.AddRange(ResolveRecursive(parts[0], templatePath, templatePath, assemblies,
                                                       new OutputData
                                                       {
-                                                          Namespaces = data.Namespaces,
+                                                          Assemblies = data.Assemblies,
                                                           Namespace = data.Namespace,
                                                           Type = data.Type
                                                       }));
@@ -90,17 +90,23 @@ namespace Docu.Generation
 
                     HACK_inNamespace = false;
 
-                    foreach (Namespace ns in namespaces)
+                    foreach (var found in from a in assemblies
+                                       from n in a.Namespaces
+                                       select new { Assembly = a, Namespace = n })
                     {
-                        string nsPath = templatePath.Replace(current, ns.Name);
+                        string nsPath = templatePath.Replace(current, found.Namespace.Name);
 
                         HACK_inNamespace = true;
 
-                        matches.AddRange(ResolveRecursive(parts[0], nsPath, templatePath, new List<Namespace> { ns },
+                        var assembly = new AssemblyDoc(found.Assembly.Name);
+
+                        assembly.Namespaces.Add(found.Namespace);
+
+                        matches.AddRange(ResolveRecursive(parts[0], nsPath, templatePath, new List<AssemblyDoc> { assembly }, // bug
                                                           new OutputData
                                                           {
-                                                              Namespaces = data.Namespaces,
-                                                              Namespace = ns,
+                                                              Assemblies = data.Assemblies,
+                                                              Namespace = found.Namespace,
                                                               Type = data.Type
                                                           }));
                     }
@@ -112,21 +118,21 @@ namespace Docu.Generation
                     string[] parts = templatePath.Replace(current, "").Split(new[] { '\\' },
                                                                              StringSplitOptions.RemoveEmptyEntries);
 
-                    foreach (Namespace ns in namespaces)
+                    foreach (var found in from a in assemblies
+                                          from n in a.Namespaces
+                                          from t in n.Types
+                                          select new { Type = t, Namespace = n })
                     {
-                        foreach (DeclaredType type in ns.Types)
-                        {
-                            string typePath = templatePath.Replace(current, ns.Name + "." + type.Name);
+                        string typePath = templatePath.Replace(current, found.Namespace.Name + "." + found.Type.Name);
 
-                            matches.AddRange(ResolveRecursive(parts[0], typePath, templatePath,
-                                                              new List<Namespace> { ns },
-                                                              new OutputData
-                                                              {
-                                                                  Namespaces = data.Namespaces,
-                                                                  Namespace = ns,
-                                                                  Type = type
-                                                              }));
-                        }
+                        matches.AddRange(ResolveRecursive(parts[0], typePath, templatePath,
+                                                          new List<AssemblyDoc> {  }, // bug
+                                                          new OutputData
+                                                          {
+                                                              Assemblies = data.Assemblies,
+                                                              Namespace = found.Namespace,
+                                                              Type = found.Type
+                                                          }));
                     }
                 }
             }

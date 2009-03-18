@@ -5,7 +5,7 @@ namespace Docu.Generation
 {
     public interface IPageWriter
     {
-        void CreatePages(string templateDirectory, string destination, IList<Namespace> namespaces);
+        void CreatePages(string templateDirectory, string destination, IList<AssemblyDoc> assemblies);
         void SetTemplatePath(string templateDirectory);
     }
 }

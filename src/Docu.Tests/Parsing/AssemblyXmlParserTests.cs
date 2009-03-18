@@ -34,7 +34,7 @@ namespace Docu.Tests.Parsing
         public void TypesFromAssembliesPassedToAssociator()
         {
             var matcher = MockRepository.GenerateMock<IDocumentationXmlMatcher>();
-            var model = MockRepository.GenerateStub<IDocumentModelGenerator>();
+            var model = MockRepository.GenerateStub<IDocumentModel>();
             var documentableMembers = MockRepository.GenerateStub<IDocumentableMemberFinder>();
             var parser = new AssemblyXmlParser(matcher, model, documentableMembers);
             var assemblies = new[] {typeof(First).Assembly, typeof(AssemblyXmlParserTests).Assembly};
@@ -58,7 +58,7 @@ namespace Docu.Tests.Parsing
         public void XmlNodesFromStringPassedToAssociator()
         {
             var matcher = MockRepository.GenerateMock<IDocumentationXmlMatcher>();
-            var model = MockRepository.GenerateStub<IDocumentModelGenerator>();
+            var model = MockRepository.GenerateStub<IDocumentModel>();
             var documentableMembers = MockRepository.GenerateStub<IDocumentableMemberFinder>();
             var parser = new AssemblyXmlParser(matcher, model, documentableMembers);
             var assemblies = new Assembly[0];
@@ -77,7 +77,7 @@ namespace Docu.Tests.Parsing
         public void ShouldPassAssocationsToTransformer()
         {
             var matcher = MockRepository.GenerateStub<IDocumentationXmlMatcher>();
-            var model = MockRepository.GenerateMock<IDocumentModelGenerator>();
+            var model = MockRepository.GenerateMock<IDocumentModel>();
             var documentableMembers = MockRepository.GenerateStub<IDocumentableMemberFinder>();
             var parser = new AssemblyXmlParser(matcher, model, documentableMembers);
             var assemblies = new Assembly[0];

@@ -20,9 +20,9 @@ namespace Docu.Generation
             this.writer = writer;
         }
 
-        public void CreatePages(string templateDirectory, string destination, IList<Namespace> namespaces)
+        public void CreatePages(string templateDirectory, string destination, IList<AssemblyDoc> assemblies)
         {
-            IList<TemplateMatch> paths = patternTemplateResolver.Resolve(templateDirectory, namespaces);
+            IList<TemplateMatch> paths = patternTemplateResolver.Resolve(templateDirectory, assemblies);
 
             foreach (TemplateMatch path in paths)
             {
