@@ -1,54 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
-using Docu.Parsing;
 using Docu.Parsing.Model;
 using Example;
 using Example.Deep;
 using NUnit.Framework;
-using Rhino.Mocks;
 
-namespace Docu.Tests.Documentation
+namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 {
     [TestFixture]
-    public class DocumentModelGeneratorTests : BaseFixture
+    public class General : BaseDocumentModelGeneratorFixture
     {
-        private DocumentModel model;
-
-        [SetUp]
-        public void CreateTransformer()
-        {
-            model = new DocumentModel(new CommentContentParser());
-        }
-
-        private DocumentedType Type<T>(string xml)
-        {
-            return new DocumentedType(Identifier.FromType(typeof(T)), xml.ToNode(), typeof(T));
-        }
-
-        private DocumentedType Type(Type type, string xml)
-        {
-            return new DocumentedType(Identifier.FromType(type), xml.ToNode(), type);
-        }
-
-        private DocumentedMethod Method<T>(string xml, Expression<Action<T>> methodAction)
-        {
-            var method = ((MethodCallExpression)methodAction.Body).Method;
-
-            return new DocumentedMethod(Identifier.FromMethod(method, typeof(T)), xml.ToNode(), method, typeof(T));
-        }
-
-        private DocumentedProperty Property<T>(string xml, Expression<Func<T, object>> propertyAction)
-        {
-            var property = ((MemberExpression)propertyAction.Body).Member as PropertyInfo;
-
-            return new DocumentedProperty(Identifier.FromProperty(property, typeof(T)), xml.ToNode(), property, typeof(T));
-        }
-
         [Test]
         public void ShouldBuildNamespaces()
         {
@@ -157,22 +120,6 @@ namespace Docu.Tests.Documentation
         }
 
         [Test]
-        public void ShouldHaveSummaryForType()
-        {
-            var members = new[]
-            {
-                Type<First>(@"<member name=""T:Example.First""><summary>First summary</summary></member>"),
-                Type<Second>(@"<member name=""T:Example.Second""><summary>Second summary</summary></member>"),
-            };
-            var namespaces = model.Create(members);
-
-            namespaces[0].Types[0].Summary.CountShouldEqual(1);
-            ((InlineText)namespaces[0].Types[0].Summary[0]).Text.ShouldEqual("First summary");
-            namespaces[0].Types[1].Summary.CountShouldEqual(1);
-            ((InlineText)namespaces[0].Types[1].Summary[0]).Text.ShouldEqual("Second summary");
-        }
-
-        [Test]
         public void ShouldntHaveAnyUnresolvedReferencesLeftIfAllValid()
         {
             var members = new[]
@@ -195,21 +142,6 @@ namespace Docu.Tests.Documentation
             ((See)namespaces[0].Types[0].Summary[0]).Reference.IsExternal.ShouldBeTrue();
             ((See)namespaces[0].Types[0].Summary[0]).Reference.Name.ShouldEqual("First");
             ((See)namespaces[0].Types[0].Summary[0]).Reference.FullName.ShouldEqual("Example.First");
-        }
-
-        [Test]
-        public void ShouldPassSummaryToContentParser()
-        {
-            var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
-            var members = new[] { Type<First>(@"<member name=""T:Example.First""><summary>First summary</summary></member>") };
-
-            contentParser.Stub(x => x.Parse(null))
-                .IgnoreArguments()
-                .Return(new List<IComment>());
-            
-            new DocumentModel(contentParser).Create(members);
-
-            contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[0]));
         }
 
         [Test]
@@ -241,37 +173,6 @@ namespace Docu.Tests.Documentation
         }
 
         [Test]
-        public void ShouldHaveSummaryForMethods()
-        {
-            var members = new[]
-            {
-                Method<Second>(@"<member name=""M:Example.Second.SecondMethod""><summary>Second method</summary></member>", x => x.SecondMethod()),
-                Method<Second>(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)""><summary>Second method 2</summary></member>", x => x.SecondMethod2(null, 0))
-            };
-            var namespaces = model.Create(members);
-
-            namespaces[0].Types[0].Methods[0].Summary.CountShouldEqual(1);
-            ((InlineText)namespaces[0].Types[0].Methods[0].Summary[0]).Text.ShouldEqual("Second method");
-            namespaces[0].Types[0].Methods[1].Summary.CountShouldEqual(1);
-            ((InlineText)namespaces[0].Types[0].Methods[1].Summary[0]).Text.ShouldEqual("Second method 2");
-        }
-
-        [Test]
-        public void ShouldPassMethodSummaryToContentParser()
-        {
-            var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
-            var members = new[] { Method<Second>(@"<member name=""M:Example.Second.SecondMethod""><summary>First summary</summary></member>", x => x.SecondMethod()) };
-
-            contentParser.Stub(x => x.Parse(null))
-                .IgnoreArguments()
-                .Return(new List<IComment>());
-
-            new DocumentModel(contentParser).Create(members);
-
-            contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[0]));
-        }
-
-        [Test]
         public void ShouldHavePropertiesInTypes()
         {
             var members = new IDocumentationMember[]
@@ -299,19 +200,6 @@ namespace Docu.Tests.Documentation
         }
 
         [Test]
-        public void ShouldHaveSummaryForProperties()
-        {
-            var members = new[]
-            {
-                Property<Second>(@"<member name=""P:Example.Second.SecondProperty""><summary>Second property</summary></member>", x => x.SecondProperty),
-            };
-            var namespaces = model.Create(members);
-
-            namespaces[0].Types[0].Properties[0].Summary.CountShouldEqual(1);
-            ((InlineText)namespaces[0].Types[0].Properties[0].Summary[0]).Text.ShouldEqual("Second property");
-        }
-
-        [Test]
         public void ShouldHaveParametersInMethods()
         {
             var members = new IDocumentationMember[]
@@ -331,25 +219,6 @@ namespace Docu.Tests.Documentation
         }
 
         [Test]
-        public void ShouldHaveSummaryForMethodParameter()
-        {
-            var members = new[]
-            {
-                Method<Second>(@"
-                <member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"">
-                  <param name=""one"">First parameter</param>
-                  <param name=""two"">Second parameter</param>
-                </member>", x => x.SecondMethod2(null, 0))
-            };
-            var namespaces = model.Create(members);
-
-            namespaces[0].Types[0].Methods[0].Parameters[0].Summary.CountShouldEqual(1);
-            ((InlineText)namespaces[0].Types[0].Methods[0].Parameters[0].Summary[0]).Text.ShouldEqual("First parameter");
-            namespaces[0].Types[0].Methods[0].Parameters[1].Summary.CountShouldEqual(1);
-            ((InlineText)namespaces[0].Types[0].Methods[0].Parameters[1].Summary[0]).Text.ShouldEqual("Second parameter");
-        }
-
-        [Test]
         public void ShouldHaveReturnTypeInMethods()
         {
             var members = new IDocumentationMember[]
@@ -361,29 +230,6 @@ namespace Docu.Tests.Documentation
 
             method.ReturnType.ShouldNotBeNull();
             method.ReturnType.PrettyName.ShouldEqual("string");
-        }
-
-        [Test]
-        public void ShouldPassMethodParameterSummaryToContentParser()
-        {
-            var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
-            var members = new[]
-            {
-                Method<Second>(@"
-                <member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"">
-                  <param name=""one"">First parameter</param>
-                  <param name=""two"">Second parameter</param>
-                </member>", x => x.SecondMethod2(null, 0))
-            };
-
-            contentParser.Stub(x => x.Parse(null))
-                .IgnoreArguments()
-                .Return(new List<IComment>());
-
-            new DocumentModel(contentParser).Create(members);
-
-            contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[0]));
-            contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[1]));
         }
     }
 }

@@ -93,6 +93,11 @@ namespace Docu.Documentation
             properties.Sort((x, y) => x.Name.CompareTo(y.Name));
         }
 
+        public override string ToString()
+        {
+            return base.ToString() + " { Name = '" + Name + "'}";
+        }
+
         public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Type type, Namespace ns)
         {
             var declaredType = new DeclaredType(typeIdentifier, ns) { IsResolved = false, representedType = type };

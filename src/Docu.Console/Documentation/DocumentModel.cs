@@ -109,10 +109,12 @@ namespace Docu.Documentation
                 GetReferencesFromComment(references, doc.Summary);
             }
 
-            foreach (ParameterInfo parameter in association.Method.GetParameters())
+            foreach (var parameter in association.Method.GetParameters())
             {
-                DeclaredType reference = DeclaredType.Unresolved(Identifier.FromType(parameter.ParameterType),
-                                                                 parameter.ParameterType, @namespace);
+                var reference = DeclaredType.Unresolved(
+                    Identifier.FromType(parameter.ParameterType),
+                    parameter.ParameterType,
+                    Namespace.Unresolved(Identifier.FromNamespace(parameter.ParameterType.Namespace)));
                 var docParam = new MethodParameter(parameter.Name, reference);
 
                 references.Add(reference);

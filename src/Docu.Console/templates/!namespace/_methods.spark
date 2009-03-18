@@ -11,7 +11,7 @@
 					<td></td>
 				</tr>
 				<tr each="var param in method.Parameters">
-					<td><code>${WriteReference(param.Reference)} ${param.Name}:</code></td>
+					<td><code>${WriteReference(param.Reference)} ${param.Name}</code></td>
 					<td>${WriteSummary(param.Summary)}</td>
 				</tr>
 			</table>

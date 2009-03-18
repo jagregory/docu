@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Docu.Console;
+﻿using Docu.Console;
 
 namespace Docu
 {
@@ -7,7 +6,6 @@ namespace Docu
     {
         private static void Main(string[] args)
         {
-            Debugger.Break();
             ConsoleApplication.Run(args);
         }
     }

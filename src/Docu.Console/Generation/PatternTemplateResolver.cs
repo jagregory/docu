@@ -11,7 +11,7 @@ namespace Docu.Generation
     {
         private bool HACK_inNamespace;
         private readonly List<TemplateMatch> matches = new List<TemplateMatch>();
-        private IEnumerable<Assembly> usedAssemblies;
+        private IEnumerable<Assembly> usedAssemblies = new Assembly[0];
 
         public IList<TemplateMatch> Resolve(string path, IList<Namespace> namespaces)
         {
