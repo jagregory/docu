@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
@@ -23,11 +25,19 @@ namespace Docu.UI
     {
         protected readonly IOutputFormatter Formatter = new HtmlOutputFormatter();
 
+        public IList<Assembly> Assemblies
+        {
+            get { return ViewData.Assemblies; }
+        }
+
         public IList<Namespace> Namespaces
         {
-            get { return (from a in ViewData.Assemblies
-                          from n in a.Namespaces
-                          select n).ToList(); }
+            get { return ViewData.Namespaces; }
+        }
+
+        public IList<DeclaredType> Types
+        {
+            get { return ViewData.Types; }
         }
 
         public Namespace Namespace
@@ -40,7 +50,19 @@ namespace Docu.UI
             get { return ViewData.Type; }
         }
 
-        public OutputData ViewData { get; set; }
+        public ViewData ViewData { get; set; }
+
+        public string WriteProductName(Assembly assembly)
+        {
+            var info = FileVersionInfo.GetVersionInfo(assembly.Location);
+            
+            return info.ProductName;
+        }
+
+        public string WriteVersion(Assembly assembly)
+        {
+            return assembly.GetName().Version.ToString();
+        }
 
         public string h(string content)
         {

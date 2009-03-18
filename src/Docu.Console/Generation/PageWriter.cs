@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Docu.Documentation;
 using Docu.IO;
 
@@ -12,27 +14,26 @@ namespace Docu.Generation
         private readonly IOutputWriter writer;
         private string templatePath;
 
-        public PageWriter(IOutputGenerator generator, IOutputWriter writer,
-                          IPatternTemplateResolver patternTemplateResolver)
+        public PageWriter(IOutputGenerator generator, IOutputWriter writer, IPatternTemplateResolver patternTemplateResolver)
         {
             this.generator = generator;
             this.patternTemplateResolver = patternTemplateResolver;
             this.writer = writer;
         }
 
-        public void CreatePages(string templateDirectory, string destination, IList<AssemblyDoc> assemblies)
+        public void CreatePages(string templateDirectory, string destination, IList<Namespace> namespaces)
         {
-            IList<TemplateMatch> paths = patternTemplateResolver.Resolve(templateDirectory, assemblies);
+            var paths = patternTemplateResolver.Resolve(templateDirectory, namespaces);
 
-            foreach (TemplateMatch path in paths)
+            foreach (var path in paths)
             {
-                string output = generator.Convert(path.TemplatePath, path.Data);
-                string outputDir = Path.GetDirectoryName(path.OutputPath);
-                string outputPath = path.OutputPath;
+                var output = generator.Convert(path.TemplatePath, path.Data);
+                var outputDir = Path.GetDirectoryName(path.OutputPath);
+                var outputPath = path.OutputPath;
 
                 if (!string.IsNullOrEmpty(destination))
                 {
-                    string outputFilename = Path.GetFileName(path.OutputPath);
+                    var outputFilename = Path.GetFileName(path.OutputPath);
 
                     if (!string.IsNullOrEmpty(templatePath))
                         outputDir = outputDir.Replace(templatePath, destination);
@@ -52,6 +53,11 @@ namespace Docu.Generation
         public void SetTemplatePath(string templateDirectory)
         {
             templatePath = templateDirectory;
+        }
+
+        public void SetAssemblies(IEnumerable<Assembly> assemblies)
+        {
+            patternTemplateResolver.SetAssemblies(assemblies);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Docu.Parsing
             this.documentableMembers = documentableMembers;
         }
 
-        public IList<AssemblyDoc> CreateDocumentModel(IEnumerable<Assembly> assemblies, IEnumerable<string> xml)
+        public IList<Namespace> CreateDocumentModel(IEnumerable<Assembly> assemblies, IEnumerable<string> xml)
         {
             IEnumerable<IDocumentationMember> members = GetAssociations(assemblies, xml);
 

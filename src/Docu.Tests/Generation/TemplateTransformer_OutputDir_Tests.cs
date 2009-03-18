@@ -26,17 +26,17 @@ namespace Docu.Tests.Generation
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new PageWriter(generator, writer, resolver);
-            var assemblies = new AssemblyDoc[0];
+            var namespaces = new Namespace[0];
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
-                .Return(new List<TemplateMatch> { new TemplateMatch("simple.htm", "simple.spark", new OutputData()) });
+                .Return(new List<TemplateMatch> { new TemplateMatch("simple.htm", "simple.spark", new ViewData()) });
 
             generator.Stub(x => x.Convert(null, null))
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("simple.spark", "output", assemblies);
+            transformer.CreatePages("simple.spark", "output", namespaces);
 
             writer.AssertWasCalled(x => x.WriteFile("output\\simple.htm", "content"));
         }
@@ -48,21 +48,21 @@ namespace Docu.Tests.Generation
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new PageWriter(generator, writer, resolver);
-            var assemblies = new[] { AssemblyNamespaces("One", "Two") };
+            var namespaces = Namespaces("One", "Two");
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch>
                 {
-                    new TemplateMatch("One.htm", "!namespace.spark", new OutputData()),
-                    new TemplateMatch("Two.htm", "!namespace.spark", new OutputData())
+                    new TemplateMatch("One.htm", "!namespace.spark", new ViewData()),
+                    new TemplateMatch("Two.htm", "!namespace.spark", new ViewData())
                 });
 
             generator.Stub(x => x.Convert(null, null))
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("!namespace.spark", "output", assemblies);
+            transformer.CreatePages("!namespace.spark", "output", namespaces);
 
             writer.AssertWasCalled(x => x.WriteFile("output\\One.htm", "content"));
             writer.AssertWasCalled(x => x.WriteFile("output\\Two.htm", "content"));
@@ -75,24 +75,24 @@ namespace Docu.Tests.Generation
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new PageWriter(generator, writer, resolver);
-            var assemblies = new[] { AssemblyNamespaces("Assembly", "One", "Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            Type<First>(assemblies[0].Namespaces[0]);
-            Type<Second>(assemblies[0].Namespaces[1]);
+            Type<First>(namespaces[0]);
+            Type<Second>(namespaces[1]);
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch>
                 {
-                    new TemplateMatch("One.First.htm", "!type.spark", new OutputData()),
-                    new TemplateMatch("Two.Second.htm", "!type.spark", new OutputData())
+                    new TemplateMatch("One.First.htm", "!type.spark", new ViewData()),
+                    new TemplateMatch("Two.Second.htm", "!type.spark", new ViewData())
                 });
 
             generator.Stub(x => x.Convert(null, null))
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("!type.spark", "output", assemblies);
+            transformer.CreatePages("!type.spark", "output", namespaces);
 
             writer.AssertWasCalled(x => x.WriteFile("output\\One.First.htm", "content"));
             writer.AssertWasCalled(x => x.WriteFile("output\\Two.Second.htm", "content"));
@@ -105,14 +105,14 @@ namespace Docu.Tests.Generation
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new PageWriter(generator, writer, resolver);
-            var assemblies = new[] { AssemblyNamespaces("Assembly", "One", "Two") };
+            var namespaces = Namespaces("One", "Two");
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch>
                 {
-                    new TemplateMatch("One\\template.htm", "!namespace\\template.spark", new OutputData()),
-                    new TemplateMatch("Two\\template.htm", "!namespace\\template.spark", new OutputData())
+                    new TemplateMatch("One\\template.htm", "!namespace\\template.spark", new ViewData()),
+                    new TemplateMatch("Two\\template.htm", "!namespace\\template.spark", new ViewData())
                 });
 
             writer.Stub(x => x.Exists(null))
@@ -123,7 +123,7 @@ namespace Docu.Tests.Generation
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("!namespace\\template.spark", "output", assemblies);
+            transformer.CreatePages("!namespace\\template.spark", "output", namespaces);
 
             writer.AssertWasCalled(x => x.CreateDirectory("output\\One"));
             writer.AssertWasCalled(x => x.WriteFile("output\\One\\template.htm", "content"));
@@ -138,17 +138,17 @@ namespace Docu.Tests.Generation
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new PageWriter(generator, writer, resolver);
-            var assemblies = new[] { AssemblyNamespaces("Assembly", "One", "Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            Type<First>(assemblies[0].Namespaces[0]);
-            Type<Second>(assemblies[0].Namespaces[1]);
+            Type<First>(namespaces[0]);
+            Type<Second>(namespaces[1]);
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch>
                 {
-                    new TemplateMatch("One.First\\template.htm", "!type\\template.spark", new OutputData()),
-                    new TemplateMatch("Two.Second\\template.htm", "!type\\template.spark", new OutputData()),
+                    new TemplateMatch("One.First\\template.htm", "!type\\template.spark", new ViewData()),
+                    new TemplateMatch("Two.Second\\template.htm", "!type\\template.spark", new ViewData()),
                 });
 
             writer.Stub(x => x.Exists(null))
@@ -159,7 +159,7 @@ namespace Docu.Tests.Generation
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("!type\\template.spark", "output", assemblies);
+            transformer.CreatePages("!type\\template.spark", "output", namespaces);
 
             writer.AssertWasCalled(x => x.CreateDirectory("output\\One.First"));
             writer.AssertWasCalled(x => x.WriteFile("output\\One.First\\template.htm", "content"));
@@ -174,20 +174,20 @@ namespace Docu.Tests.Generation
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new PageWriter(generator, writer, resolver);
-            var assemblies = new[] { AssemblyNamespaces("One", "Two") };
+            var namespaces = Namespaces("One", "Two");
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch>
                 {
-                    new TemplateMatch("One\\test.htm", "", new OutputData()),
-                    new TemplateMatch("Two\\test.htm", "", new OutputData()),
+                    new TemplateMatch("One\\test.htm", "", new ViewData()),
+                    new TemplateMatch("Two\\test.htm", "", new ViewData()),
                 });
             generator.Stub(x => x.Convert(null, null))
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("!namespace\\test.spark", "output", assemblies);
+            transformer.CreatePages("!namespace\\test.spark", "output", namespaces);
 
             writer.AssertWasCalled(x => x.WriteFile("output\\One\\test.htm", "content"));
             writer.AssertWasCalled(x => x.WriteFile("output\\Two\\test.htm", "content"));
@@ -200,16 +200,16 @@ namespace Docu.Tests.Generation
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new PageWriter(generator, writer, resolver);
-            var assemblies = new AssemblyDoc[0];
+            var namespaces = new Namespace[0];
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
-                .Return(new List<TemplateMatch> { new TemplateMatch("directory\\test.htm", "", new OutputData()) });
+                .Return(new List<TemplateMatch> { new TemplateMatch("directory\\test.htm", "", new ViewData()) });
             generator.Stub(x => x.Convert(null, null))
                 .IgnoreArguments()
                 .Return("content");
 
-            transformer.CreatePages("directory\\test.spark", "output", assemblies);
+            transformer.CreatePages("directory\\test.spark", "output", namespaces);
 
             writer.AssertWasCalled(x => x.WriteFile("output\\directory\\test.htm", "content"));
         }
@@ -221,18 +221,18 @@ namespace Docu.Tests.Generation
             var writer = MockRepository.GenerateMock<IOutputWriter>();
             var resolver = MockRepository.GenerateStub<IPatternTemplateResolver>();
             var transformer = new PageWriter(generator, writer, resolver);
-            var assemblies = new AssemblyDoc[0];
+            var namespaces = new Namespace[0];
 
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
-                .Return(new List<TemplateMatch> { new TemplateMatch("templates\\simple.htm", "templates\\simple.spark", new OutputData()) });
+                .Return(new List<TemplateMatch> { new TemplateMatch("templates\\simple.htm", "templates\\simple.spark", new ViewData()) });
 
             generator.Stub(x => x.Convert(null, null))
                 .IgnoreArguments()
                 .Return("content");
 
             transformer.SetTemplatePath("templates");
-            transformer.CreatePages("templates\\simple.spark", "output", assemblies);
+            transformer.CreatePages("templates\\simple.spark", "output", namespaces);
 
             writer.AssertWasCalled(x => x.WriteFile("output\\simple.htm", "content"));
         }

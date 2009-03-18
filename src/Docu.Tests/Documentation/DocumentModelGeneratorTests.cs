@@ -57,9 +57,7 @@ namespace Docu.Tests.Documentation
                 Type<First>(@"<member name=""T:Example.First"" />"),  
                 Type<DeepFirst>(@"<member name=""T:Example.Deep.DeepFirst"" />"),
             };
-            var namespaces = from a in model.Create(members)
-                             from n in a.Namespaces
-                             select n;
+            var namespaces = model.Create(members);
 
             namespaces.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromNamespace("Example")));
             namespaces.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromNamespace("Example.Deep")));
@@ -74,9 +72,7 @@ namespace Docu.Tests.Documentation
                 Type<Second>(@"<member name=""T:Example.Second"" />"),  
                 Type<DeepFirst>(@"<member name=""T:Example.Deep.DeepFirst"" />")
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types
                 .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(First))))
@@ -92,9 +88,7 @@ namespace Docu.Tests.Documentation
             {
                 Type<First>(@"<member name=""T:Example.First"" />"),  
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types[0].ParentType.ShouldNotBeNull();
             namespaces[0].Types[0].ParentType.PrettyName.ShouldEqual("object");
@@ -107,9 +101,7 @@ namespace Docu.Tests.Documentation
             {
                 Type<FirstChild>(@"<member name=""T:Example.FirstChild"" />"),  
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types[0].ParentType.ShouldNotBeNull();
             namespaces[0].Types[0].ParentType.PrettyName.ShouldEqual("First");
@@ -122,9 +114,7 @@ namespace Docu.Tests.Documentation
             {
                 Type<ClassWithInterfaces>(@"<member name=""T:Example.ClassWithInterfaces"" />"),  
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types[0].Interfaces.CountShouldEqual(2);
             namespaces[0].Types[0].Interfaces[0].PrettyName.ShouldEqual("EmptyInterface");
@@ -138,9 +128,7 @@ namespace Docu.Tests.Documentation
             {
                 Type<ClassWithBaseWithInterfaces>(@"<member name=""T:Example.ClassWithBaseWithInterfaces"" />"),  
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types[0].Interfaces.CountShouldEqual(0);
         }
@@ -152,9 +140,7 @@ namespace Docu.Tests.Documentation
             {
                 Type<ClassWithBaseWithInterfacesAndDirect>(@"<member name=""T:Example.ClassWithBaseWithInterfacesAndDirect"" />"),  
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types[0].Interfaces.CountShouldEqual(1);
             namespaces[0].Types[0].Interfaces[0].PrettyName.ShouldEqual("IExample");
@@ -164,9 +150,7 @@ namespace Docu.Tests.Documentation
         public void ShouldHavePrettyNamesForGenericTypes()
         {
             var members = new[] { Type(typeof(GenericDefinition<>), @"<member name=""T:Example.GenericDefinition`1"" />") };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types
                 .ShouldContain(x => x.PrettyName == "GenericDefinition<T>");
@@ -180,9 +164,7 @@ namespace Docu.Tests.Documentation
                 Type<First>(@"<member name=""T:Example.First""><summary>First summary</summary></member>"),
                 Type<Second>(@"<member name=""T:Example.Second""><summary>Second summary</summary></member>"),
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types[0].Summary.CountShouldEqual(1);
             ((InlineText)namespaces[0].Types[0].Summary[0]).Text.ShouldEqual("First summary");
@@ -198,9 +180,7 @@ namespace Docu.Tests.Documentation
                 Type<First>(@"<member name=""T:Example.First"" />"),  
                 Type<Second>(@"<member name=""T:Example.Second""><summary><see cref=""T:Example.First"" /></summary></member>"),  
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             ((See)namespaces[0].Types[1].Summary[0]).Reference.ShouldNotBeNull();
             ((See)namespaces[0].Types[1].Summary[0]).Reference.IsResolved.ShouldBeTrue();
@@ -210,9 +190,7 @@ namespace Docu.Tests.Documentation
         public void UnresolvedReferencesBecomeExternalReferencesIfStillExist()
         {
             var members = new[] { Type<Second>(@"<member name=""T:Example.Second""><summary><see cref=""T:Example.First"" /></summary></member>") };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             ((See)namespaces[0].Types[0].Summary[0]).Reference.IsExternal.ShouldBeTrue();
             ((See)namespaces[0].Types[0].Summary[0]).Reference.Name.ShouldEqual("First");
@@ -238,9 +216,7 @@ namespace Docu.Tests.Documentation
         public void ShouldForceTypeIfOnlyMethodDefined()
         {
             var members = new[] { Method<Second>(@"<member name=""M:Example.Second.SecondMethod"" />", x => x.SecondMethod()) };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Name.ShouldEqual("Example");
             namespaces[0].Types.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(Second))));
@@ -255,9 +231,7 @@ namespace Docu.Tests.Documentation
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod"" />", x => x.SecondMethod()),
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"" />", x => x.SecondMethod2(null, 0))
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
             var method = Method<Second>(x => x.SecondMethod());
             var method2 = Method<Second>(x => x.SecondMethod2(null, 0));
 
@@ -274,9 +248,7 @@ namespace Docu.Tests.Documentation
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod""><summary>Second method</summary></member>", x => x.SecondMethod()),
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)""><summary>Second method 2</summary></member>", x => x.SecondMethod2(null, 0))
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types[0].Methods[0].Summary.CountShouldEqual(1);
             ((InlineText)namespaces[0].Types[0].Methods[0].Summary[0]).Text.ShouldEqual("Second method");
@@ -306,9 +278,7 @@ namespace Docu.Tests.Documentation
             {
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty"" />", x => x.SecondProperty)
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types[0].Properties
                 .ShouldContain(x => x.Name == "SecondProperty");
@@ -321,9 +291,7 @@ namespace Docu.Tests.Documentation
             {
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty"" />", x => x.SecondProperty)
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
             var property = namespaces[0].Types[0].Properties[0];
 
             property.ReturnType.ShouldNotBeNull();
@@ -337,9 +305,7 @@ namespace Docu.Tests.Documentation
             {
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty""><summary>Second property</summary></member>", x => x.SecondProperty),
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types[0].Properties[0].Summary.CountShouldEqual(1);
             ((InlineText)namespaces[0].Types[0].Properties[0].Summary[0]).Text.ShouldEqual("Second property");
@@ -353,9 +319,7 @@ namespace Docu.Tests.Documentation
                 Type<First>(@"<member name=""T:Example.First"" />"),
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod2(System.String,Example.First)"" />", x => x.SecondMethod3(null, null))
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             var method = namespaces[0].Types[1].Methods[0];
 
@@ -377,9 +341,7 @@ namespace Docu.Tests.Documentation
                   <param name=""two"">Second parameter</param>
                 </member>", x => x.SecondMethod2(null, 0))
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
 
             namespaces[0].Types[0].Methods[0].Parameters[0].Summary.CountShouldEqual(1);
             ((InlineText)namespaces[0].Types[0].Methods[0].Parameters[0].Summary[0]).Text.ShouldEqual("First parameter");
@@ -394,9 +356,7 @@ namespace Docu.Tests.Documentation
             {
                 Method<Second>(@"<member name=""M:Example.Second.ReturnType"" />", x => x.ReturnType())
             };
-            var namespaces = (from a in model.Create(members)
-                              from n in a.Namespaces
-                              select n).ToList();
+            var namespaces = model.Create(members);
             var method = namespaces[0].Types[0].Methods[0];
 
             method.ReturnType.ShouldNotBeNull();

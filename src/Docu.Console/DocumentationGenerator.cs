@@ -69,6 +69,7 @@ namespace Docu
         {
             var documentModel = parser.CreateDocumentModel(assemblies, xmls);
 
+            writer.SetAssemblies(assemblies);
             writer.CreatePagesFromDirectory(templatePath, outputPath, documentModel);
 
             resourceManager.MoveResources(templatePath, outputPath);

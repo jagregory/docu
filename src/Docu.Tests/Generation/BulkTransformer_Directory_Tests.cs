@@ -57,13 +57,13 @@ namespace Docu.Tests.Generation
         {
             var transformer = MockRepository.GenerateMock<IPageWriter>();
             var bulkTransformer = new BulkPageWriter(transformer);
-            var assemblies = new AssemblyDoc[0];
+            var namespaces = new Namespace[0];
 
-            bulkTransformer.CreatePagesFromDirectory(directory, "output", assemblies);
+            bulkTransformer.CreatePagesFromDirectory(directory, "output", namespaces);
 
-            transformer.AssertWasCalled(x => x.CreatePages(directory_oneSpark, "output", assemblies));
-            transformer.AssertWasCalled(x => x.CreatePages(directory_twoSpark, "output", assemblies));
-            transformer.AssertWasCalled(x => x.CreatePages(directory_namespaceSpark, "output", assemblies));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_oneSpark, "output", namespaces));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_twoSpark, "output", namespaces));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_namespaceSpark, "output", namespaces));
         }
 
         [Test]
@@ -71,11 +71,11 @@ namespace Docu.Tests.Generation
         {
             var transformer = MockRepository.GenerateMock<IPageWriter>();
             var bulkTransformer = new BulkPageWriter(transformer);
-            var assemblies = new AssemblyDoc[0];
+            var namespaces = new Namespace[0];
 
-            bulkTransformer.CreatePagesFromDirectory(directory, "output", assemblies);
+            bulkTransformer.CreatePagesFromDirectory(directory, "output", namespaces);
 
-            transformer.AssertWasCalled(x => x.CreatePages(directory_sub_oneSpark, "output", assemblies));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_sub_oneSpark, "output", namespaces));
         }
 
         [Test]
@@ -83,11 +83,11 @@ namespace Docu.Tests.Generation
         {
             var transformer = MockRepository.GenerateMock<IPageWriter>();
             var bulkTransformer = new BulkPageWriter(transformer);
-            var assemblies = new AssemblyDoc[0];
+            var namespaces = new Namespace[0];
 
-            bulkTransformer.CreatePagesFromDirectory(directory, "output", assemblies);
+            bulkTransformer.CreatePagesFromDirectory(directory, "output", namespaces);
 
-            transformer.AssertWasCalled(x => x.CreatePages(directory_namespace_oneSpark, "output", assemblies));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_namespace_oneSpark, "output", namespaces));
         }
 
         [Test]
@@ -95,11 +95,11 @@ namespace Docu.Tests.Generation
         {
             var transformer = MockRepository.GenerateMock<IPageWriter>();
             var bulkTransformer = new BulkPageWriter(transformer);
-            var assemblies = new AssemblyDoc[0];
+            var namespaces = new Namespace[0];
 
-            bulkTransformer.CreatePagesFromDirectory(directory_sub, "output", assemblies);
+            bulkTransformer.CreatePagesFromDirectory(directory_sub, "output", namespaces);
 
-            transformer.AssertWasCalled(x => x.CreatePages(directory_sub_oneSpark, "output", assemblies));
+            transformer.AssertWasCalled(x => x.CreatePages(directory_sub_oneSpark, "output", namespaces));
         }
 
         [Test]
@@ -107,9 +107,9 @@ namespace Docu.Tests.Generation
         {
             var transformer = MockRepository.GenerateMock<IPageWriter>();
             var bulkTransformer = new BulkPageWriter(transformer);
-            var assemblies = new AssemblyDoc[0];
+            var namespaces = new Namespace[0];
 
-            bulkTransformer.CreatePagesFromDirectory(directory_sub, "output", assemblies);
+            bulkTransformer.CreatePagesFromDirectory(directory_sub, "output", namespaces);
 
             transformer.AssertWasCalled(x => x.SetTemplatePath(directory_sub));
         }
@@ -119,11 +119,11 @@ namespace Docu.Tests.Generation
         {
             var transformer = MockRepository.GenerateMock<IPageWriter>();
             var bulkTransformer = new BulkPageWriter(transformer);
-            var assemblies = new AssemblyDoc[0];
+            var namespaces = new Namespace[0];
 
-            bulkTransformer.CreatePagesFromDirectory(directory, "output", assemblies);
+            bulkTransformer.CreatePagesFromDirectory(directory, "output", namespaces);
 
-            transformer.AssertWasNotCalled(x => x.CreatePages(directory_underscoreSpark, "output", assemblies));
+            transformer.AssertWasNotCalled(x => x.CreatePages(directory_underscoreSpark, "output", namespaces));
         }
     }
 }

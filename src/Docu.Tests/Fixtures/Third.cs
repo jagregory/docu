@@ -4,4 +4,8 @@ namespace Example
     {
 
     }
+
+    public class Fourth {}
+    public class Fifth {}
+    public class Sixth {}
 }

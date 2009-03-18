@@ -13,29 +13,22 @@ namespace Docu.Documentation
     {
         private readonly ICommentContentParser commentContentParser;
         private readonly IDictionary<Identifier, IReferencable> matchedAssociations = new Dictionary<Identifier, IReferencable>();
-        private readonly List<AssemblyDoc> assemblies = new List<AssemblyDoc>();
 
         public DocumentModel(ICommentContentParser commentContentParser)
         {
             this.commentContentParser = commentContentParser;
         }
 
-        public IList<AssemblyDoc> Create(IEnumerable<IDocumentationMember> members)
+        public IList<Namespace> Create(IEnumerable<IDocumentationMember> members)
         {
             var namespaces = new List<Namespace>();
             var references = new List<IReferencable>();
 
-            assemblies.Clear();
             matchedAssociations.Clear();
 
             foreach (DocumentedType association in members.Where(x => x is DocumentedType))
             {
-                AddAssembly(assemblies, association);
-            }
-
-            foreach (DocumentedType association in members.Where(x => x is DocumentedType))
-            {
-                AddNamespace(namespaces, assemblies, association);
+                AddNamespace(namespaces, association);
             }
 
             foreach (DocumentedType association in members.Where(x => x is DocumentedType))
@@ -45,12 +38,12 @@ namespace Docu.Documentation
 
             foreach (DocumentedMethod association in members.Where(x => x is DocumentedMethod))
             {
-                AddMethod(namespaces, assemblies, references, association);
+                AddMethod(namespaces, references, association);
             }
 
             foreach (DocumentedProperty association in members.Where(x => x is DocumentedProperty))
             {
-                AddProperty(namespaces, assemblies, references, association);
+                AddProperty(namespaces, references, association);
             }
 
             foreach (IReferencable referencable in references)
@@ -59,22 +52,22 @@ namespace Docu.Documentation
                     referencable.Resolve(matchedAssociations);
             }
 
-            Sort(assemblies);
+            Sort(namespaces);
 
-            return assemblies;
+            return namespaces;
         }
 
-        private void Sort(List<AssemblyDoc> assemblies)
+        private void Sort(List<Namespace> namespaces)
         {
-            assemblies.Sort((x, y) => x.Name.CompareTo(y.Name));
+            namespaces.Sort((x, y) => x.Name.CompareTo(y.Name));
 
-            foreach (var assembly in assemblies)
+            foreach (var ns in namespaces)
             {
-                assembly.Sort();
+                ns.Sort();
             }
         }
 
-        private void AddMethod(List<Namespace> namespaces, List<AssemblyDoc> assemblies, List<IReferencable> references, DocumentedMethod association)
+        private void AddMethod(List<Namespace> namespaces, List<IReferencable> references, DocumentedMethod association)
         {
             if (association.Method == null) return;
 
@@ -84,8 +77,7 @@ namespace Docu.Documentation
 
             if (@namespace == null)
             {
-                AddNamespace(namespaces, assemblies,
-                             new DocumentedType(association.Name.CloneAsNamespace(), null, association.TargetType));
+                AddNamespace(namespaces, new DocumentedType(association.Name.CloneAsNamespace(), null, association.TargetType));
                 @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
             }
 
@@ -155,7 +147,7 @@ namespace Docu.Documentation
             }
         }
 
-        private void AddProperty(List<Namespace> namespaces, List<AssemblyDoc> assemblies, List<IReferencable> references, DocumentedProperty association)
+        private void AddProperty(List<Namespace> namespaces, List<IReferencable> references, DocumentedProperty association)
         {
             if (association.Property == null) return;
 
@@ -165,8 +157,7 @@ namespace Docu.Documentation
 
             if (@namespace == null)
             {
-                AddNamespace(namespaces, assemblies,
-                             new DocumentedType(association.Name.CloneAsNamespace(), null, association.TargetType));
+                AddNamespace(namespaces, new DocumentedType(association.Name.CloneAsNamespace(), null, association.TargetType));
                 @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
             }
 
@@ -203,44 +194,16 @@ namespace Docu.Documentation
             type.AddProperty(doc);
         }
 
-        private void AddNamespace(List<Namespace> namespaces, List<AssemblyDoc> assemblies, DocumentedType association)
+        private void AddNamespace(List<Namespace> namespaces, DocumentedType association)
         {
             var ns = Identifier.FromNamespace(association.Type.Namespace);
 
             if (!namespaces.Exists(x => x.IsIdentifiedBy(ns)))
             {
-                var assembly = FindAssembly(association);
                 var doc = new Namespace(ns);
-
-                assembly.Namespaces.Add(doc);
                 matchedAssociations.Add(association.Name.CloneAsNamespace(), doc);
                 namespaces.Add(doc);
             }
-        }
-
-        private AssemblyDoc FindAssembly(DocumentedType association)
-        {
-            EnsureAssemblyExists(association);
-
-            return assemblies.Find(x => x.Name == association.Type.Assembly.FullName);
-        }
-
-        private void EnsureAssemblyExists(DocumentedType association)
-        {
-            if (assemblies.Exists(x => x.Name == association.Type.Assembly.FullName)) return;
-
-            var assembly = new AssemblyDoc(association.Type.Assembly.FullName);
-
-            assemblies.Add(assembly);
-        }
-
-        private void AddAssembly(List<AssemblyDoc> assemblies, DocumentedType association)
-        {
-            if (assemblies.Exists(x => x.Name == association.Type.Assembly.FullName)) return;
-
-            var assembly = new AssemblyDoc(association.Type.Assembly.FullName);
-
-            assemblies.Add(assembly);
         }
 
         private void AddType(List<Namespace> namespaces, List<IReferencable> references, DocumentedType association)

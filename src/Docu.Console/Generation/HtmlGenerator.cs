@@ -36,7 +36,7 @@ namespace Docu.Generation
             engine.ViewFolder = viewFolder;
         }
 
-        public string Convert(string templateName, OutputData data)
+        public string Convert(string templateName, ViewData data)
         {
             string template = templateName;
 

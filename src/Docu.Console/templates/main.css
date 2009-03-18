@@ -8,17 +8,29 @@
 .header {
 	background: #048;
 	border-bottom: 3px solid #006;
-	font-size: 18px;
 	margin: 0;
 	color: #FFF;
 	padding: 10px;
-	font-weight: bold;
 	clear: left;
+	font-size: 13px;
 }
 
-.header strong {
-	font-size: 12px;
-	font-weight: normal;
+.header p 
+{
+	margin: 0 0 4px 0;
+}
+
+.header .class 
+{
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.header strong
+{
+	font-size: 13px;
+	width: 100px;
+	float: left;
 }
 
 .header a 
@@ -142,4 +154,11 @@ a:hover {
 	background: #039;
 	color: #FFF;
 	text-decoration: none;
+}
+
+#footer
+{
+	text-align: center;
+	font-size: 10px;
+	color: #888;
 }

@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <title>${h(Type.PrettyName)}</title>
+    <title>${h(Type.PrettyName)} - ${WriteProductName(Assemblies[0])} Documentation</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <link type="text/css" rel="stylesheet" href="../main.css" />
   </head>
@@ -11,10 +11,10 @@
     <namespaces />
     <types />
     <div class="header">
-		<strong>Namespace</strong> ${Namespace.Name}<br />
-		<strong>Type</strong> ${h(Type.PrettyName)}<br />
-		<if condition="Type.ParentType != null && Type.ParentType.PrettyName != 'object'"><strong>Parent</strong> ${WriteReference(Type.ParentType)}</if>
-		<if condition="Type.Interfaces.Count > 0"><strong>Interfaces</strong> ${WriteInterfaces(Type.Interfaces)}</if>
+		<p class="class"><strong>Type</strong> ${h(Type.PrettyName)}</p>
+		<p><strong>Namespace</strong> ${Namespace.Name}</p>
+		<p if="Type.ParentType != null && Type.ParentType.PrettyName != 'object'"><strong>Parent</strong> ${WriteReference(Type.ParentType)}</p>
+		<p if="Type.Interfaces.Count > 0"><strong>Interfaces</strong> ${WriteInterfaces(Type.Interfaces)}</p>
 	</div>
     <div class="sub-header">
 		<if condition="Type.Summary.Count > 0">
@@ -45,5 +45,7 @@
 	<methods methods="publicStaticMethods" title="'Public static methods'" />
 	
 	<properties properties="Type.Properties" title="'Public properties'" />
+	
+	<use file="../_footer" />
   </body>
 </html>

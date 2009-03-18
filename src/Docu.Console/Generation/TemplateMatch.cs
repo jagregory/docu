@@ -2,7 +2,7 @@ namespace Docu.Generation
 {
     public class TemplateMatch
     {
-        public TemplateMatch(string outputPath, string templatePath, OutputData data)
+        public TemplateMatch(string outputPath, string templatePath, ViewData data)
         {
             OutputPath = outputPath;
             TemplatePath = templatePath;
@@ -11,6 +11,6 @@ namespace Docu.Generation
 
         public string OutputPath { get; private set; }
         public string TemplatePath { get; private set; }
-        public OutputData Data { get; private set; }
+        public ViewData Data { get; private set; }
     }
 }

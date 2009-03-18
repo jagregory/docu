@@ -122,7 +122,7 @@
     <Compile Include="Generation\IOutputGenerator.cs" />
     <Compile Include="Generation\IPatternTemplateResolver.cs" />
     <Compile Include="Generation\IPageWriter.cs" />
-    <Compile Include="Generation\OutputData.cs" />
+    <Compile Include="Generation\ViewData.cs" />
     <Compile Include="Generation\PatternTemplateResolver.cs" />
     <Compile Include="Generation\TemplateMatch.cs" />
     <Compile Include="IO\FileSystemOutputWriter.cs" />
@@ -186,6 +186,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="templates\!namespace\_properties.spark">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="templates\_footer.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="utils\ilmerge.bat" />

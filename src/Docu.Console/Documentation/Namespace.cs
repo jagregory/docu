@@ -48,6 +48,11 @@ namespace Docu.Documentation
             types.Add(type);
         }
 
+        public override string ToString()
+        {
+            return base.ToString() + " { Name = '" + Name + "' }";
+        }
+
         public static Namespace Unresolved(NamespaceIdentifier namespaceIdentifier)
         {
             return new Namespace(namespaceIdentifier) { IsResolved = false };

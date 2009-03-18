@@ -29,16 +29,16 @@ namespace Docu.Tests
             return ((MemberExpression)propertyAction.Body).Member as PropertyInfo;
         }
 
-        protected AssemblyDoc AssemblyNamespaces(string assemblyName, params string[] namespaces)
+        protected IList<Namespace> Namespaces(params string[] namespaces)
         {
-            var assembly = new AssemblyDoc(assemblyName);
+            var list = new List<Namespace>();
 
             foreach (var ns in namespaces)
             {
-                assembly.Namespaces.Add(Namespace(ns));
+                list.Add(Namespace(ns));
             }
 
-            return assembly;
+            return list;
         }
 
         protected Docu.Documentation.Namespace Namespace(string ns)

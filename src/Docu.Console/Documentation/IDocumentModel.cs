@@ -5,6 +5,6 @@ namespace Docu.Documentation
 {
     public interface IDocumentModel
     {
-        IList<AssemblyDoc> Create(IEnumerable<IDocumentationMember> members);
+        IList<Namespace> Create(IEnumerable<IDocumentationMember> members);
     }
 }

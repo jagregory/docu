@@ -17,7 +17,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         {
             var writer = MockRepository.GenerateMock<IBulkPageWriter>();
             var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, writer, StubResourceManager);
-            var documentModel = new List<AssemblyDoc>();
+            var documentModel = new List<Namespace>();
 
             StubParser.Stub(x => x.CreateDocumentModel(null, null))
                 .IgnoreArguments()

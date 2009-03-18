@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Docu.Documentation;
 
 namespace Docu.Generation
@@ -13,7 +15,7 @@ namespace Docu.Generation
             this.writer = writer;
         }
 
-        public void CreatePagesFromDirectory(string templatePath, string destination, IList<AssemblyDoc> assemblies)
+        public void CreatePagesFromDirectory(string templatePath, string destination, IList<Namespace> namespaces)
         {
             writer.SetTemplatePath(templatePath);
 
@@ -21,8 +23,13 @@ namespace Docu.Generation
             {
                 if (IsPartial(file)) continue;
 
-                writer.CreatePages(file, destination, assemblies);
+                writer.CreatePages(file, destination, namespaces);
             }
+        }
+
+        public void SetAssemblies(IEnumerable<Assembly> assemblies)
+        {
+            writer.SetAssemblies(assemblies);
         }
 
         private bool IsPartial(string file)

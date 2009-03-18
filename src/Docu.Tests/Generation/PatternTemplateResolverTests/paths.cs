@@ -1,25 +1,20 @@
-using System.Collections.Generic;
-using Docu.Documentation;
-using Docu.Generation;
-using Docu.Parsing.Model;
 using Docu.Documentation;
 using Docu.Generation;
 using Docu.Parsing.Model;
 using Example;
 using NUnit.Framework;
-using DeclaredType=Docu.Documentation.DeclaredType;
 
-namespace Docu.Tests.Generation
+namespace Docu.Tests.Generation.PatternTemplateResolverTests
 {
     [TestFixture]
-    public class PatternTemplateResolverTests : BaseFixture
+    public class paths : BaseFixture
     {
         [Test]
         public void MatchesSingleFilename()
         {
             var resolver = new PatternTemplateResolver();
-            var assemblies = new AssemblyDoc[0];
-            var results = resolver.Resolve("template.spark", assemblies);
+            var namespaces = new Namespace[0];
+            var results = resolver.Resolve("template.spark", namespaces);
 
             results[0].OutputPath.ShouldEqual("template.htm");
             results[0].TemplatePath.ShouldEqual("template.spark");
@@ -29,8 +24,8 @@ namespace Docu.Tests.Generation
         public void MatchesNamespacePatternFilename()
         {
             var resolver = new PatternTemplateResolver();
-            var assemblies = new[] { AssemblyNamespaces("Assembly", "One", "Two") };
-            var results = resolver.Resolve("!namespace.spark", assemblies);
+            var namespaces = Namespaces("One", "Two");
+            var results = resolver.Resolve("!namespace.spark", namespaces);
 
             results.CountShouldEqual(2);
             results[0].OutputPath.ShouldEqual("One.htm");
@@ -43,12 +38,12 @@ namespace Docu.Tests.Generation
         public void MatchesTypePatternFilename()
         {
             var resolver = new PatternTemplateResolver();
-            var assemblies = new[] { AssemblyNamespaces("Assembly", "One", "Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            assemblies[0].Namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), assemblies[0].Namespaces[0]));
-            assemblies[0].Namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), assemblies[0].Namespaces[1]));
+            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
+            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
 
-            var results = resolver.Resolve("!type.spark", assemblies);
+            var results = resolver.Resolve("!type.spark", namespaces);
 
             results.CountShouldEqual(2);
             results[0].OutputPath.ShouldEqual("One.First.htm");
@@ -61,8 +56,8 @@ namespace Docu.Tests.Generation
         public void MatchesTemplateInDirectory()
         {
             var resolver = new PatternTemplateResolver();
-            var assemblies = new AssemblyDoc[0];
-            var results = resolver.Resolve("directory\\template.spark", assemblies);
+            var namespaces = new Namespace[0];
+            var results = resolver.Resolve("directory\\template.spark", namespaces);
 
             results.CountShouldEqual(1);
             results[0].OutputPath.ShouldEqual("directory\\template.htm");
@@ -73,8 +68,8 @@ namespace Docu.Tests.Generation
         public void MatchesPatternTemplateInDirectory()
         {
             var resolver = new PatternTemplateResolver();
-            var assemblies = new[] { AssemblyNamespaces("Assembly", "One", "Two") };
-            var results = resolver.Resolve("directory\\!namespace.spark", assemblies);
+            var namespaces = Namespaces("One", "Two");
+            var results = resolver.Resolve("directory\\!namespace.spark", namespaces);
 
             results.CountShouldEqual(2);
             results[0].OutputPath.ShouldEqual("directory\\One.htm");
@@ -87,8 +82,8 @@ namespace Docu.Tests.Generation
         public void MatchesTemplateInNamespacePatternDirectory()
         {
             var resolver = new PatternTemplateResolver();
-            var assemblies = new[] { AssemblyNamespaces("Assembly", "One", "Two") };
-            var results = resolver.Resolve("!namespace\\template.spark", assemblies);
+            var namespaces = Namespaces("One", "Two");
+            var results = resolver.Resolve("!namespace\\template.spark", namespaces);
 
             results.CountShouldEqual(2);
             results[0].OutputPath.ShouldEqual("One\\template.htm");
@@ -101,14 +96,14 @@ namespace Docu.Tests.Generation
         public void MatchesTemplateInTypePatternDirectory()
         {
             var resolver = new PatternTemplateResolver();
-            var assemblies = new[] { AssemblyNamespaces("Assembly", "One", "Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            assemblies[0].Namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), assemblies[0].Namespaces[0]));
-            assemblies[0].Namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), assemblies[0].Namespaces[1]));
+            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
+            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
 
-            var results = resolver.Resolve("!type\\template.spark", assemblies);
+            var results = resolver.Resolve("!type\\template.spark", namespaces);
 
-            results.CountShouldEqual(2);
+            results.Count.ShouldEqual(2);
             results[0].OutputPath.ShouldEqual("One.First\\template.htm");
             results[0].TemplatePath.ShouldEqual("!type\\template.spark");
             results[1].OutputPath.ShouldEqual("Two.Second\\template.htm");
@@ -119,14 +114,14 @@ namespace Docu.Tests.Generation
         public void MatchesTypePatternInNamespaceDirectory()
         {
             var resolver = new PatternTemplateResolver();
-            var assemblies = new[] { AssemblyNamespaces("Assembly", "One", "Two") };
+            var namespaces = Namespaces("One", "Two");
 
-            assemblies[0].Namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), assemblies[0].Namespaces[0]));
-            assemblies[0].Namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), assemblies[0].Namespaces[0]));
-            assemblies[0].Namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(First)), assemblies[0].Namespaces[1]));
-            assemblies[0].Namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), assemblies[0].Namespaces[1]));
+            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
+            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[0]));
+            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[1]));
+            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
 
-            var results = resolver.Resolve("!namespace\\!type.spark", assemblies);
+            var results = resolver.Resolve("!namespace\\!type.spark", namespaces);
 
             results.CountShouldEqual(4);
             results[0].OutputPath.ShouldEqual("One\\First.htm");
