@@ -81,8 +81,22 @@ namespace Docu.Parsing.Model
 
         private static TypeIdentifier FromTypeString(string name)
         {
-            string ns = name.Substring(0, name.LastIndexOf('.'));
-            string type = name.Substring(name.LastIndexOf('.') + 1);
+            string ns;
+            string type;
+
+            if (name.Contains("."))
+            {
+                // has namespace
+                ns = name.Substring(0, name.LastIndexOf('.'));
+                type = name.Substring(name.LastIndexOf('.') + 1);
+            }
+            else
+            {
+                // special case where no namespace is used
+                ns = "Unknown";
+                type = name;
+            }
+            
 
             return new TypeIdentifier(type, ns);
         }

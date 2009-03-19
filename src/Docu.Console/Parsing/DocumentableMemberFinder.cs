@@ -14,6 +14,7 @@ namespace Docu.Parsing
             foreach (Type type in types)
             {
                 if (type.IsSpecialName) continue;
+                if (type.Name.StartsWith("__")) continue; // probably a lambda generated class
 
                 members.Add(new UndocumentedType(Identifier.FromType(type), type));
 
