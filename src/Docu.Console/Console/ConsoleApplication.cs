@@ -56,6 +56,7 @@ namespace Docu.Console
 
                 documentationGenerator.SetAssemblies(assemblies);
                 documentationGenerator.SetXmlFiles(xmls);
+                documentationGenerator.SetTemplatePath(Path.Combine(Path.GetDirectoryName(typeof(ConsoleApplication).Assembly.Location), "templates"));
                 documentationGenerator.Generate();
 
                 ShowMessage(Messages.Done);
