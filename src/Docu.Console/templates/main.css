@@ -161,4 +161,6 @@ a:hover {
 	text-align: center;
 	font-size: 10px;
 	color: #888;
+	clear: left;
+	padding-top: 10px;
 }
