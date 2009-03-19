@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Docu.Documentation;
 using Docu.Generation;
@@ -33,9 +35,19 @@ namespace Docu
         {
             foreach (string assemblyPath in assemblyPaths)
             {
-                assemblies.Add(assemblyLoader.LoadFrom(assemblyPath));
+                try
+                {
+                    assemblies.Add(assemblyLoader.LoadFrom(assemblyPath));
+                }
+                catch(BadImageFormatException)
+                {
+                    if(BadFileEvent != null)
+                        BadFileEvent(this, new BadFileEventArgs(assemblyPath));
+                }
             }
         }
+
+        public event EventHandler<BadFileEventArgs> BadFileEvent;
 
         public void SetAssemblies(IEnumerable<Assembly> assembliesToParse)
         {
@@ -70,9 +82,24 @@ namespace Docu
             var documentModel = parser.CreateDocumentModel(assemblies, xmls);
 
             writer.SetAssemblies(assemblies);
+            
+            if (assemblies.Count <= 0) return;
+            
             writer.CreatePagesFromDirectory(templatePath, outputPath, documentModel);
-
             resourceManager.MoveResources(templatePath, outputPath);
+        }
+    }
+
+    public class BadFileEventArgs : EventArgs
+    {
+        public BadFileEventArgs(string filePath)
+        {
+            FilePath = filePath;
+        }
+
+        public string FilePath
+        {
+            get; set;
         }
     }
 }

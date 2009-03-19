@@ -15,6 +15,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
             var writer = MockRepository.GenerateMock<IBulkPageWriter>();
             var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, writer, StubResourceManager);
 
+            generator.SetAssemblies(new[] { "unimportant_file_path" });
             generator.SetOutputPath("output-path");
             generator.Generate();
 
@@ -28,6 +29,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
             var writer = MockRepository.GenerateMock<IBulkPageWriter>();
             var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, writer, StubResourceManager);
 
+            generator.SetAssemblies(new[] { "unimportant_file_path" });
             generator.Generate();
 
             writer.AssertWasCalled(x => x.CreatePagesFromDirectory(null, null, null),

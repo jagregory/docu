@@ -3,6 +3,7 @@ using Docu.Documentation;
 using Docu.Generation;
 using Docu.Documentation;
 using Docu.Generation;
+using Docu.IO;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Is=Rhino.Mocks.Constraints.Is;
@@ -23,6 +24,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
                 .IgnoreArguments()
                 .Return(documentModel);
 
+            generator.SetAssemblies(new []{"unimportant_file_path"});
             generator.Generate();
 
             writer.AssertWasCalled(x => x.CreatePagesFromDirectory(null, null, null),
@@ -35,6 +37,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
             var resourceManager = MockRepository.GenerateMock<IUntransformableResourceManager>();
             var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, StubWriter, resourceManager);
 
+            generator.SetAssemblies(new[] { "unimportant_file_path" });
             generator.SetTemplatePath("template-dir");
             generator.Generate();
 
@@ -48,11 +51,24 @@ namespace Docu.Tests.DocumentationGeneratorTests
             var resourceManager = MockRepository.GenerateMock<IUntransformableResourceManager>();
             var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, StubWriter, resourceManager);
 
+            generator.SetAssemblies(new[] { "unimportant_file_path" });
             generator.SetOutputPath("output-dir");
             generator.Generate();
 
             resourceManager.AssertWasCalled(x => x.MoveResources(null, null),
                                             x => x.Constraints(Is.Anything(), Is.Equal("output-dir")));
+        }
+
+        [Test]
+        public void should_not_error_if_it_can_not_find_assemblies_to_doc()
+        {
+            var resourceManager = MockRepository.GenerateMock<IUntransformableResourceManager>();
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, StubWriter, resourceManager);
+
+            generator.SetOutputPath("output-dir");
+            generator.Generate();
+
+            StubWriter.AssertWasNotCalled(x => x.CreatePagesFromDirectory(null, null, null), x => x.Constraints(Is.Anything(), Is.Anything(), Is.Anything()));
         }
     }
 }

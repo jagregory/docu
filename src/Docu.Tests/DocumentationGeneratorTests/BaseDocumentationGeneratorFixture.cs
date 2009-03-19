@@ -25,6 +25,10 @@ namespace Docu.Tests.DocumentationGeneratorTests
             StubResourceManager = MockRepository.GenerateStub<IUntransformableResourceManager>();
             StubAssemblyLoader = MockRepository.GenerateStub<IAssemblyLoader>();
             StubXmlLoader = MockRepository.GenerateStub<IXmlLoader>();
+
+            StubAssemblyLoader.Stub(x => x.LoadFrom(null))
+                .IgnoreArguments()
+                .Return(typeof(DocumentationGenerator).Assembly);
         }
     }
 }

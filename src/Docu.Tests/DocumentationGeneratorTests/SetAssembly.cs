@@ -55,5 +55,19 @@ namespace Docu.Tests.DocumentationGeneratorTests
             parser.AssertWasCalled(x => x.CreateDocumentModel(null, null),
                 x => x.Constraints(List.ContainsAll(new[] { typeof(IAssemblyLoader).Assembly }), Is.Anything()));
         }
+
+        [Test]
+        public void set_assemblies_should_fire_event_if_bad_file_found()
+        {
+            var parser = MockRepository.GenerateMock<IAssemblyXmlParser>();
+            var badFileFound = false;
+
+            var generator = new DocumentationGenerator(new AssemblyLoader(), StubXmlLoader, parser, StubWriter, StubResourceManager);
+            generator.BadFileEvent += (s, e) => badFileFound = true;
+
+            generator.SetAssemblies(new[] { "docu.pdb" });
+
+            badFileFound.ShouldBeTrue();
+        }
     }
 }

@@ -17,6 +17,12 @@ namespace Docu.Console
         {
             this.screenWriter = screenWriter;
             this.documentationGenerator = documentationGenerator;
+            this.documentationGenerator.BadFileEvent += documentationGenerator_BadFileEvent;
+        }
+
+        void documentationGenerator_BadFileEvent(object sender, BadFileEventArgs e)
+        {
+            ShowMessage(Messages.BadFile);
         }
 
         public static void Run(IEnumerable<string> args)

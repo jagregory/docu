@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -12,5 +13,6 @@ namespace Docu
         void SetTemplatePath(string templateDirectory);
         void SetOutputPath(string outputDirectory);
         void Generate();
+        event EventHandler<BadFileEventArgs> BadFileEvent;
     }
 }
