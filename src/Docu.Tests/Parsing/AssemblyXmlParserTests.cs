@@ -30,17 +30,27 @@ namespace Docu.Tests.Parsing
     </members>
 </doc>"};
 
+        private IDocumentationXmlMatcher StubDocXmlMatcher;
+        private IDocumentModel StubDocModel;
+        private IDocumentableMemberFinder StubDocMembers;
+
+        [SetUp]
+        public void CreateStubs()
+        {
+            StubDocXmlMatcher = MockRepository.GenerateStub<IDocumentationXmlMatcher>();
+            StubDocModel = MockRepository.GenerateStub<IDocumentModel>();
+            StubDocMembers = MockRepository.GenerateStub<IDocumentableMemberFinder>();
+        }
+
         [Test]
         public void TypesFromAssembliesPassedToAssociator()
         {
             var matcher = MockRepository.GenerateMock<IDocumentationXmlMatcher>();
-            var model = MockRepository.GenerateStub<IDocumentModel>();
-            var documentableMembers = MockRepository.GenerateStub<IDocumentableMemberFinder>();
-            var parser = new AssemblyXmlParser(matcher, model, documentableMembers);
+            var parser = new AssemblyXmlParser(matcher, StubDocModel, StubDocMembers);
             var assemblies = new[] {typeof(First).Assembly, typeof(AssemblyXmlParserTests).Assembly};
             var members = DocMembers(typeof(First), typeof(Second));
 
-            documentableMembers.Stub(x => x.GetMembersForDocumenting(null))
+            StubDocMembers.Stub(x => x.GetMembersForDocumenting(null))
                 .IgnoreArguments()
                 .Return(members);
 
@@ -58,9 +68,7 @@ namespace Docu.Tests.Parsing
         public void XmlNodesFromStringPassedToAssociator()
         {
             var matcher = MockRepository.GenerateMock<IDocumentationXmlMatcher>();
-            var model = MockRepository.GenerateStub<IDocumentModel>();
-            var documentableMembers = MockRepository.GenerateStub<IDocumentableMemberFinder>();
-            var parser = new AssemblyXmlParser(matcher, model, documentableMembers);
+            var parser = new AssemblyXmlParser(matcher, StubDocModel, StubDocMembers);
             var assemblies = new Assembly[0];
 
             parser.CreateDocumentModel(assemblies, Xml);
@@ -76,20 +84,38 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldPassAssocationsToTransformer()
         {
-            var matcher = MockRepository.GenerateStub<IDocumentationXmlMatcher>();
             var model = MockRepository.GenerateMock<IDocumentModel>();
-            var documentableMembers = MockRepository.GenerateStub<IDocumentableMemberFinder>();
-            var parser = new AssemblyXmlParser(matcher, model, documentableMembers);
+            var parser = new AssemblyXmlParser(StubDocXmlMatcher, model, StubDocMembers);
             var assemblies = new Assembly[0];
             var associations = new IDocumentationMember[0];
 
-            matcher.Stub(x => x.DocumentMembers(null, null))
+            StubDocXmlMatcher.Stub(x => x.DocumentMembers(null, null))
                 .IgnoreArguments()
                 .Return(associations);
 
             parser.CreateDocumentModel(assemblies, new[] {""});
 
             model.AssertWasCalled(x => x.Create(associations));
+        }
+
+        [Test]
+        public void ShouldRaiseParserWarningWhenMatcherRaisesWarning()
+        {
+            var model = MockRepository.GenerateMock<IDocumentModel>();
+            var parser = new AssemblyXmlParser(StubDocXmlMatcher, model, StubDocMembers);
+            var warningRaised = false;
+            var warningType = WarningType.Unknown;
+
+            parser.ParseWarning += (sender, e) =>
+            {
+                warningRaised = true;
+                warningType = e.WarningType;
+            };
+
+            model.Raise(x => x.CreationWarning += null, model, new DocumentModelWarningEventArgs("Message!"));
+
+            warningRaised.ShouldBeTrue();
+            warningType.ShouldEqual(WarningType.DocumentModel);
         }
     }
 }

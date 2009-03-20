@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Docu.Parsing;
 using StructureMap;
 
 namespace Docu.Console
@@ -18,6 +19,13 @@ namespace Docu.Console
             this.screenWriter = screenWriter;
             this.documentationGenerator = documentationGenerator;
             this.documentationGenerator.BadFileEvent += documentationGenerator_BadFileEvent;
+            this.documentationGenerator.Warning += documentationGenerator_Warning;
+        }
+
+        void documentationGenerator_Warning(object sender, GenerationEventArgs e)
+        {
+            if (e.WarningType == WarningType.DocumentModel)
+                ShowMessage(new DocumentModelWarningMessage(e.Message));
         }
 
         void documentationGenerator_BadFileEvent(object sender, BadFileEventArgs e)

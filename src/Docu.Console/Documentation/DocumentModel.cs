@@ -14,6 +14,8 @@ namespace Docu.Documentation
         private readonly ICommentContentParser commentContentParser;
         private readonly IDictionary<Identifier, IReferencable> matchedAssociations = new Dictionary<Identifier, IReferencable>();
 
+        public event EventHandler<DocumentModelWarningEventArgs> CreationWarning = (sender, e) => {};
+
         public DocumentModel(ICommentContentParser commentContentParser)
         {
             this.commentContentParser = commentContentParser;
@@ -33,17 +35,38 @@ namespace Docu.Documentation
 
             foreach (DocumentedType association in members.Where(x => x is DocumentedType))
             {
-                AddType(namespaces, references, association);
+                try
+                {
+                    AddType(namespaces, references, association);
+                }
+                catch (UnsupportedDocumentationMemberException ex)
+                {
+                    RaiseCreationWarning(ex);
+                }
             }
 
             foreach (DocumentedMethod association in members.Where(x => x is DocumentedMethod))
             {
-                AddMethod(namespaces, references, association);
+                try
+                {
+                    AddMethod(namespaces, references, association);
+                }
+                catch (UnsupportedDocumentationMemberException ex)
+                {
+                    RaiseCreationWarning(ex);
+                }
             }
 
             foreach (DocumentedProperty association in members.Where(x => x is DocumentedProperty))
             {
-                AddProperty(namespaces, references, association);
+                try
+                {
+                    AddProperty(namespaces, references, association);
+                }
+                catch (UnsupportedDocumentationMemberException ex)
+                {
+                    RaiseCreationWarning(ex);
+                }
             }
 
             foreach (IReferencable referencable in references)
@@ -55,6 +78,11 @@ namespace Docu.Documentation
             Sort(namespaces);
 
             return namespaces;
+        }
+
+        private void RaiseCreationWarning(UnsupportedDocumentationMemberException exception)
+        {
+            CreationWarning(this, new DocumentModelWarningEventArgs("Unsupported documentation member found: '" + exception.MemberName + "'"));
         }
 
         private void Sort(List<Namespace> namespaces)

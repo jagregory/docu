@@ -48,18 +48,19 @@ namespace Docu.Parsing.Model
 
         public static Identifier FromString(string name)
         {
-            string trimmedName = name.Substring(2);
+            var prefix = name.Substring(0, 1);
+            var trimmedName = name.Substring(2);
 
-            if (name.StartsWith("T:"))
+            if (prefix == "T")
                 return FromTypeString(trimmedName);
-            if (name.StartsWith("N:"))
+            if (prefix == "N")
                 return FromNamespace(trimmedName);
-            if (name.StartsWith("M:"))
+            if (prefix == "M")
                 return FromMethodName(trimmedName);
-            if (name.StartsWith("P:"))
+            if (prefix == "P")
                 return FromPropertyName(trimmedName);
 
-            throw new InvalidOperationException("Unexpected name type");
+            throw new UnsupportedDocumentationMemberException(name);
         }
 
         private static PropertyIdentifier FromPropertyName(string name)

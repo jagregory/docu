@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Console\ConsoleApplicationTests\Arguments.cs" />
+    <Compile Include="Console\ConsoleApplicationTests\BadXml.cs" />
     <Compile Include="Console\ConsoleApplicationTests\ValidArguments.cs" />
     <Compile Include="DocumentationGeneratorTests\BaseDocumentationGeneratorFixture.cs" />
     <Compile Include="DocumentationGeneratorTests\Generate.cs" />
@@ -61,7 +62,9 @@
     <Compile Include="DocumentationGeneratorTests\SetTemplatePath.cs" />
     <Compile Include="DocumentationGeneratorTests\SetXml.cs" />
     <Compile Include="DocumentationGeneratorTests\SetAssembly.cs" />
+    <Compile Include="Documentation\DocumentModelGeneratorTests\UnrecognisedDocumentationTypes.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\BaseDocumentModelGeneratorFixture.cs" />
+    <Compile Include="Documentation\DocumentModelGeneratorTests\Namespaces.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Summaries.cs" />
     <Compile Include="Generation\PatternTemplateResolverTests\BasePatternResolve_ViewData_Fixture.cs" />
     <Compile Include="Generation\PatternTemplateResolverTests\type_template_in_directory.cs" />

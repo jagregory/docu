@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Docu.Console;
-using Docu.Console;
+﻿using Docu.Console;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;

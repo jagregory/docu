@@ -66,6 +66,7 @@
     <Compile Include="Console\AssemblyNotFoundMessage.cs" />
     <Compile Include="Console\ConsoleApplication.cs" />
     <Compile Include="Console\ConsoleScreenWriter.cs" />
+    <Compile Include="Console\DocumentModelWarningMessage.cs" />
     <Compile Include="Console\DoneMessage.cs" />
     <Compile Include="Console\FileNotFoundMessage.cs" />
     <Compile Include="Console\HelpMessage.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Documentation\AssemblyDoc.cs" />
     <Compile Include="Documentation\BaseDocumentationElement.cs" />
     <Compile Include="Documentation\PrettyNameExtensions.cs" />
+    <Compile Include="GenerationEventArgs.cs" />
     <Compile Include="IDocumentationGenerator.cs" />
     <Compile Include="IO\AssemblyLoader.cs" />
     <Compile Include="DocumentationGenerator.cs" />
@@ -118,6 +120,8 @@
     <Compile Include="Documentation\DeclaredType.cs" />
     <Compile Include="Generation\BulkPageWriter.cs" />
     <Compile Include="Generation\HtmlGenerator.cs" />
+    <Compile Include="Parsing\UnsupportedDocumentationMemberException.cs" />
+    <Compile Include="Parsing\WarningEventArgs.cs" />
     <Compile Include="UI\HtmlOutputFormatter.cs" />
     <Compile Include="UI\IOutputFormatter.cs" />
     <Compile Include="Generation\IOutputGenerator.cs" />

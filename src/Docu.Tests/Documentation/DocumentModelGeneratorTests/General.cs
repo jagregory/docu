@@ -13,20 +13,6 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
     public class General : BaseDocumentModelGeneratorFixture
     {
         [Test]
-        public void ShouldBuildNamespaces()
-        {
-            var members = new[]
-            {
-                Type<First>(@"<member name=""T:Example.First"" />"),  
-                Type<DeepFirst>(@"<member name=""T:Example.Deep.DeepFirst"" />"),
-            };
-            var namespaces = model.Create(members);
-
-            namespaces.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromNamespace("Example")));
-            namespaces.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromNamespace("Example.Deep")));
-        }
-
-        [Test]
         public void ShouldHaveTypesInNamespaces()
         {
             var members = new[]

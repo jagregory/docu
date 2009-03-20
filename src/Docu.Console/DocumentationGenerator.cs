@@ -21,14 +21,24 @@ namespace Docu
         private string outputPath = "output";
         private string templatePath = "templates";
 
-        public DocumentationGenerator(IAssemblyLoader assemblyLoader, IXmlLoader xmlLoader, IAssemblyXmlParser parser,
-                                      IBulkPageWriter writer, IUntransformableResourceManager resourceManager)
+        public event EventHandler<BadFileEventArgs> BadFileEvent;
+        public event EventHandler<GenerationEventArgs> Warning = (sender, e) => {};
+
+        public DocumentationGenerator(IAssemblyLoader assemblyLoader, IXmlLoader xmlLoader, IAssemblyXmlParser parser, IBulkPageWriter writer, IUntransformableResourceManager resourceManager)
         {
             this.assemblyLoader = assemblyLoader;
             this.xmlLoader = xmlLoader;
             this.parser = parser;
             this.writer = writer;
             this.resourceManager = resourceManager;
+
+            parser.ParseWarning += parser_ParseWarning;
+        }
+
+        void parser_ParseWarning(object sender, ParserWarningEventArgs e)
+        {
+            var args = new GenerationEventArgs(e.Message, e.WarningType);
+            Warning(this, args);
         }
 
         public void SetAssemblies(IEnumerable<string> assemblyPaths)
@@ -46,8 +56,6 @@ namespace Docu
                 }
             }
         }
-
-        public event EventHandler<BadFileEventArgs> BadFileEvent;
 
         public void SetAssemblies(IEnumerable<Assembly> assembliesToParse)
         {

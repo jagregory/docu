@@ -13,12 +13,21 @@ namespace Docu.Parsing
         private readonly IDocumentModel documentModel;
         private readonly IDocumentationXmlMatcher xmlMatcher;
 
-        public AssemblyXmlParser(IDocumentationXmlMatcher xmlMatcher, IDocumentModel documentModel,
-                                 IDocumentableMemberFinder documentableMembers)
+        public event EventHandler<ParserWarningEventArgs> ParseWarning = (sender, e) => {};
+
+        public AssemblyXmlParser(IDocumentationXmlMatcher xmlMatcher, IDocumentModel documentModel, IDocumentableMemberFinder documentableMembers)
         {
             this.xmlMatcher = xmlMatcher;
             this.documentModel = documentModel;
             this.documentableMembers = documentableMembers;
+
+            documentModel.CreationWarning += documentModel_CreationWarning;
+        }
+
+        void documentModel_CreationWarning(object sender, DocumentModelWarningEventArgs e)
+        {
+            var args = new ParserWarningEventArgs(e.Message, WarningType.DocumentModel);
+            ParseWarning(this, args);
         }
 
         public IList<Namespace> CreateDocumentModel(IEnumerable<Assembly> assemblies, IEnumerable<string> xml)
@@ -28,8 +37,7 @@ namespace Docu.Parsing
             return documentModel.Create(members);
         }
 
-        private IEnumerable<IDocumentationMember> GetAssociations(IEnumerable<Assembly> assemblies,
-                                                                  IEnumerable<string> xml)
+        private IEnumerable<IDocumentationMember> GetAssociations(IEnumerable<Assembly> assemblies, IEnumerable<string> xml)
         {
             IList<IDocumentationMember> undocumentedMembers = GetUndocumentedMembers(assemblies);
             XmlNode[] members = GetMembersXml(xml);
