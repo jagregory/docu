@@ -64,6 +64,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Console\ISwitch.cs" />
+    <Compile Include="Console\ParameterSwitch.cs" />
+    <Compile Include="Console\Switch.cs" />
     <Compile Include="Documentation\Field.cs" />
     <Compile Include="Events\BadFileEvent.cs" />
     <Compile Include="Console\AssemblyNotFoundMessage.cs" />

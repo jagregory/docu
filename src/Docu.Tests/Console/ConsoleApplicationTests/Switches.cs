@@ -50,5 +50,17 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
             writer.AssertWasCalled(x => x.WriteMessage(null),
                 x => x.Constraints(Is.TypeOf<HelpMessage>()));
         }
+
+        [Test]
+        public void should_set_output_path_on_generator_if_output_switch_given()
+        {
+            var generator = MockRepository.GenerateMock<IDocumentationGenerator>();
+            var app = new ConsoleApplication(StubWriter, generator, StubEventAggregator);
+
+            app.SetArguments(new[] { "--output=dir" });
+            app.Run();
+
+            generator.AssertWasCalled(x => x.SetOutputPath("dir"));
+        }
     }
 }

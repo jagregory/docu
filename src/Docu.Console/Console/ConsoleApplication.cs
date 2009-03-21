@@ -15,7 +15,7 @@ namespace Docu.Console
         private readonly IEventAggregator eventAggregator;
         private readonly IScreenWriter screenWriter;
         private bool canRun;
-        private bool showHelp;
+        private readonly IList<ISwitch> switches = new List<ISwitch>();
 
         public ConsoleApplication(IScreenWriter screenWriter, IDocumentationGenerator documentationGenerator, IEventAggregator eventAggregator)
         {
@@ -23,12 +23,32 @@ namespace Docu.Console
             this.documentationGenerator = documentationGenerator;
             this.eventAggregator = eventAggregator;
 
-            this.eventAggregator
+            WireUpListeners();
+            DefineSwitches();
+        }
+
+        private void WireUpListeners()
+        {
+            eventAggregator
                 .GetEvent<WarningEvent>()
                 .Subscribe(Warning);
-            this.eventAggregator
+            eventAggregator
                 .GetEvent<BadFileEvent>()
                 .Subscribe(BadFile);
+        }
+
+        private void DefineSwitches()
+        {
+            switches.Add(new Switch("--help", () =>
+            {
+                ShowMessage(new HelpMessage());
+                return false;
+            }));
+            switches.Add(new ParameterSwitch("--output", arg =>
+            {
+                documentationGenerator.SetOutputPath(arg);
+                return true;
+            }));
         }
 
         void Warning(string message)
@@ -47,18 +67,18 @@ namespace Docu.Console
 
             if (arguments.Count > 0)
                 canRun = true;
-
-            if (arguments.Contains("--help"))
-                showHelp = true;
         }
 
         public void Run()
         {
-            if (!canRun || showHelp)
+            if (!canRun)
             {
                 ShowMessage(Messages.Help);
                 return;
             }
+
+            if (ProcessSwitches() == false)
+                return;
 
             ShowMessage(Messages.Splash);
 
@@ -76,6 +96,26 @@ namespace Docu.Console
 
                 ShowMessage(Messages.Done);
             }
+        }
+
+        private bool ProcessSwitches()
+        {
+            foreach (var svvitch in switches)
+            {
+                for (var i = arguments.Count - 1; i >= 0; i--)
+                {
+                    var argument = arguments[i];
+
+                    if (!svvitch.IsMatch(argument)) continue;
+
+                    arguments.RemoveAt(i);
+
+                    if (svvitch.Handle(argument) == false)
+                        return false;
+                }
+            }
+
+            return true;
         }
 
         private bool VerifyArguments(IEnumerable<string> assemblies, IEnumerable<string> xmls)

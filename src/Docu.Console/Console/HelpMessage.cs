@@ -15,7 +15,8 @@ namespace Docu.Console
             yield return "   or can be explicitly named.";
             yield return "";
             yield return "Switches:";
-            yield return "  --help  Shows this message";
+            yield return "  --help          Shows this message";
+            yield return "  --output=value  Sets the output path to value";
         }
     }
 }
