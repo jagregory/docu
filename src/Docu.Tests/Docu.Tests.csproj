@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Console\ConsoleApplicationTests\Arguments.cs" />
     <Compile Include="Console\ConsoleApplicationTests\BadXml.cs" />
+    <Compile Include="Console\ConsoleApplicationTests\Switches.cs" />
     <Compile Include="Console\ConsoleApplicationTests\ValidArguments.cs" />
     <Compile Include="DocumentationGeneratorTests\BaseDocumentationGeneratorFixture.cs" />
     <Compile Include="DocumentationGeneratorTests\Generate.cs" />

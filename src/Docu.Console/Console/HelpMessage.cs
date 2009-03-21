@@ -6,7 +6,16 @@ namespace Docu.Console
     {
         public IEnumerable<string> GetBody()
         {
-            yield return "usuage: docu assembly [assembly...] [xml file...]";
+            yield return "usuage: docu pattern.dll [pattern.dll ...] [pattern.xml ...]";
+            yield return "";
+            yield return " * One or more dll matching patterns can be specified,";
+            yield return "   e.g. MyProject*.dll or MyProject.dll";
+            yield return "";
+            yield return " * Xml file names can be inferred from the dll patterns";
+            yield return "   or can be explicitly named.";
+            yield return "";
+            yield return "Switches:";
+            yield return "  --help  Shows this message";
         }
     }
 }

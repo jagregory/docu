@@ -37,6 +37,19 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
         }
 
         [Test]
+        public void should_show_help_when_empty_args_set()
+        {
+            var writer = MockRepository.GenerateMock<IScreenWriter>();
+            var app = new ConsoleApplication(writer, StubDocGen, StubEventAggregator);
+            
+            app.SetArguments(new string[0]);
+            app.Run();
+
+            writer.AssertWasCalled(x => x.WriteMessage(null),
+                                   x => x.Constraints(Is.TypeOf<HelpMessage>()));
+        }
+
+        [Test]
         public void should_exit_after_showing_help_when_no_args()
         {
             var writer = MockRepository.GenerateMock<IScreenWriter>();
@@ -120,7 +133,7 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
             var generator = MockRepository.GenerateMock<IDocumentationGenerator>();
             var app = new ConsoleApplication(StubWriter, generator, StubEventAggregator);
 
-            app.SetArguments(new[] { "Docu*.dll", "Docu.xml" });
+            app.SetArguments(new[] { "Docu*.dll", "DummyDocs.xml" });
             app.Run();
 
             generator.AssertWasCalled(x => x.SetAssemblies(new[] { "Docu.Tests.dll" }));

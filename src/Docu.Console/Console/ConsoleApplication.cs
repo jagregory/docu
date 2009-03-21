@@ -15,6 +15,7 @@ namespace Docu.Console
         private readonly IEventAggregator eventAggregator;
         private readonly IScreenWriter screenWriter;
         private bool canRun;
+        private bool showHelp;
 
         public ConsoleApplication(IScreenWriter screenWriter, IDocumentationGenerator documentationGenerator, IEventAggregator eventAggregator)
         {
@@ -44,13 +45,16 @@ namespace Docu.Console
         {
             arguments.AddRange(args);
 
-            if (arguments.Count >= 0)
+            if (arguments.Count > 0)
                 canRun = true;
+
+            if (arguments.Contains("--help"))
+                showHelp = true;
         }
 
         public void Run()
         {
-            if (!canRun)
+            if (!canRun || showHelp)
             {
                 ShowMessage(Messages.Help);
                 return;
