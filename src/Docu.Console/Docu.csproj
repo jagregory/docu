@@ -90,6 +90,10 @@
     <Compile Include="Documentation\IDocumentationElement.cs" />
     <Compile Include="Documentation\IGenerationStep.cs" />
     <Compile Include="Documentation\PrettyNameExtensions.cs" />
+    <Compile Include="Events\DocuEvent.cs" />
+    <Compile Include="Events\EventAggregator.cs" />
+    <Compile Include="Events\IEvent.cs" />
+    <Compile Include="Events\IEventAggregator.cs" />
     <Compile Include="GenerationEventArgs.cs" />
     <Compile Include="IDocumentationGenerator.cs" />
     <Compile Include="IO\AssemblyLoader.cs" />

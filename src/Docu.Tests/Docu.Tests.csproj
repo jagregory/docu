@@ -67,6 +67,7 @@
     <Compile Include="Documentation\DocumentModelGeneratorTests\Events.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Namespaces.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Summaries.cs" />
+    <Compile Include="Events\EventAggregatorTests.cs" />
     <Compile Include="Generation\PatternTemplateResolverTests\BasePatternResolve_ViewData_Fixture.cs" />
     <Compile Include="Generation\PatternTemplateResolverTests\type_template_in_directory.cs" />
     <Compile Include="Generation\PatternTemplateResolverTests\single_template_in_directory.cs" />
