@@ -52,9 +52,6 @@ namespace Docu.Parsing.Model
             {
                 var other = (PropertyIdentifier)obj;
 
-                if (HasGet != other.HasGet || HasSet != other.HasSet)
-                    return false;
-
                 return base.Equals(obj) && typeId.Equals(other.typeId);
             }
 

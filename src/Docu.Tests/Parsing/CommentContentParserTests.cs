@@ -80,7 +80,18 @@ namespace Docu.Tests.Parsing
         }
 
         [Test]
-        public void ShouldParseSee()
+        public void ShouldParseSeeForNamespace()
+        {
+            var blocks = parser.Parse("<x><see cref=\"N:Example\" /></x>".ToNode());
+
+            blocks.CountShouldEqual(1);
+            blocks[0].ShouldBeOfType<See>();
+            ((See)blocks[0]).Reference.IsResolved.ShouldBeFalse();
+            ((See)blocks[0]).Reference.Name.ShouldEqual("Example");
+        }
+
+        [Test]
+        public void ShouldParseSeeForType()
         {
             var blocks = parser.Parse("<x><see cref=\"T:Example.First\" /></x>".ToNode());
 
@@ -88,6 +99,50 @@ namespace Docu.Tests.Parsing
             blocks[0].ShouldBeOfType<See>();
             ((See)blocks[0]).Reference.IsResolved.ShouldBeFalse();
             ((See)blocks[0]).Reference.Name.ShouldEqual("First");
+        }
+
+        [Test]
+        public void ShouldParseSeeForMethod()
+        {
+            var blocks = parser.Parse("<x><see cref=\"M:Example.Second.SecondMethod\" /></x>".ToNode());
+
+            blocks.CountShouldEqual(1);
+            blocks[0].ShouldBeOfType<See>();
+            ((See)blocks[0]).Reference.IsResolved.ShouldBeFalse();
+            ((See)blocks[0]).Reference.Name.ShouldEqual("SecondMethod");
+        }
+
+        [Test]
+        public void ShouldParseSeeForProperty()
+        {
+            var blocks = parser.Parse("<x><see cref=\"P:Example.Second.SecondProperty\" /></x>".ToNode());
+
+            blocks.CountShouldEqual(1);
+            blocks[0].ShouldBeOfType<See>();
+            ((See)blocks[0]).Reference.IsResolved.ShouldBeFalse();
+            ((See)blocks[0]).Reference.Name.ShouldEqual("SecondProperty");
+        }
+
+        [Test]
+        public void ShouldParseSeeForEvent()
+        {
+            var blocks = parser.Parse("<x><see cref=\"E:Example.Second.AnEvent\" /></x>".ToNode());
+
+            blocks.CountShouldEqual(1);
+            blocks[0].ShouldBeOfType<See>();
+            ((See)blocks[0]).Reference.IsResolved.ShouldBeFalse();
+            ((See)blocks[0]).Reference.Name.ShouldEqual("AnEvent");
+        }
+
+        [Test]
+        public void ShouldParseSeeForField()
+        {
+            var blocks = parser.Parse("<x><see cref=\"F:Example.Second.aField\" /></x>".ToNode());
+
+            blocks.CountShouldEqual(1);
+            blocks[0].ShouldBeOfType<See>();
+            ((See)blocks[0]).Reference.IsResolved.ShouldBeFalse();
+            ((See)blocks[0]).Reference.Name.ShouldEqual("aField");
         }
 
         [Test]
