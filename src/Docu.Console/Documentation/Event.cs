@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Model;
 
@@ -26,13 +27,18 @@ namespace Docu.Documentation
         {
             if (referencables.ContainsKey(identifier))
             {
+                IsResolved = true;
                 var referencable = referencables[identifier];
                 var ev = referencable as Event;
 
                 if (ev == null)
                     throw new InvalidOperationException("Cannot resolve to '" + referencable.GetType().FullName + "'");
 
-                IsResolved = true;
+                foreach (IReferrer comment in Summary.Where(x => x is IReferrer))
+                {
+                    if (!comment.Reference.IsResolved)
+                        comment.Reference.Resolve(referencables);
+                }
             }
 
             ConvertToExternalReference();

@@ -30,7 +30,18 @@ namespace Docu.Documentation
 
         public void Resolve(IDictionary<Identifier, IReferencable> referencables)
         {
-            throw new NotImplementedException();
+            if (referencables.ContainsKey(identifier))
+            {
+                IsResolved = true;
+
+                foreach (var type in Types)
+                {
+                    if (!type.IsResolved)
+                        type.Resolve(referencables);
+                }
+            }
+            else
+                ConvertToExternalReference();
         }
 
         public void Sort()

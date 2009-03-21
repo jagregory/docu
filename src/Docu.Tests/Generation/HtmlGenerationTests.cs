@@ -34,8 +34,6 @@ namespace Docu.Tests.Generation
         [Test]
         public void ShouldOutputAssemblies()
         {
-            var a1 = new AssemblyDoc("One");
-            var a2 = new AssemblyDoc("Two");
             var data = new ViewData { Assemblies = new[] { typeof(ViewData).Assembly } };
             var content = generator.Convert("assemblies", data);
 

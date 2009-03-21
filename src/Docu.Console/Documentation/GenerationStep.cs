@@ -6,7 +6,7 @@ namespace Docu.Documentation
 {
     internal class GenerationStep<T> : IGenerationStep
     {
-        public GenerationStep(Action<List<Namespace>, List<IReferencable>, T> action)
+        public GenerationStep(Action<List<Namespace>, T> action)
         {
             Action = action;
         }
@@ -16,11 +16,11 @@ namespace Docu.Documentation
             get { return x => x is T; }
         }
 
-        public Action<List<Namespace>, List<IReferencable>, T> Action { get; private set; }
+        public Action<List<Namespace>, T> Action { get; private set; }
             
-        Action<List<Namespace>, List<IReferencable>, IDocumentationMember> IGenerationStep.Action
+        Action<List<Namespace>, IDocumentationMember> IGenerationStep.Action
         {
-            get { return (x, y, z) => Action(x, y, (T)z); }
+            get { return (x, y) => Action(x, (T)y); }
         }
     }
 }

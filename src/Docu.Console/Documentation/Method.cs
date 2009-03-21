@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Model;
@@ -48,6 +49,7 @@ namespace Docu.Documentation
         {
             if (referencables.ContainsKey(identifier))
             {
+                IsResolved = true;
                 IReferencable referencable = referencables[identifier];
                 var method = referencable as Method;
 
@@ -56,7 +58,18 @@ namespace Docu.Documentation
 
                 ReturnType = method.ReturnType;
                 representedMethod = method.representedMethod;
-                IsResolved = true;
+
+                foreach (IReferrer comment in Summary.Where(x => x is IReferrer))
+                {
+                    if (!comment.Reference.IsResolved)
+                        comment.Reference.Resolve(referencables);
+                }
+
+                foreach (var para in Parameters)
+                {
+                    if (!para.Reference.IsResolved)
+                        para.Reference.Resolve(referencables);
+                }
             }
 
             ConvertToExternalReference();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -33,7 +34,6 @@ namespace Docu.Documentation
         public IList<Namespace> Create(IEnumerable<IDocumentationMember> members)
         {
             var namespaces = new List<Namespace>();
-            var references = new List<IReferencable>();
 
             matchedAssociations.Clear();
 
@@ -43,7 +43,7 @@ namespace Docu.Documentation
                 {
                     try
                     {
-                        step.Action(namespaces, references, member);
+                        step.Action(namespaces, member);
                     }
                     catch (UnsupportedDocumentationMemberException ex)
                     {
@@ -52,10 +52,10 @@ namespace Docu.Documentation
                 }
             }
 
-            foreach (IReferencable referencable in references)
+            foreach (var ns in namespaces)
             {
-                if (!referencable.IsResolved)
-                    referencable.Resolve(matchedAssociations);
+                if (!ns.IsResolved)
+                    ns.Resolve(matchedAssociations);
             }
 
             Sort(namespaces);
@@ -80,41 +80,40 @@ namespace Docu.Documentation
             }
         }
 
-        private Namespace FindOrCreateNamespace(IDocumentationMember member, List<Namespace> namespaces, List<IReferencable> references)
+        private Namespace FindOrCreateNamespace(IDocumentationMember member, List<Namespace> namespaces)
         {
             var identifier = Identifier.FromNamespace(member.TargetType.Namespace);
             var ns = namespaces.Find(x => x.IsIdentifiedBy(identifier));
 
             if (ns == null)
             {
-                AddNamespace(namespaces, references, new DocumentedType(member.Name.CloneAsNamespace(), null, member.TargetType));
+                AddNamespace(namespaces, new DocumentedType(member.Name.CloneAsNamespace(), null, member.TargetType));
                 ns = namespaces.Find(x => x.IsIdentifiedBy(identifier));
             }
 
             return ns;
         }
 
-        private DeclaredType FindOrCreateType(IDocumentationMember member, Namespace ns, List<Namespace> namespaces, List<IReferencable> references)
+        private DeclaredType FindOrCreateType(IDocumentationMember member, Namespace ns, List<Namespace> namespaces)
         {
             var typeName = Identifier.FromType(member.TargetType);
             var type = ns.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
 
             if (type == null)
             {
-                AddType(namespaces, references,
-                        new DocumentedType(member.Name.CloneAsType(), null, member.TargetType));
+                AddType(namespaces, new DocumentedType(member.Name.CloneAsType(), null, member.TargetType));
                 type = ns.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
             }
 
             return type;
         }
 
-        private void AddMethod(List<Namespace> namespaces, List<IReferencable> references, DocumentedMethod association)
+        private void AddMethod(List<Namespace> namespaces, DocumentedMethod association)
         {
             if (association.Method == null) return;
 
-            var ns = FindOrCreateNamespace(association, namespaces, references);
-            var type = FindOrCreateType(association, ns, namespaces, references);
+            var ns = FindOrCreateNamespace(association, namespaces);
+            var type = FindOrCreateType(association, ns, namespaces);
 
             DeclaredType methodReturnType = DeclaredType.Unresolved(
                 Identifier.FromType(association.Method.ReturnType),
@@ -123,9 +122,7 @@ namespace Docu.Documentation
             Method doc = Method.Unresolved(Identifier.FromMethod(association.Method, association.TargetType),
                                            association.Method, methodReturnType);
 
-            references.Add(methodReturnType);
-
-            ParseSummary(association, doc, references);
+            ParseSummary(association, doc);
 
             foreach (var parameter in association.Method.GetParameters())
             {
@@ -135,9 +132,7 @@ namespace Docu.Documentation
                     Namespace.Unresolved(Identifier.FromNamespace(parameter.ParameterType.Namespace)));
                 var docParam = new MethodParameter(parameter.Name, reference);
 
-                references.Add(reference);
-
-                ParseParamSummary(association, docParam, references);
+                ParseParamSummary(association, docParam);
 
                 doc.AddParameter(docParam);
             }
@@ -145,17 +140,16 @@ namespace Docu.Documentation
             if (matchedAssociations.ContainsKey(association.Name))
                 return; // weird case when a type has the same method declared twice
 
-            references.Add(doc);
             matchedAssociations.Add(association.Name, doc);
             type.AddMethod(doc);
         }
 
-        private void AddProperty(List<Namespace> namespaces, List<IReferencable> references, DocumentedProperty association)
+        private void AddProperty(List<Namespace> namespaces, DocumentedProperty association)
         {
             if (association.Property == null) return;
 
-            var ns = FindOrCreateNamespace(association, namespaces, references);
-            var type = FindOrCreateType(association, ns, namespaces, references);
+            var ns = FindOrCreateNamespace(association, namespaces);
+            var type = FindOrCreateType(association, ns, namespaces);
 
             DeclaredType propertyReturnType =
                 DeclaredType.Unresolved(Identifier.FromType(association.Property.PropertyType),
@@ -165,84 +159,73 @@ namespace Docu.Documentation
             Property doc = Property.Unresolved(Identifier.FromProperty(association.Property, association.TargetType),
                                                propertyReturnType);
 
-            references.Add(propertyReturnType);
+            ParseSummary(association, doc);
 
-            ParseSummary(association, doc, references);
-
-            references.Add(doc);
             type.AddProperty(doc);
         }
 
-        private void AddEvent(List<Namespace> namespaces, List<IReferencable> references, DocumentedEvent association)
+        private void AddEvent(List<Namespace> namespaces, DocumentedEvent association)
         {
             if (association.Event == null) return;
 
-            var ns = FindOrCreateNamespace(association, namespaces, references);
-            var type = FindOrCreateType(association, ns, namespaces, references);
+            var ns = FindOrCreateNamespace(association, namespaces);
+            var type = FindOrCreateType(association, ns, namespaces);
 
             var doc = Event.Unresolved(Identifier.FromEvent(association.Event, association.TargetType));
 
-            ParseSummary(association, doc, references);
+            ParseSummary(association, doc);
 
-            references.Add(doc);
             type.AddEvent(doc);
         }
 
-        private void AddNamespace(List<Namespace> namespaces, List<IReferencable> references, DocumentedType association)
+        private void AddNamespace(List<Namespace> namespaces, DocumentedType association)
         {
             var ns = Identifier.FromNamespace(association.TargetType.Namespace);
 
             if (!namespaces.Exists(x => x.IsIdentifiedBy(ns)))
             {
-                var doc = new Namespace(ns);
+                var doc = Namespace.Unresolved(ns);
                 matchedAssociations.Add(association.Name.CloneAsNamespace(), doc);
                 namespaces.Add(doc);
             }
         }
 
-        private void AddType(List<Namespace> namespaces, List<IReferencable> references, DocumentedType association)
+        private void AddType(List<Namespace> namespaces, DocumentedType association)
         {
-            var ns = FindOrCreateNamespace(association, namespaces, references);
+            var ns = FindOrCreateNamespace(association, namespaces);
             DeclaredType doc = DeclaredType.Unresolved((TypeIdentifier)association.Name, association.TargetType, ns);
 
-            ParseSummary(association, doc, references);
+            ParseSummary(association, doc);
 
             if (matchedAssociations.ContainsKey(association.Name))
                 return; // weird case when a type has the same method declared twice
 
-            references.Add(doc);
             matchedAssociations.Add(association.Name, doc);
             ns.AddType(doc);
         }
 
-        private void ParseComment(XmlNode node, IDocumentationElement doc, List<IReferencable> references)
+        private void ParseComment(XmlNode node, IDocumentationElement doc)
         {
             if (node != null)
                 doc.Summary = commentContentParser.Parse(node);
-
-            foreach (var comment in doc.Summary)
-            {
-                if (comment is IReferrer)
-                    references.Add(((IReferrer)comment).Reference);
-            }
         }
 
-        private void ParseParamSummary(IDocumentationMember member, IDocumentationElement doc, List<IReferencable> references)
+        private void ParseParamSummary(IDocumentationMember member, IDocumentationElement doc)
         {
             if (member.Xml == null) return;
 
             var node = member.Xml.SelectSingleNode("param[@name='" + doc.Name + "']");
 
-            ParseComment(node, doc, references);
+            ParseComment(node, doc);
         }
 
-        private void ParseSummary(IDocumentationMember member, IDocumentationElement doc, List<IReferencable> references)
+        private void ParseSummary(IDocumentationMember member, IDocumentationElement doc)
         {
             if (member.Xml == null) return;
 
             var node = member.Xml.SelectSingleNode("summary");
 
-            ParseComment(node, doc, references);
+            ParseComment(node, doc);
         }
     }
 }

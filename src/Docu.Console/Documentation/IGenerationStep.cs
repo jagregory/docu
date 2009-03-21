@@ -7,6 +7,6 @@ namespace Docu.Documentation
     internal interface IGenerationStep
     {
         Func<IDocumentationMember, bool> Criteria { get; }
-        Action<List<Namespace>, List<IReferencable>, IDocumentationMember> Action { get; }
+        Action<List<Namespace>, IDocumentationMember> Action { get; }
     }
 }

@@ -135,16 +135,6 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
 
     public static class Extensions
     {
-        public static void names_should_equal(this IList<AssemblyDoc> assemblies, params string[] names)
-        {
-            foreach (var name in names)
-            {
-                var s = name;
-                if (assemblies.FirstOrDefault(x => x.Name == s) == null)
-                    Assert.Fail("Couldn't find '" + name + "'");
-            }
-        }
-
         public static void names_should_equal(this IList<Namespace> namespaces, params string[] names)
         {
             foreach (var name in names)

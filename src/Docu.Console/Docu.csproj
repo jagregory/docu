@@ -85,7 +85,6 @@
     <Compile Include="Console\XmlNotFoundMessage.cs" />
     <Compile Include="ContainerBootstrapper.cs" />
     <Compile Include="DefaultRegistry.cs" />
-    <Compile Include="Documentation\AssemblyDoc.cs" />
     <Compile Include="Documentation\BaseDocumentationElement.cs" />
     <Compile Include="Documentation\Event.cs" />
     <Compile Include="Documentation\GenerationStep.cs" />
