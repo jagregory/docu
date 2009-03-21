@@ -124,6 +124,7 @@ namespace Docu.Documentation
                                            association.Method, methodReturnType);
 
             ParseSummary(association, doc);
+            ParseRemarks(association, doc);
 
             foreach (var parameter in association.Method.GetParameters())
             {
@@ -161,6 +162,7 @@ namespace Docu.Documentation
                                                propertyReturnType);
 
             ParseSummary(association, doc);
+            ParseRemarks(association, doc);
 
             matchedAssociations.Add(association.Name, doc);
             type.AddProperty(doc);
@@ -176,6 +178,7 @@ namespace Docu.Documentation
             var doc = Event.Unresolved(Identifier.FromEvent(association.Event, association.TargetType));
 
             ParseSummary(association, doc);
+            ParseRemarks(association, doc);
 
             matchedAssociations.Add(association.Name, doc);
             type.AddEvent(doc);
@@ -195,6 +198,7 @@ namespace Docu.Documentation
             var doc = Field.Unresolved(Identifier.FromField(association.Field, association.TargetType), returnType);
 
             ParseSummary(association, doc);
+            ParseRemarks(association, doc);
 
             matchedAssociations.Add(association.Name, doc);
             type.AddField(doc);
@@ -218,6 +222,7 @@ namespace Docu.Documentation
             DeclaredType doc = DeclaredType.Unresolved((TypeIdentifier)association.Name, association.TargetType, ns);
 
             ParseSummary(association, doc);
+            ParseRemarks(association, doc);
 
             if (matchedAssociations.ContainsKey(association.Name))
                 return; // weird case when a type has the same method declared twice
@@ -226,7 +231,7 @@ namespace Docu.Documentation
             ns.AddType(doc);
         }
 
-        private void ParseComment(XmlNode node, IDocumentationElement doc)
+        private void ParseSummary(XmlNode node, IDocumentationElement doc)
         {
             if (node != null)
                 doc.Summary = commentContentParser.Parse(node);
@@ -238,7 +243,7 @@ namespace Docu.Documentation
 
             var node = member.Xml.SelectSingleNode("param[@name='" + doc.Name + "']");
 
-            ParseComment(node, doc);
+            ParseSummary(node, doc);
         }
 
         private void ParseSummary(IDocumentationMember member, IDocumentationElement doc)
@@ -247,7 +252,17 @@ namespace Docu.Documentation
 
             var node = member.Xml.SelectSingleNode("summary");
 
-            ParseComment(node, doc);
+            ParseSummary(node, doc);
+        }
+
+        private void ParseRemarks(IDocumentationMember member, IDocumentationElement doc)
+        {
+            if (member.Xml == null) return;
+
+            var node = member.Xml.SelectSingleNode("remarks");
+
+            if (node != null)
+                doc.Remarks = commentContentParser.Parse(node);
         }
     }
 }

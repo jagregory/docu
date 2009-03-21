@@ -4,7 +4,8 @@
   <div id="${field.Name}" class="method" each="var field in fields">
     <h4>${h(field.ReturnType.PrettyName)} <strong>${h(field.Name)}</strong></h4>
     <div class="content">
-      ${WriteSummary(field.Summary)}
+      <summary content="field.Summary" />
+      <remarks content="field.Remarks" />
       <table>
         <tr>
           <td>

@@ -14,12 +14,14 @@ namespace Docu.Documentation
             this.identifier = identifier;
             IsResolved = true;
             Summary = new List<IComment>();
+            Remarks = new List<IComment>();
         }
 
         public string Name { get; private set; }
         public bool IsExternal { get; private set; }
         public bool IsResolved { get; protected set; }
         public IList<IComment> Summary { get; set; }
+        public IList<IComment> Remarks { get; set; }
 
         public bool IsIdentifiedBy(Identifier otherIdentifier)
         {

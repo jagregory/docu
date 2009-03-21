@@ -19,7 +19,8 @@
     <div class="sub-header">
 		<if condition="Type.Summary.Count > 0">
 			<div id="summary">
-				${WriteSummary(Type.Summary)}
+				<summary content="Type.Summary" />
+				<remarks content="Type.Remarks" />
 			</div>
 		</if>
 		
