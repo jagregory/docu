@@ -40,16 +40,6 @@ namespace Docu.Console
             ShowMessage(new BadFileMessage(path));
         }
 
-        public static void Run(IEnumerable<string> args)
-        {
-            ContainerBootstrapper.BootstrapStructureMap();
-
-            var application = ObjectFactory.GetInstance<ConsoleApplication>();
-
-            application.SetArguments(args);
-            application.Run();
-        }
-
         public void SetArguments(IEnumerable<string> args)
         {
             arguments.AddRange(args);
@@ -145,14 +135,14 @@ namespace Docu.Console
             screenWriter.WriteMessage(message);
         }
 
-        private static string[] GetXmlsFromArgs(IEnumerable<string> args, IEnumerable<string> assemblies)
+        private string[] GetXmlsFromArgs(IEnumerable<string> args, IEnumerable<string> assemblies)
         {
             var xmls = new List<string>();
 
-            foreach (string arg in args)
+            foreach (var arg in args)
             {
                 if (arg.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
-                    xmls.Add(arg);
+                    xmls.AddRange(GetFiles(arg));
             }
 
             if (xmls.Count == 0)
@@ -160,27 +150,59 @@ namespace Docu.Console
                 // none specified, try to find some
                 foreach (string assembly in assemblies)
                 {
-                    string name = assembly.Replace(".dll", ".xml");
+                    var name = assembly.Replace(".dll", ".xml");
 
-                    if (File.Exists(name))
-                        xmls.Add(name);
+                    foreach (var file in GetFiles(name))
+                    {
+                        if (File.Exists(file))
+                            xmls.Add(file);
+                    }
                 }
             }
 
             return xmls.ToArray();
         }
 
-        private static string[] GetAssembliesFromArgs(IEnumerable<string> args)
+        private string[] GetAssembliesFromArgs(IEnumerable<string> args)
         {
             var assemblies = new List<string>();
 
-            foreach (string arg in args)
+            foreach (var arg in args)
             {
                 if (arg.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
-                    assemblies.Add(arg);
+                    assemblies.AddRange(GetFiles(arg));
             }
 
             return assemblies.ToArray();
+        }
+
+        private IEnumerable<string> GetFiles(string path)
+        {
+            if (path.Contains("*") || path.Contains("?"))
+            {
+                var dir = Environment.CurrentDirectory;
+                var filename = Path.GetFileName(path);
+
+                if (path.Contains("\\"))
+                    dir = Path.GetDirectoryName(path);
+
+                foreach (var file in Directory.GetFiles(dir, filename))
+                {
+                    yield return file.Replace(Environment.CurrentDirectory + "\\", "");
+                }
+            }
+            else
+                yield return path;
+        }
+
+        public static void Run(IEnumerable<string> args)
+        {
+            ContainerBootstrapper.BootstrapStructureMap();
+
+            var application = ObjectFactory.GetInstance<ConsoleApplication>();
+
+            application.SetArguments(args);
+            application.Run();
         }
     }
 }

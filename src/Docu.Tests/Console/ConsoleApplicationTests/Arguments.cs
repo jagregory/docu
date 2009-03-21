@@ -13,11 +13,13 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
     {
         private IDocumentationGenerator StubDocGen;
         private IEventAggregator StubEventAggregator;
+        private IScreenWriter StubWriter;
 
         [SetUp]
         public void create_stubs()
         {
             StubDocGen = MockRepository.GenerateStub<IDocumentationGenerator>();
+            StubWriter = MockRepository.GenerateStub<IScreenWriter>();
             StubEventAggregator = MockRepository.GenerateStub<IEventAggregator>();
             StubEventAggregator.Stub(x => x.GetEvent<WarningEvent>()).Return(new WarningEvent());
             StubEventAggregator.Stub(x => x.GetEvent<BadFileEvent>()).Return(new BadFileEvent());
@@ -110,6 +112,69 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
 
             writer.AssertWasCalled(x => x.WriteMessage(null),
                                    x => x.Constraints(Is.TypeOf<XmlNotFoundMessage>()));
+        }
+
+        [Test]
+        public void should_expand_assembly_wildcards_in_current_dir()
+        {
+            var generator = MockRepository.GenerateMock<IDocumentationGenerator>();
+            var app = new ConsoleApplication(StubWriter, generator, StubEventAggregator);
+
+            app.SetArguments(new[] { "Docu*.dll", "Docu.xml" });
+            app.Run();
+
+            generator.AssertWasCalled(x => x.SetAssemblies(new[] { "Docu.Tests.dll" }));
+        }
+
+        [Test]
+        public void should_expand_assembly_wildcards_before_passing_to_generator()
+        {
+            var generator = MockRepository.GenerateMock<IDocumentationGenerator>();
+            var app = new ConsoleApplication(StubWriter, generator, StubEventAggregator);
+
+            app.SetArguments(new[] { "Fixtures\\Fake*.dll" });
+            app.Run();
+
+            generator.AssertWasCalled(x => x.SetAssemblies(new[]
+            {
+                "Fixtures\\FakeAssembly1.dll",
+                "Fixtures\\FakeAssembly2.dll",
+                "Fixtures\\FakeAssembly3.dll"
+            }));
+        }
+
+        [Test]
+        public void should_expand_xml_wildcards_before_passing_to_generator()
+        {
+            var generator = MockRepository.GenerateMock<IDocumentationGenerator>();
+            var app = new ConsoleApplication(StubWriter, generator, StubEventAggregator);
+
+            app.SetArguments(new[] { "Fixtures\\FakeAssembly1.dll", "Fixtures\\*.xml" });
+            app.Run();
+
+            generator.AssertWasCalled(x => x.SetXmlFiles(new[]
+            {
+                "Fixtures\\FakeAssembly1.xml",
+                "Fixtures\\FakeAssembly2.xml",
+                "Fixtures\\FakeAssembly3.xml"
+            }));
+        }
+
+        [Test]
+        public void should_expand_xmls_from_assembly_wildcards_before_passing_to_generator()
+        {
+            var generator = MockRepository.GenerateMock<IDocumentationGenerator>();
+            var app = new ConsoleApplication(StubWriter, generator, StubEventAggregator);
+
+            app.SetArguments(new[] { "Fixtures\\Fake*.dll" });
+            app.Run();
+
+            generator.AssertWasCalled(x => x.SetXmlFiles(new[]
+            {
+                "Fixtures\\FakeAssembly1.xml",
+                "Fixtures\\FakeAssembly2.xml",
+                "Fixtures\\FakeAssembly3.xml"
+            }));
         }
     }
 }
