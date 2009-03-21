@@ -1,13 +1,10 @@
-using Docu.IO;
-using Docu.Parsing;
-using Docu.Generation;
+using Docu.Events;
 using Docu.IO;
 using Docu.Parsing;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;
 using Test = NUnit.Framework.TestAttribute;
-using SetUp = NUnit.Framework.SetUpAttribute;
 
 namespace Docu.Tests.DocumentationGeneratorTests
 {
@@ -18,7 +15,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void should_load_assemblies_if_strings_used()
         {
             var assemblyLoader = MockRepository.GenerateMock<IAssemblyLoader>();
-            var generator = new DocumentationGenerator(assemblyLoader, StubXmlLoader, StubParser, StubWriter, StubResourceManager);
+            var generator = new DocumentationGenerator(assemblyLoader, StubXmlLoader, StubParser, StubWriter, StubResourceManager, StubEventAggregator);
 
             generator.SetAssemblies(new[] { "assembly.dll", "assembly2.dll" });
 
@@ -30,7 +27,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void generate_should_pass_assemblies_to_parser_when_set_by_name()
         {
             var parser = MockRepository.GenerateMock<IAssemblyXmlParser>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, parser, StubWriter, StubResourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, parser, StubWriter, StubResourceManager, StubEventAggregator);
 
             StubAssemblyLoader.Stub(x => x.LoadFrom(null))
                 .IgnoreArguments()
@@ -47,7 +44,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void generate_should_pass_assemblies_to_parser_when_set_directly()
         {
             var parser = MockRepository.GenerateMock<IAssemblyXmlParser>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, parser, StubWriter, StubResourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, parser, StubWriter, StubResourceManager, StubEventAggregator);
 
             generator.SetAssemblies(new[] { typeof(IAssemblyLoader).Assembly });
             generator.Generate();
@@ -57,17 +54,20 @@ namespace Docu.Tests.DocumentationGeneratorTests
         }
 
         [Test]
-        public void set_assemblies_should_fire_event_if_bad_file_found()
+        public void set_assemblies_should_publish_event_if_bad_file_found()
         {
+            var ev = MockRepository.GenerateMock<BadFileEvent>();
             var parser = MockRepository.GenerateMock<IAssemblyXmlParser>();
             var badFileFound = false;
 
-            var generator = new DocumentationGenerator(new AssemblyLoader(), StubXmlLoader, parser, StubWriter, StubResourceManager);
-            generator.BadFileEvent += (s, e) => badFileFound = true;
+            StubEventAggregator.Stub(x => x.GetEvent<BadFileEvent>())
+                .Return(ev);
+
+            var generator = new DocumentationGenerator(new AssemblyLoader(), StubXmlLoader, parser, StubWriter, StubResourceManager, StubEventAggregator);
 
             generator.SetAssemblies(new[] { "docu.pdb" });
 
-            badFileFound.ShouldBeTrue();
+            ev.AssertWasCalled(x => x.Publish("docu.pdb"));
         }
     }
 }

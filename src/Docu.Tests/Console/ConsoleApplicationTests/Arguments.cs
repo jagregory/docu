@@ -19,9 +19,8 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
         {
             StubDocGen = MockRepository.GenerateStub<IDocumentationGenerator>();
             StubEventAggregator = MockRepository.GenerateStub<IEventAggregator>();
-            StubEventAggregator
-                .Stub(x => x.GetEvent<WarningEvent>())
-                .Return(new WarningEvent());
+            StubEventAggregator.Stub(x => x.GetEvent<WarningEvent>()).Return(new WarningEvent());
+            StubEventAggregator.Stub(x => x.GetEvent<BadFileEvent>()).Return(new BadFileEvent());
         }
 
         [Test]

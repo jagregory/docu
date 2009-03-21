@@ -1,4 +1,3 @@
-using Docu.Console;
 using Docu.Documentation;
 using Docu.Events;
 using Docu.Parsing;

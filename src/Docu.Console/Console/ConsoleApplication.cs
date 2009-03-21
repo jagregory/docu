@@ -21,11 +21,13 @@ namespace Docu.Console
             this.screenWriter = screenWriter;
             this.documentationGenerator = documentationGenerator;
             this.eventAggregator = eventAggregator;
-            this.documentationGenerator.BadFileEvent += documentationGenerator_BadFileEvent;
 
             this.eventAggregator
                 .GetEvent<WarningEvent>()
                 .Subscribe(Warning);
+            this.eventAggregator
+                .GetEvent<BadFileEvent>()
+                .Subscribe(BadFile);
         }
 
         void Warning(string message)
@@ -33,9 +35,9 @@ namespace Docu.Console
             ShowMessage(new WarningMessage(message));
         }
 
-        void documentationGenerator_BadFileEvent(object sender, BadFileEventArgs e)
+        void BadFile(string path)
         {
-            ShowMessage(Messages.BadFile);
+            ShowMessage(new BadFileMessage(path));
         }
 
         public static void Run(IEnumerable<string> args)

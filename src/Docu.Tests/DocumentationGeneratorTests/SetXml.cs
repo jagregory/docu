@@ -18,7 +18,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void should_load_xml_files_if_names_used()
         {
             var xmlLoader = MockRepository.GenerateMock<IXmlLoader>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, xmlLoader, StubParser, StubWriter, StubResourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, xmlLoader, StubParser, StubWriter, StubResourceManager, StubEventAggregator);
 
             generator.SetXmlFiles(new[] { "assembly.xml", "assembly2.xml" });
 
@@ -30,7 +30,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void generate_should_pass_xmls_to_parser_when_set_by_name()
         {
             var parser = MockRepository.GenerateMock<IAssemblyXmlParser>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, parser, StubWriter, StubResourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, parser, StubWriter, StubResourceManager, StubEventAggregator);
 
             StubXmlLoader.Stub(x => x.LoadFrom(null))
                 .IgnoreArguments()
@@ -47,7 +47,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void generate_should_pass_assemblies_to_parser_when_set_directly()
         {
             var parser = MockRepository.GenerateMock<IAssemblyXmlParser>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, parser, StubWriter, StubResourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, parser, StubWriter, StubResourceManager, StubEventAggregator);
 
             generator.SetXmlContent(new[] { "content" });
             generator.Generate();

@@ -1,3 +1,4 @@
+using Docu.Events;
 using Docu.Generation;
 using Docu.IO;
 using Docu.Parsing;
@@ -16,6 +17,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         protected IUntransformableResourceManager StubResourceManager;
         protected IAssemblyLoader StubAssemblyLoader;
         protected IXmlLoader StubXmlLoader;
+        protected IEventAggregator StubEventAggregator;
 
         [SetUp]
         public void CreateStubs()
@@ -25,6 +27,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
             StubResourceManager = MockRepository.GenerateStub<IUntransformableResourceManager>();
             StubAssemblyLoader = MockRepository.GenerateStub<IAssemblyLoader>();
             StubXmlLoader = MockRepository.GenerateStub<IXmlLoader>();
+            StubEventAggregator = MockRepository.GenerateStub<IEventAggregator>();
 
             StubAssemblyLoader.Stub(x => x.LoadFrom(null))
                 .IgnoreArguments()

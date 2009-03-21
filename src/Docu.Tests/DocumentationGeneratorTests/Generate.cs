@@ -18,7 +18,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void should_pass_document_model_to_writer()
         {
             var writer = MockRepository.GenerateMock<IBulkPageWriter>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, writer, StubResourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, writer, StubResourceManager, StubEventAggregator);
             var documentModel = new List<Namespace>();
 
             StubParser.Stub(x => x.CreateDocumentModel(null, null))
@@ -36,7 +36,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void should_move_untransformable_resources_from_template_dir()
         {
             var resourceManager = MockRepository.GenerateMock<IUntransformableResourceManager>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, StubWriter, resourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, StubWriter, resourceManager, StubEventAggregator);
 
             generator.SetAssemblies(new[] { "unimportant_file_path" });
             generator.SetTemplatePath("template-dir");
@@ -50,7 +50,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void should_move_untransformable_resources_to_output_dir()
         {
             var resourceManager = MockRepository.GenerateMock<IUntransformableResourceManager>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, StubWriter, resourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, StubWriter, resourceManager, StubEventAggregator);
 
             generator.SetAssemblies(new[] { "unimportant_file_path" });
             generator.SetOutputPath("output-dir");
@@ -64,7 +64,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void should_not_error_if_it_can_not_find_assemblies_to_doc()
         {
             var resourceManager = MockRepository.GenerateMock<IUntransformableResourceManager>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, StubWriter, resourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, StubWriter, resourceManager, StubEventAggregator);
 
             generator.SetOutputPath("output-dir");
             generator.Generate();

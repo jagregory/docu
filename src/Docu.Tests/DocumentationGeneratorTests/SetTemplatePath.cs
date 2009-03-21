@@ -17,7 +17,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void should_pass_template_path_to_writer_if_set()
         {
             var writer = MockRepository.GenerateMock<IBulkPageWriter>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, writer, StubResourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, writer, StubResourceManager, StubEventAggregator);
 
             generator.SetAssemblies(new[] { "unimportant_file_path" });
             generator.SetTemplatePath("template-path");
@@ -31,7 +31,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
         public void should_pass_default_template_path_to_writer_if_not_set()
         {
             var writer = MockRepository.GenerateMock<IBulkPageWriter>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, writer, StubResourceManager);
+            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, StubParser, writer, StubResourceManager, StubEventAggregator);
 
             generator.SetAssemblies(new[] { "unimportant_file_path" });
             generator.Generate();

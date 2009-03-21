@@ -9,6 +9,5 @@ namespace Docu.Console
         public static readonly IScreenMessage ProcessingArguments = new ProcessingArgumentsMessage();
         public static readonly IScreenMessage Splash = new SplashMessage();
         public static readonly IScreenMessage Start = new StartMessage();
-        public static readonly IScreenMessage BadFile = new BadFileMessage();
     }
 }
