@@ -7,7 +7,6 @@ namespace Docu.Documentation
 {
     public interface IDocumentModel
     {
-        event EventHandler<DocumentModelWarningEventArgs> CreationWarning;
         IList<Namespace> Create(IEnumerable<IDocumentationMember> members);
     }
 }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
+using Docu.Console;
 using Docu.Documentation.Comments;
+using Docu.Events;
 using Docu.Parsing;
 using Docu.Parsing.Model;
 
@@ -12,14 +14,15 @@ namespace Docu.Documentation
     public class DocumentModel : IDocumentModel
     {
         private readonly ICommentContentParser commentContentParser;
+        private readonly IEventAggregator eventAggregator;
         private readonly IDictionary<Identifier, IReferencable> matchedAssociations = new Dictionary<Identifier, IReferencable>();
 
-        public event EventHandler<DocumentModelWarningEventArgs> CreationWarning = (sender, e) => {};
         private readonly IList<IGenerationStep> steps;
 
-        public DocumentModel(ICommentContentParser commentContentParser)
+        public DocumentModel(ICommentContentParser commentContentParser, IEventAggregator eventAggregator)
         {
             this.commentContentParser = commentContentParser;
+            this.eventAggregator = eventAggregator;
 
             steps = new List<IGenerationStep>
             {
@@ -66,7 +69,9 @@ namespace Docu.Documentation
 
         private void RaiseCreationWarning(UnsupportedDocumentationMemberException exception)
         {
-            CreationWarning(this, new DocumentModelWarningEventArgs("Unsupported documentation member found: '" + exception.MemberName + "'"));
+            eventAggregator
+                .GetEvent<WarningEvent>()
+                .Publish("Unsupported documentation member found: '" + exception.MemberName + "'");
         }
 
         private void Sort(List<Namespace> namespaces)

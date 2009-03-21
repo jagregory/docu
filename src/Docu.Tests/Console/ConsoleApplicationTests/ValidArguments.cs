@@ -1,4 +1,5 @@
 ﻿using Docu.Console;
+using Docu.Events;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;
@@ -11,18 +12,23 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
     public class ValidArguments
     {
         private IScreenWriter StubWriter;
+        private IEventAggregator StubEventAggregator;
 
         [SetUp]
         public void create_stubs()
         {
             StubWriter = MockRepository.GenerateStub<IScreenWriter>();
+            StubEventAggregator = MockRepository.GenerateStub<IEventAggregator>();
+            StubEventAggregator
+                .Stub(x => x.GetEvent<WarningEvent>())
+                .Return(new WarningEvent());
         }
 
         [Test]
         public void should_pass_assemblies_to_docgen()
         {
             var docGen = MockRepository.GenerateMock<IDocumentationGenerator>();
-            var app = new ConsoleApplication(StubWriter, docGen);
+            var app = new ConsoleApplication(StubWriter, docGen, StubEventAggregator);
 
             app.SetArguments(new[] { "Docu.Tests.dll", "DummyDocs.xml" });
             app.Run();
@@ -35,7 +41,7 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
         public void should_pass_xmls_to_docgen()
         {
             var docGen = MockRepository.GenerateMock<IDocumentationGenerator>();
-            var app = new ConsoleApplication(StubWriter, docGen);
+            var app = new ConsoleApplication(StubWriter, docGen, StubEventAggregator);
 
             app.SetArguments(new[] { "Docu.Tests.dll", "DummyDocs.xml" });
             app.Run();
@@ -48,7 +54,7 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
         public void if_all_good_should_generate()
         {
             var docGen = MockRepository.GenerateMock<IDocumentationGenerator>();
-            var app = new ConsoleApplication(StubWriter, docGen);
+            var app = new ConsoleApplication(StubWriter, docGen, StubEventAggregator);
 
             app.SetArguments(new[] { "Docu.Tests.dll", "DummyDocs.xml" });
             app.Run();
@@ -61,7 +67,7 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
         {
             var writer = MockRepository.GenerateMock<IScreenWriter>();
             var docGen = MockRepository.GenerateMock<IDocumentationGenerator>();
-            var app = new ConsoleApplication(writer, docGen);
+            var app = new ConsoleApplication(writer, docGen, StubEventAggregator);
 
             app.SetArguments(new[] { "Docu.Tests.dll", "DummyDocs.xml" });
             app.Run();

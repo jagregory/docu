@@ -1,3 +1,4 @@
+using Docu.Documentation;
 using Docu.Parsing.Model;
 using Example;
 using Example.Deep;
@@ -11,6 +12,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldBuildNamespaces()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new[]
             {
                 Type<First>(@"<member name=""T:Example.First"" />"),  

@@ -71,28 +71,5 @@ namespace Docu.Tests.DocumentationGeneratorTests
 
             StubWriter.AssertWasNotCalled(x => x.CreatePagesFromDirectory(null, null, null), x => x.Constraints(Is.Anything(), Is.Anything(), Is.Anything()));
         }
-
-        [Test]
-        public void should_bubble_warning_from_parser()
-        {
-            var parser = MockRepository.GenerateMock<IAssemblyXmlParser>();
-            var generator = new DocumentationGenerator(StubAssemblyLoader, StubXmlLoader, parser, StubWriter, StubResourceManager);
-            var warningRaised = false;
-            var warningMessage = "";
-            var warningType = WarningType.Unknown;
-
-            generator.Warning += (sender, e) =>
-            {
-                warningRaised = true;
-                warningMessage = e.Message;
-                warningType = e.WarningType;
-            };
-            
-            parser.Raise(x => x.ParseWarning += null, parser, new ParserWarningEventArgs("Warning!", WarningType.DocumentModel));
-
-            warningRaised.ShouldBeTrue();
-            warningMessage.ShouldEqual("Warning!");
-            warningType.ShouldEqual(WarningType.DocumentModel);
-        }
     }
 }

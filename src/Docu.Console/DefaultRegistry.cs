@@ -1,4 +1,5 @@
 using Docu.Console;
+using Docu.Events;
 using Docu.Generation;
 using Docu.IO;
 using StructureMap.Configuration.DSL;
@@ -22,6 +23,8 @@ namespace Docu
             ForRequestedType<IScreenWriter>()
                 .TheDefaultIsConcreteType<ConsoleScreenWriter>();
             ForRequestedType<IScreenMessage>()
+                .AsSingletons();
+            ForRequestedType<IEventAggregator>()
                 .AsSingletons();
         }
     }

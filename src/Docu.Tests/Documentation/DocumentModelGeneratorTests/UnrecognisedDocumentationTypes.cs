@@ -1,6 +1,11 @@
+using Docu.Console;
+using Docu.Documentation;
+using Docu.Events;
+using Docu.Parsing;
 using Docu.Parsing.Model;
 using Example;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 {
@@ -10,61 +15,61 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldRaiseWarningOnUnexpectedKindInReferenceInType()
         {
-            var warningRaised = false;
+            var ev = MockRepository.GenerateMock<WarningEvent>();
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new IDocumentationMember[] { Type<Second>(@"<member name=""T:Example.Second""><summary><see cref=""G:Whats-a-g"" /></summary></member>") };
 
-            model.CreationWarning += (sender, e) => { warningRaised = true; };
+            StubEventAggregator.Stub(x => x.GetEvent<WarningEvent>())
+                .Return(ev);
+
             model.Create(members);
 
-            warningRaised.ShouldBeTrue();
-        }
-
-        [Test]
-        public void ShouldHaveCorrectMessageInWarningWhenRaised()
-        {
-            var members = new IDocumentationMember[] { Type<Second>(@"<member name=""T:Example.Second""><summary><see cref=""G:Whats-a-g"" /></summary></member>") };
-            var warningMessage = "";
-
-            model.CreationWarning += (sender, e) => { warningMessage = e.Message; };
-            model.Create(members);
-
-            warningMessage.ShouldEqual("Unsupported documentation member found: 'G:Whats-a-g'");
+            ev.AssertWasCalled(x => x.Publish("Unsupported documentation member found: 'G:Whats-a-g'"));
         }
 
         [Test]
         public void ShouldRaiseWarningOnUnexpectedKindInReferenceInMethod()
         {
-            var warningRaised = false;
+            var ev = MockRepository.GenerateMock<WarningEvent>();
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new IDocumentationMember[] { Method<Second>(@"<member name=""M:Example.Second.SecondMethod""><summary><see cref=""G:Whats-a-g"" /></summary></member>", x => x.SecondMethod()) };
 
-            model.CreationWarning += (sender, e) => { warningRaised = true; };
+            StubEventAggregator.Stub(x => x.GetEvent<WarningEvent>())
+                .Return(ev);
+
             model.Create(members);
 
-            warningRaised.ShouldBeTrue();
+            ev.AssertWasCalled(x => x.Publish("Unsupported documentation member found: 'G:Whats-a-g'"));
         }
 
         [Test]
         public void ShouldRaiseWarningOnUnexpectedKindInReferenceInProperty()
         {
-            var warningRaised = false;
+            var ev = MockRepository.GenerateMock<WarningEvent>();
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new IDocumentationMember[] { Property<Second>(@"<member name=""P:Example.Second.SecondProperty""><summary><see cref=""G:Whats-a-g"" /></summary></member>", x => x.SecondProperty) };
 
-            model.CreationWarning += (sender, e) => { warningRaised = true; };
+            StubEventAggregator.Stub(x => x.GetEvent<WarningEvent>())
+                .Return(ev);
+
             model.Create(members);
 
-            warningRaised.ShouldBeTrue();
+            ev.AssertWasCalled(x => x.Publish("Unsupported documentation member found: 'G:Whats-a-g'"));
         }
 
         [Test]
         public void ShouldRaiseWarningOnUnexpectedKindInReferenceInEvent()
         {
-            var warningRaised = false;
+            var ev = MockRepository.GenerateMock<WarningEvent>();
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new IDocumentationMember[] { Event<Second>(@"<member name=""E:Example.Second.AnEvent""><summary><see cref=""G:Whats-a-g"" /></summary></member>", "AnEvent") };
 
-            model.CreationWarning += (sender, e) => { warningRaised = true; };
+            StubEventAggregator.Stub(x => x.GetEvent<WarningEvent>())
+                .Return(ev);
+
             model.Create(members);
 
-            warningRaised.ShouldBeTrue();
+            ev.AssertWasCalled(x => x.Publish("Unsupported documentation member found: 'G:Whats-a-g'"));
         }
     }
 }

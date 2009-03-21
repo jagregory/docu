@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Docu.Events;
 using Docu.Parsing;
 using StructureMap;
 
@@ -11,21 +12,25 @@ namespace Docu.Console
     {
         private readonly List<string> arguments = new List<string>();
         private readonly IDocumentationGenerator documentationGenerator;
+        private readonly IEventAggregator eventAggregator;
         private readonly IScreenWriter screenWriter;
         private bool canRun;
 
-        public ConsoleApplication(IScreenWriter screenWriter, IDocumentationGenerator documentationGenerator)
+        public ConsoleApplication(IScreenWriter screenWriter, IDocumentationGenerator documentationGenerator, IEventAggregator eventAggregator)
         {
             this.screenWriter = screenWriter;
             this.documentationGenerator = documentationGenerator;
+            this.eventAggregator = eventAggregator;
             this.documentationGenerator.BadFileEvent += documentationGenerator_BadFileEvent;
-            this.documentationGenerator.Warning += documentationGenerator_Warning;
+
+            this.eventAggregator
+                .GetEvent<WarningEvent>()
+                .Subscribe(Warning);
         }
 
-        void documentationGenerator_Warning(object sender, GenerationEventArgs e)
+        void Warning(string message)
         {
-            if (e.WarningType == WarningType.DocumentModel)
-                ShowMessage(new DocumentModelWarningMessage(e.Message));
+            ShowMessage(new WarningMessage(message));
         }
 
         void documentationGenerator_BadFileEvent(object sender, BadFileEventArgs e)

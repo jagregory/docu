@@ -1,21 +1,29 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using Docu.Documentation;
+using Docu.Documentation.Comments;
+using Docu.Events;
 using Docu.Parsing;
 using Docu.Parsing.Model;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 {
     public abstract class BaseDocumentModelGeneratorFixture : BaseFixture
     {
-        protected DocumentModel model;
+        protected ICommentContentParser StubParser;
+        public IEventAggregator StubEventAggregator;
 
         [SetUp]
-        public void CreateTransformer()
+        public void CreateStubs()
         {
-            model = new DocumentModel(new CommentContentParser());
+            StubEventAggregator = MockRepository.GenerateStub<IEventAggregator>();
+            StubParser = MockRepository.GenerateStub<ICommentContentParser>();
+            StubParser.Stub(x => x.Parse(null))
+                .IgnoreArguments()
+                .Return(new List<IComment>());
         }
 
         protected DocumentedType Type<T>(string xml)

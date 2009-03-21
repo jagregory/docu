@@ -97,25 +97,5 @@ namespace Docu.Tests.Parsing
 
             model.AssertWasCalled(x => x.Create(associations));
         }
-
-        [Test]
-        public void ShouldRaiseParserWarningWhenMatcherRaisesWarning()
-        {
-            var model = MockRepository.GenerateMock<IDocumentModel>();
-            var parser = new AssemblyXmlParser(StubDocXmlMatcher, model, StubDocMembers);
-            var warningRaised = false;
-            var warningType = WarningType.Unknown;
-
-            parser.ParseWarning += (sender, e) =>
-            {
-                warningRaised = true;
-                warningType = e.WarningType;
-            };
-
-            model.Raise(x => x.CreationWarning += null, model, new DocumentModelWarningEventArgs("Message!"));
-
-            warningRaised.ShouldBeTrue();
-            warningType.ShouldEqual(WarningType.DocumentModel);
-        }
     }
 }

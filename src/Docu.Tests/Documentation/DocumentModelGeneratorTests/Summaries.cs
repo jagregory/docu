@@ -14,6 +14,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveSummaryForType()
         {
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new[]
             {
                 Type<First>(@"<member name=""T:Example.First""><summary>First summary</summary></member>"),
@@ -31,13 +32,14 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldPassSummaryToContentParser()
         {
             var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
+            var model = new DocumentModel(contentParser, StubEventAggregator);
             var members = new[] { Type<First>(@"<member name=""T:Example.First""><summary>First summary</summary></member>") };
 
             contentParser.Stub(x => x.Parse(null))
                 .IgnoreArguments()
                 .Return(new List<IComment>());
 
-            new DocumentModel(contentParser).Create(members);
+            model.Create(members);
 
             contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[0]));
         }
@@ -45,6 +47,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveSummaryForMethods()
         {
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new[]
             {
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod""><summary>Second method</summary></member>", x => x.SecondMethod()),
@@ -62,13 +65,14 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldPassMethodSummaryToContentParser()
         {
             var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
+            var model = new DocumentModel(contentParser, StubEventAggregator);
             var members = new[] { Method<Second>(@"<member name=""M:Example.Second.SecondMethod""><summary>First summary</summary></member>", x => x.SecondMethod()) };
 
             contentParser.Stub(x => x.Parse(null))
                 .IgnoreArguments()
                 .Return(new List<IComment>());
 
-            new DocumentModel(contentParser).Create(members);
+            model.Create(members);
 
             contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[0]));
         }
@@ -76,6 +80,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveSummaryForProperties()
         {
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new[]
             {
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty""><summary>Second property</summary></member>", x => x.SecondProperty),
@@ -89,6 +94,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveSummaryForEvents()
         {
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new[]
             {
                 Event<Second>(@"<member name=""E:Example.Second.AnEvent""><summary>An event</summary></member>", "AnEvent"),
@@ -102,6 +108,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveSummaryForMethodParameter()
         {
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new[]
             {
                 Method<Second>(@"
@@ -122,6 +129,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldPassMethodParameterSummaryToContentParser()
         {
             var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
+            var model = new DocumentModel(contentParser, StubEventAggregator);
             var members = new[]
             {
                 Method<Second>(@"
@@ -135,7 +143,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
                 .IgnoreArguments()
                 .Return(new List<IComment>());
 
-            new DocumentModel(contentParser).Create(members);
+            model.Create(members);
 
             contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[0]));
             contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[1]));

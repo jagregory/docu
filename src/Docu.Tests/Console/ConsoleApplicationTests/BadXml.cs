@@ -1,5 +1,6 @@
 using System.Linq;
 using Docu.Console;
+using Docu.Events;
 using Docu.Parsing;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -12,16 +13,19 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
     public class BadXml
     {
         [Test]
-        public void should_show_warning_if_warning_raised()
+        public void should_show_warning_if_warning_message_created()
         {
             var writer = MockRepository.GenerateMock<IScreenWriter>();
-            var docGen = MockRepository.GenerateMock<IDocumentationGenerator>();
-            var app = new ConsoleApplication(writer, docGen);
+            var docGen = MockRepository.GenerateStub<IDocumentationGenerator>();
+            var eventAggregator = new EventAggregator();
+            var app = new ConsoleApplication(writer, docGen, eventAggregator);
 
-            docGen.Raise(x => x.Warning += null, docGen, new GenerationEventArgs("Warning!", WarningType.DocumentModel));
+            eventAggregator
+                .GetEvent<WarningEvent>()
+                .Publish("Warning!");
 
             writer.AssertWasCalled(x => x.WriteMessage(null),
-                                   x => x.Constraints(IsMessage<DocumentModelWarningMessage>("WARNING: Warning!")));
+                                   x => x.Constraints(IsMessage<WarningMessage>("WARNING: Warning!")));
                                        
         }
 

@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace Docu.Console
 {
-    public class DocumentModelWarningMessage : IScreenMessage
+    public class WarningMessage : IScreenMessage
     {
         private readonly string message;
 
-        public DocumentModelWarningMessage(string message)
+        public WarningMessage(string message)
         {
             this.message = message;
         }

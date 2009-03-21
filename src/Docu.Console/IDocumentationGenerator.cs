@@ -15,6 +15,5 @@ namespace Docu
         void Generate();
 
         event EventHandler<BadFileEventArgs> BadFileEvent;
-        event EventHandler<GenerationEventArgs> Warning;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
+using Docu.Parsing;
 using Docu.Parsing.Model;
 using Example;
 using Example.Deep;
@@ -15,6 +16,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveTypesInNamespaces()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new[]
             {
                 Type<First>(@"<member name=""T:Example.First"" />"),  
@@ -33,6 +35,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveParentForTypes()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new[]
             {
                 Type<First>(@"<member name=""T:Example.First"" />"),  
@@ -46,6 +49,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveParentForTypes_WithDocumentedParent()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new[]
             {
                 Type<FirstChild>(@"<member name=""T:Example.FirstChild"" />"),  
@@ -59,6 +63,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveInterfacesForTypes()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new[]
             {
                 Type<ClassWithInterfaces>(@"<member name=""T:Example.ClassWithInterfaces"" />"),  
@@ -73,6 +78,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldntInheritInterfacesForTypes()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new[]
             {
                 Type<ClassWithBaseWithInterfaces>(@"<member name=""T:Example.ClassWithBaseWithInterfaces"" />"),  
@@ -85,6 +91,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldntShowOnlyDirectInterfacesForTypes()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new[]
             {
                 Type<ClassWithBaseWithInterfacesAndDirect>(@"<member name=""T:Example.ClassWithBaseWithInterfacesAndDirect"" />"),  
@@ -98,6 +105,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHavePrettyNamesForGenericTypes()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new[] { Type(typeof(GenericDefinition<>), @"<member name=""T:Example.GenericDefinition`1"" />") };
             var namespaces = model.Create(members);
 
@@ -108,6 +116,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldntHaveAnyUnresolvedReferencesLeftIfAllValid()
         {
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new[]
             {
                 Type<First>(@"<member name=""T:Example.First"" />"),  
@@ -122,6 +131,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void UnresolvedReferencesBecomeExternalReferencesIfStillExist()
         {
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
             var members = new[] { Type<Second>(@"<member name=""T:Example.Second""><summary><see cref=""T:Example.First"" /></summary></member>") };
             var namespaces = model.Create(members);
 
@@ -133,6 +143,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldForceTypeIfOnlyMethodDefined()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new[] { Method<Second>(@"<member name=""M:Example.Second.SecondMethod"" />", x => x.SecondMethod()) };
             var namespaces = model.Create(members);
 
@@ -143,6 +154,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveMethodsInTypes()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),  
@@ -161,6 +173,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHavePropertiesInTypes()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty"" />", x => x.SecondProperty)
@@ -174,6 +187,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveReturnTypeInProperties()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty"" />", x => x.SecondProperty)
@@ -188,6 +202,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveParametersInMethods()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
                 Type<First>(@"<member name=""T:Example.First"" />"),
@@ -207,6 +222,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveReturnTypeInMethods()
         {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
                 Method<Second>(@"<member name=""M:Example.Second.ReturnType"" />", x => x.ReturnType())
