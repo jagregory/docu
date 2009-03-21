@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using Docu.Parsing.Model;
@@ -6,8 +7,7 @@ namespace Docu.Parsing
 {
     public class DocumentationXmlMatcher : IDocumentationXmlMatcher
     {
-        public IList<IDocumentationMember> DocumentMembers(IList<IDocumentationMember> undocumentedMembers,
-                                                           XmlNode[] snippets)
+        public IList<IDocumentationMember> DocumentMembers(IList<IDocumentationMember> undocumentedMembers, XmlNode[] snippets)
         {
             var members = new List<IDocumentationMember>(undocumentedMembers);
 
@@ -21,6 +21,8 @@ namespace Docu.Parsing
                     ParseMethod(members, node);
                 else if (name.StartsWith("P"))
                     ParseProperty(members, node);
+                else if (name.StartsWith("E"))
+                    ParseEvent(members, node);
             }
 
             return members;
@@ -49,6 +51,19 @@ namespace Docu.Parsing
 
                 if (propertyMember != null && propertyMember.Match(member))
                     members[i] = new DocumentedProperty(member, node, propertyMember.Property, propertyMember.TargetType);
+            }
+        }
+
+        private void ParseEvent(List<IDocumentationMember> members, XmlNode node)
+        {
+            var member = Identifier.FromString(node.Attributes["name"].Value);
+
+            for (int i = 0; i < members.Count; i++)
+            {
+                var eventMember = members[i] as UndocumentedEvent;
+
+                if (eventMember != null && eventMember.Match(member))
+                    members[i] = new DocumentedEvent(member, node, eventMember.Event, eventMember.TargetType);
             }
         }
 

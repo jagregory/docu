@@ -64,6 +64,7 @@
     <Compile Include="DocumentationGeneratorTests\SetAssembly.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\UnrecognisedDocumentationTypes.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\BaseDocumentModelGeneratorFixture.cs" />
+    <Compile Include="Documentation\DocumentModelGeneratorTests\Events.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Namespaces.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Summaries.cs" />
     <Compile Include="Generation\PatternTemplateResolverTests\BasePatternResolve_ViewData_Fixture.cs" />

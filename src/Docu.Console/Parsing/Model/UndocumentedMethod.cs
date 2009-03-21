@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Xml;
 
 namespace Docu.Parsing.Model
 {

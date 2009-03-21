@@ -29,6 +29,11 @@ namespace Docu.Tests
             return ((MemberExpression)propertyAction.Body).Member as PropertyInfo;
         }
 
+        protected EventInfo Event<T>(string name)
+        {
+            return typeof(T).GetEvent(name);
+        }
+
         protected IList<Namespace> Namespaces(params string[] namespaces)
         {
             var list = new List<Namespace>();

@@ -41,6 +41,11 @@ namespace Docu.Parsing.Model
             return new PropertyIdentifier(property.Name, property.CanRead, property.CanWrite, FromType(type));
         }
 
+        public static EventIdentifier FromEvent(EventInfo ev, Type type)
+        {
+            return new EventIdentifier(ev.Name, FromType(type));
+        }
+
         public static NamespaceIdentifier FromNamespace(string ns)
         {
             return new NamespaceIdentifier(ns);
@@ -59,6 +64,8 @@ namespace Docu.Parsing.Model
                 return FromMethodName(trimmedName);
             if (prefix == "P")
                 return FromPropertyName(trimmedName);
+            if (prefix == "E")
+                return FromEventName(trimmedName);
 
             throw new UnsupportedDocumentationMemberException(name);
         }
@@ -69,6 +76,14 @@ namespace Docu.Parsing.Model
             string propertyName = GetMethodName(name);
 
             return new PropertyIdentifier(propertyName, false, false, FromTypeString(typeName));
+        }
+
+        private static EventIdentifier FromEventName(string name)
+        {
+            var typeName = GetTypeName(name);
+            var eventName = GetMethodName(name);
+
+            return new EventIdentifier(eventName, FromTypeString(typeName));
         }
 
         private static MethodIdentifier FromMethodName(string name)

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2FB9E7C3-B602-4343-B510-9C8DBFC7B8FD}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -31,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\docu.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Interop.SparkLanguagePackageLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -84,6 +85,7 @@
     <Compile Include="DefaultRegistry.cs" />
     <Compile Include="Documentation\AssemblyDoc.cs" />
     <Compile Include="Documentation\BaseDocumentationElement.cs" />
+    <Compile Include="Documentation\Event.cs" />
     <Compile Include="Documentation\PrettyNameExtensions.cs" />
     <Compile Include="GenerationEventArgs.cs" />
     <Compile Include="IDocumentationGenerator.cs" />
@@ -97,6 +99,8 @@
     <Compile Include="Parsing\DocumentableMemberFinder.cs" />
     <Compile Include="Parsing\IAssemblyXmlParser.cs" />
     <Compile Include="Parsing\IDocumentationXmlMatcher.cs" />
+    <Compile Include="Parsing\Model\DocumentedEvent.cs" />
+    <Compile Include="Parsing\Model\EventIdentifier.cs" />
     <Compile Include="Parsing\Model\IDocumentationMember.cs" />
     <Compile Include="Parsing\Model\Identifier.cs" />
     <Compile Include="Parsing\Model\DocumentedMethod.cs" />
@@ -106,6 +110,7 @@
     <Compile Include="Parsing\Model\NamespaceIdentifier.cs" />
     <Compile Include="Parsing\Model\PropertyIdentifier.cs" />
     <Compile Include="Parsing\Model\TypeIdentifier.cs" />
+    <Compile Include="Parsing\Model\UndocumentedEvent.cs" />
     <Compile Include="Parsing\Model\UndocumentedMethod.cs" />
     <Compile Include="Parsing\Model\UndocumentedProperty.cs" />
     <Compile Include="Parsing\Model\UndocumentedType.cs" />
@@ -194,6 +199,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="templates\_footer.spark">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="templates\!namespace\_events.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="utils\ilmerge.bat" />

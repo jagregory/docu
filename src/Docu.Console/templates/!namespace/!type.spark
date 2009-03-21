@@ -23,6 +23,13 @@
 			</div>
 		</if>
 		
+		<if condition="Type.Events.Count > 0">
+			<h3 class="section">Events</h3>
+			<ul>
+				<li each="var ev in Type.Events"><a href="#${ev.Name}" class="type">${h(ev.Name)}</a></li>
+			</ul>
+		</if>
+		
 		<if condition="Type.Methods.Count > 0">
 			<h3 class="section">Methods</h3>
 			<ul>
@@ -37,6 +44,8 @@
 			</ul>
 		</if>
 	</div>
+	
+	<events events="Type.Events" title="'Events'" />
 	
 	<var publicInstanceMethods="Type.Methods.Where(x => x.IsPublic && !x.IsStatic)" />
 	<methods methods="publicInstanceMethods" title="'Public instance methods'" />

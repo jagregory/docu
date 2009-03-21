@@ -11,23 +11,28 @@ namespace Docu.Parsing
         {
             var members = new List<IDocumentationMember>();
 
-            foreach (Type type in types)
+            foreach (var type in types)
             {
                 if (type.IsSpecialName) continue;
                 if (type.Name.StartsWith("__")) continue; // probably a lambda generated class
 
                 members.Add(new UndocumentedType(Identifier.FromType(type), type));
 
-                foreach (MethodInfo method in type.GetMethods())
+                foreach (var method in type.GetMethods())
                 {
                     if (method.IsSpecialName) continue;
 
                     members.Add(new UndocumentedMethod(Identifier.FromMethod(method, type), method, type));
                 }
 
-                foreach (PropertyInfo property in type.GetProperties())
+                foreach (var property in type.GetProperties())
                 {
                     members.Add(new UndocumentedProperty(Identifier.FromProperty(property, type), property, type));
+                }
+
+                foreach (var ev in type.GetEvents())
+                {
+                    members.Add(new UndocumentedEvent(Identifier.FromEvent(ev, type), ev, type));
                 }
             }
 

@@ -87,6 +87,19 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         }
 
         [Test]
+        public void ShouldHaveSummaryForEvents()
+        {
+            var members = new[]
+            {
+                Event<Second>(@"<member name=""E:Example.Second.AnEvent""><summary>An event</summary></member>", "AnEvent"),
+            };
+            var namespaces = model.Create(members);
+
+            namespaces[0].Types[0].Events[0].Summary.CountShouldEqual(1);
+            ((InlineText)namespaces[0].Types[0].Events[0].Summary[0]).Text.ShouldEqual("An event");
+        }
+
+        [Test]
         public void ShouldHaveSummaryForMethodParameter()
         {
             var members = new[]

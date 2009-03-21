@@ -1,3 +1,5 @@
+using System;
+
 namespace Example
 {
     public class Second
@@ -23,5 +25,7 @@ namespace Example
         }
 
         public string SecondProperty { get; set; }
+
+        public event EventHandler<EventArgs> AnEvent;
     }
 }

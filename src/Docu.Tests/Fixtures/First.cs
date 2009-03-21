@@ -75,6 +75,11 @@ namespace Example
         {}
     }
 
+    public class EventType
+    {
+        public event EventHandler<EventArgs> AnEvent;
+    }
+
     public class ReturnMethodClass
     {
         public string Method()

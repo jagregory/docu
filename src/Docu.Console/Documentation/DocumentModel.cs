@@ -69,6 +69,18 @@ namespace Docu.Documentation
                 }
             }
 
+            foreach (DocumentedEvent association in members.Where(x => x is DocumentedEvent))
+            {
+                try
+                {
+                    AddEvent(namespaces, references, association);
+                }
+                catch (UnsupportedDocumentationMemberException ex)
+                {
+                    RaiseCreationWarning(ex);
+                }
+            }
+
             foreach (IReferencable referencable in references)
             {
                 if (!referencable.IsResolved)
@@ -222,6 +234,45 @@ namespace Docu.Documentation
 
             references.Add(doc);
             type.AddProperty(doc);
+        }
+
+        private void AddEvent(List<Namespace> namespaces, List<IReferencable> references, DocumentedEvent association)
+        {
+            if (association.Event == null) return;
+
+            var namespaceName = Identifier.FromNamespace(association.TargetType.Namespace);
+            var typeName = Identifier.FromType(association.TargetType);
+            var @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
+
+            if (@namespace == null)
+            {
+                // this is a weird looking line... why is DT getting a namespace?
+                AddNamespace(namespaces, new DocumentedType(association.Name.CloneAsNamespace(), null, association.TargetType));
+                @namespace = namespaces.Find(x => x.IsIdentifiedBy(namespaceName));
+            }
+
+            var type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
+
+            if (type == null)
+            {
+                AddType(namespaces, references, new DocumentedType(association.Name.CloneAsType(), null, association.TargetType));
+                type = @namespace.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
+            }
+
+            var doc = Event.Unresolved(Identifier.FromEvent(association.Event, association.TargetType));
+
+            if (association.Xml != null)
+            {
+                XmlNode summaryNode = association.Xml.SelectSingleNode("summary");
+
+                if (summaryNode != null)
+                    doc.Summary = commentContentParser.Parse(summaryNode);
+
+                GetReferencesFromComment(references, doc.Summary);
+            }
+
+            references.Add(doc);
+            type.AddEvent(doc);
         }
 
         private void AddNamespace(List<Namespace> namespaces, DocumentedType association)

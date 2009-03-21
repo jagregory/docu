@@ -9,6 +9,7 @@ namespace Docu.Documentation
     {
         private readonly List<Method> methods = new List<Method>();
         private readonly List<Property> properties = new List<Property>();
+        private readonly List<Event> events = new List<Event>();
         private Type representedType;
 
         public DeclaredType(TypeIdentifier name, Namespace ns)
@@ -43,6 +44,10 @@ namespace Docu.Documentation
         public string FullName
         {
             get { return (Namespace == null ? "" : Namespace.FullName + ".") + PrettyName; }
+        }
+        public IList<Event> Events
+        {
+            get { return events; }
         }
 
         public void Resolve(IDictionary<Identifier, IReferencable> referencables)
@@ -85,6 +90,11 @@ namespace Docu.Documentation
         internal void AddProperty(Property property)
         {
             properties.Add(property);
+        }
+
+        public void AddEvent(Event ev)
+        {
+            events.Add(ev);
         }
 
         public void Sort()

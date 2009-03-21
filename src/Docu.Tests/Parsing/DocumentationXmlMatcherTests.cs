@@ -156,5 +156,20 @@ namespace Docu.Tests.Parsing
             member.Xml.ShouldEqual(snippets[0]);
             member.Property.ShouldEqual<Second>(x => x.SecondProperty);
         }
+
+        [Test]
+        public void ShouldAssociateEventSnippetWithCorrectReflectedEvent()
+        {
+            var undocumentedMembers = DocMembers(typeof(First), typeof(Second), typeof(Third));
+            var snippets = new[] { @"<member name=""E:Example.Second.AnEvent"" />".ToNode() };
+            var members = matcher.DocumentMembers(undocumentedMembers, snippets);
+            var ev = Event<Second>("AnEvent");
+
+            var member = members.FirstOrDefault(x => x.Name == Identifier.FromEvent(ev, typeof(Second))) as DocumentedEvent;
+
+            member.ShouldNotBeNull();
+            member.Xml.ShouldEqual(snippets[0]);
+            member.Event.ShouldEqual(ev);
+        }
     }
 }

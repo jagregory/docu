@@ -107,6 +107,16 @@ namespace Docu.Tests.Parsing
             member.Name.ToString().ShouldEqual("Method");
         }
 
+        [Test]
+        public void should_add_events()
+        {
+            document_member<EventType>();
+
+            var member = find_event<EventType>("AnEvent");
+            member.ShouldBeOfType<UndocumentedEvent>();
+            member.Name.ToString().ShouldEqual("AnEvent");
+        }
+
         private void document_member<T>()
         {
             members = matcher.DocumentMembers(DocMembers(typeof(T)), new XmlNode[0]);
@@ -115,6 +125,11 @@ namespace Docu.Tests.Parsing
         private IDocumentationMember find_member<T>()
         {
             return members.FirstOrDefault(x => x.Name == Identifier.FromType(typeof(T)));
+        }
+
+        private IDocumentationMember find_event<T>(string name)
+        {
+            return members.FirstOrDefault(x => x.Name == Identifier.FromEvent(typeof(T).GetEvent(name), typeof(T)));
         }
 
         private IDocumentationMember find_member<T>(Expression<Action<T>> methodAction)

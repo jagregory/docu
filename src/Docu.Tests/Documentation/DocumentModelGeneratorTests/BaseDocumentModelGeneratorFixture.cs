@@ -41,5 +41,11 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 
             return new DocumentedProperty(Identifier.FromProperty(property, typeof(T)), xml.ToNode(), property, typeof(T));
         }
+
+        protected DocumentedEvent Event<T>(string xml, string eventName)
+        {
+            var ev = typeof(T).GetEvent(eventName);
+            return new DocumentedEvent(Identifier.FromEvent(ev, typeof(T)), xml.ToNode(), ev, typeof(T));
+        }
     }
 }
