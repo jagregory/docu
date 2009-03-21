@@ -1,18 +1,18 @@
+using System;
 using System.Collections.Generic;
 using Docu.Documentation.Comments;
+using Docu.Parsing.Model;
 
 namespace Docu.Documentation
 {
-    public class MethodParameter : IReferrer
+    public class MethodParameter : BaseDocumentationElement, IReferrer
     {
         public MethodParameter(string name, IReferencable reference)
+            : base(new NullIdentifier(name))
         {
-            Name = name;
             Reference = reference;
             Summary = new List<IComment>();
         }
-
-        public string Name { get; private set; }
 
         public string PrettyName
         {
@@ -37,8 +37,28 @@ namespace Docu.Documentation
             }
         }
 
-        public IList<IComment> Summary { get; internal set; }
-
         public IReferencable Reference { get; set; }
+    }
+
+    public class NullIdentifier : Identifier
+    {
+        public NullIdentifier(string name)
+            : base(name)
+        {}
+
+        public override int CompareTo(Identifier other)
+        {
+            return -1;
+        }
+
+        public override NamespaceIdentifier CloneAsNamespace()
+        {
+            return null;
+        }
+
+        public override TypeIdentifier CloneAsType()
+        {
+            return null;
+        }
     }
 }

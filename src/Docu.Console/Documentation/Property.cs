@@ -18,7 +18,6 @@ namespace Docu.Documentation
         public bool HasGet { get; private set; }
         public bool HasSet { get; private set; }
 
-        public IList<IComment> Summary { get; internal set; }
         public IReferencable ReturnType { get; set; }
 
         public string FullName

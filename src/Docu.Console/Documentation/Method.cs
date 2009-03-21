@@ -33,7 +33,6 @@ namespace Docu.Documentation
         }
 
         public IReferencable ReturnType { get; set; }
-        public IList<IComment> Summary { get; internal set; }
 
         public string FullName
         {

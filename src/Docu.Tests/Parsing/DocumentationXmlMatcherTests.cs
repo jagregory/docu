@@ -30,7 +30,7 @@ namespace Docu.Tests.Parsing
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
-            member.Type.ShouldEqual(typeof(Second));
+            member.TargetType.ShouldEqual(typeof(Second));
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace Docu.Tests.Parsing
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
-            member.Type.ShouldEqual(typeof(GenericDefinition<>));
+            member.TargetType.ShouldEqual(typeof(GenericDefinition<>));
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace Docu.Tests.Parsing
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
-            member.Type.ShouldEqual(typeof(GenericDefinition<,>));
+            member.TargetType.ShouldEqual(typeof(GenericDefinition<,>));
         }
 
         [Test]

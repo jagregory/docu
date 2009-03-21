@@ -6,8 +6,6 @@ namespace Docu.Parsing.Model
     {
         public UndocumentedType(Identifier name, Type type)
             : base(name, null, type)
-        {
-            Type = type;
-        }
+        {}
     }
 }

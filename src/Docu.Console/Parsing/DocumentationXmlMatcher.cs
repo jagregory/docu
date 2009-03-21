@@ -95,7 +95,7 @@ namespace Docu.Parsing
                 var typeMember = members[i] as UndocumentedType;
 
                 if (typeMember != null && typeMember.Match(member))
-                    members[i] = new DocumentedType(member, node, typeMember.Type);
+                    members[i] = new DocumentedType(member, node, typeMember.TargetType);
             }
         }
     }

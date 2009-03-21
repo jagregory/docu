@@ -32,7 +32,6 @@ namespace Docu.Documentation
             get { return properties; }
         }
 
-        public IList<IComment> Summary { get; internal set; }
         public IReferencable ParentType { get; set; }
         public IList<IReferencable> Interfaces { get; set; }
 

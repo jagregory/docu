@@ -86,6 +86,9 @@
     <Compile Include="Documentation\AssemblyDoc.cs" />
     <Compile Include="Documentation\BaseDocumentationElement.cs" />
     <Compile Include="Documentation\Event.cs" />
+    <Compile Include="Documentation\GenerationStep.cs" />
+    <Compile Include="Documentation\IDocumentationElement.cs" />
+    <Compile Include="Documentation\IGenerationStep.cs" />
     <Compile Include="Documentation\PrettyNameExtensions.cs" />
     <Compile Include="GenerationEventArgs.cs" />
     <Compile Include="IDocumentationGenerator.cs" />

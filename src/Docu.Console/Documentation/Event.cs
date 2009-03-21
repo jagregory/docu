@@ -22,8 +22,6 @@ namespace Docu.Documentation
             get { return Name; }
         }
 
-        public IList<IComment> Summary { get; internal set; }
-
         public void Resolve(IDictionary<Identifier, IReferencable> referencables)
         {
             if (referencables.ContainsKey(identifier))
