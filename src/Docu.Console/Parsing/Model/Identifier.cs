@@ -41,6 +41,11 @@ namespace Docu.Parsing.Model
             return new PropertyIdentifier(property.Name, property.CanRead, property.CanWrite, FromType(type));
         }
 
+        public static FieldIdentifier FromField(FieldInfo field, Type type)
+        {
+            return new FieldIdentifier(field.Name, FromType(type));
+        }
+
         public static EventIdentifier FromEvent(EventInfo ev, Type type)
         {
             return new EventIdentifier(ev.Name, FromType(type));
@@ -66,6 +71,8 @@ namespace Docu.Parsing.Model
                 return FromPropertyName(trimmedName);
             if (prefix == "E")
                 return FromEventName(trimmedName);
+            if (prefix == "F")
+                return FromFieldName(trimmedName);
 
             throw new UnsupportedDocumentationMemberException(name);
         }
@@ -84,6 +91,14 @@ namespace Docu.Parsing.Model
             var eventName = GetMethodName(name);
 
             return new EventIdentifier(eventName, FromTypeString(typeName));
+        }
+
+        private static FieldIdentifier FromFieldName(string name)
+        {
+            var typeName = GetTypeName(name);
+            var fieldName = GetMethodName(name);
+
+            return new FieldIdentifier(fieldName, FromTypeString(typeName));
         }
 
         private static MethodIdentifier FromMethodName(string name)

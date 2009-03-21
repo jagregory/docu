@@ -44,14 +44,17 @@ namespace Docu.Documentation
 
                 ReturnType = property.ReturnType;
 
+                if (!ReturnType.IsResolved)
+                    ReturnType.Resolve(referencables);
+
                 foreach (IReferrer comment in Summary.Where(x => x is IReferrer))
                 {
                     if (!comment.Reference.IsResolved)
                         comment.Reference.Resolve(referencables);
                 }
             }
-
-            ConvertToExternalReference();
+            else
+                ConvertToExternalReference();
         }
 
         public static Property Unresolved(PropertyIdentifier propertyIdentifier)

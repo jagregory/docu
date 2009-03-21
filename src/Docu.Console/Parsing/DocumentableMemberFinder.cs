@@ -34,6 +34,11 @@ namespace Docu.Parsing
                 {
                     members.Add(new UndocumentedEvent(Identifier.FromEvent(ev, type), ev, type));
                 }
+
+                foreach (var field in type.GetFields())
+                {
+                    members.Add(new UndocumentedField(Identifier.FromField(field, type), field, type));
+                }
             }
 
             return members;

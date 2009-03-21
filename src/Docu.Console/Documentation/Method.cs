@@ -57,6 +57,10 @@ namespace Docu.Documentation
                     throw new InvalidOperationException("Cannot resolve to '" + referencable.GetType().FullName + "'");
 
                 ReturnType = method.ReturnType;
+
+                if (!ReturnType.IsResolved)
+                    ReturnType.Resolve(referencables);
+
                 representedMethod = method.representedMethod;
 
                 foreach (IReferrer comment in Summary.Where(x => x is IReferrer))
@@ -71,8 +75,8 @@ namespace Docu.Documentation
                         para.Reference.Resolve(referencables);
                 }
             }
-
-            ConvertToExternalReference();
+            else
+                ConvertToExternalReference();
         }
 
         internal void AddParameter(MethodParameter parameter)

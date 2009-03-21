@@ -29,6 +29,11 @@ namespace Docu.Tests
             return ((MemberExpression)propertyAction.Body).Member as PropertyInfo;
         }
 
+        protected FieldInfo Field<T>(Expression<Func<T, object>> fieldAction)
+        {
+            return ((MemberExpression)fieldAction.Body).Member as FieldInfo;
+        }
+
         protected EventInfo Event<T>(string name)
         {
             return typeof(T).GetEvent(name);

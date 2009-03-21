@@ -11,6 +11,7 @@ namespace Docu.Documentation
         private readonly List<Method> methods = new List<Method>();
         private readonly List<Property> properties = new List<Property>();
         private readonly List<Event> events = new List<Event>();
+        private readonly List<Field> fields = new List<Field>();
         private Type representedType;
 
         public DeclaredType(TypeIdentifier name, Namespace ns)
@@ -45,9 +46,15 @@ namespace Docu.Documentation
         {
             get { return (Namespace == null ? "" : Namespace.FullName + ".") + PrettyName; }
         }
+
         public IList<Event> Events
         {
             get { return events; }
+        }
+
+        public IList<Field> Fields
+        {
+            get { return fields; }
         }
 
         public void Resolve(IDictionary<Identifier, IReferencable> referencables)
@@ -89,6 +96,24 @@ namespace Docu.Documentation
                     if (!method.IsResolved)
                         method.Resolve(referencables);
                 }
+
+                foreach (var property in Properties)
+                {
+                    if (!property.IsResolved)
+                        property.Resolve(referencables);
+                }
+
+                foreach (var ev in Events)
+                {
+                    if (!ev.IsResolved)
+                        ev.Resolve(referencables);
+                }
+
+                foreach (var field in Fields)
+                {
+                    if (!field.IsResolved)
+                        field.Resolve(referencables);
+                }
             }
             else
                 ConvertToExternalReference();
@@ -107,6 +132,11 @@ namespace Docu.Documentation
         public void AddEvent(Event ev)
         {
             events.Add(ev);
+        }
+
+        public void AddField(Field field)
+        {
+            fields.Add(field);
         }
 
         public void Sort()

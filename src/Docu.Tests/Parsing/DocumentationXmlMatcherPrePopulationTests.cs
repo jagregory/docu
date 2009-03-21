@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Xml;
 using Docu.Parsing;
 using Docu.Parsing.Model;
@@ -117,6 +118,16 @@ namespace Docu.Tests.Parsing
             member.Name.ToString().ShouldEqual("AnEvent");
         }
 
+        [Test]
+        public void should_add_fields()
+        {
+            document_member<FieldType>();
+
+            var member = find_member<FieldType>(x => x.aField);
+            member.ShouldBeOfType<UndocumentedField>();
+            member.Name.ToString().ShouldEqual("aField");
+        }
+
         private void document_member<T>()
         {
             members = matcher.DocumentMembers(DocMembers(typeof(T)), new XmlNode[0]);
@@ -137,6 +148,16 @@ namespace Docu.Tests.Parsing
             var method = ((MethodCallExpression)methodAction.Body).Method;
 
             return members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(T)));
+        }
+
+        private IDocumentationMember find_member<T>(Expression<Func<T, object>> propertyOrField)
+        {
+            var member = ((MemberExpression)propertyOrField.Body).Member;
+
+            if (member is PropertyInfo)
+                return members.FirstOrDefault(x => x.Name == Identifier.FromProperty((PropertyInfo)member, typeof(T)));
+
+            return members.FirstOrDefault(x => x.Name == Identifier.FromField((FieldInfo)member, typeof(T)));
         }
 
         private IDocumentationMember find_member<T>(Expression<Action> methodAction)

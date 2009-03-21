@@ -50,6 +50,13 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             return new DocumentedProperty(Identifier.FromProperty(property, typeof(T)), xml.ToNode(), property, typeof(T));
         }
 
+        protected DocumentedField Field<T>(string xml, Expression<Func<T, object>> fieldAction)
+        {
+            var field = ((MemberExpression)fieldAction.Body).Member as FieldInfo;
+
+            return new DocumentedField(Identifier.FromField(field, typeof(T)), xml.ToNode(), field, typeof(T));
+        }
+
         protected DocumentedEvent Event<T>(string xml, string eventName)
         {
             var ev = typeof(T).GetEvent(eventName);

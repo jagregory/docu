@@ -4,6 +4,7 @@ namespace Example
 {
     public class Second
     {
+        public string aField;
         public void SecondMethod()
         {
             

@@ -200,6 +200,21 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         }
 
         [Test]
+        public void ShouldHaveReturnTypeInFields()
+        {
+            var model = new DocumentModel(StubParser, StubEventAggregator);
+            var members = new IDocumentationMember[]
+            {
+                Field<Second>(@"<member name=""F:Example.Second.aField"" />", x => x.aField)
+            };
+            var namespaces = model.Create(members);
+            var field = namespaces[0].Types[0].Fields[0];
+
+            field.ReturnType.ShouldNotBeNull();
+            field.ReturnType.PrettyName.ShouldEqual("string");
+        }
+
+        [Test]
         public void ShouldHaveParametersInMethods()
         {
             var model = new DocumentModel(StubParser, StubEventAggregator);

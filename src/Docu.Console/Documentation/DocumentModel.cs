@@ -28,6 +28,7 @@ namespace Docu.Documentation
                 new GenerationStep<DocumentedMethod>(AddMethod),
                 new GenerationStep<DocumentedProperty>(AddProperty),
                 new GenerationStep<DocumentedEvent>(AddEvent),
+                new GenerationStep<DocumentedField>(AddField),
             };
         }
 
@@ -161,6 +162,7 @@ namespace Docu.Documentation
 
             ParseSummary(association, doc);
 
+            matchedAssociations.Add(association.Name, doc);
             type.AddProperty(doc);
         }
 
@@ -175,7 +177,27 @@ namespace Docu.Documentation
 
             ParseSummary(association, doc);
 
+            matchedAssociations.Add(association.Name, doc);
             type.AddEvent(doc);
+        }
+
+        private void AddField(List<Namespace> namespaces, DocumentedField association)
+        {
+            if (association.Field == null) return;
+
+            var ns = FindOrCreateNamespace(association, namespaces);
+            var type = FindOrCreateType(association, ns, namespaces);
+
+            var returnType = DeclaredType.Unresolved(Identifier.FromType(association.Field.FieldType),
+                                        association.Field.FieldType,
+                                        Namespace.Unresolved(
+                                            Identifier.FromNamespace(association.Field.FieldType.Namespace)));
+            var doc = Field.Unresolved(Identifier.FromField(association.Field, association.TargetType), returnType);
+
+            ParseSummary(association, doc);
+
+            matchedAssociations.Add(association.Name, doc);
+            type.AddField(doc);
         }
 
         private void AddNamespace(List<Namespace> namespaces, DocumentedType association)

@@ -106,6 +106,20 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         }
 
         [Test]
+        public void ShouldHaveSummaryForFields()
+        {
+            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
+            var members = new[]
+            {
+                Field<Second>(@"<member name=""F:Example.Second.aField""><summary>A field</summary></member>", x => x.aField),
+            };
+            var namespaces = model.Create(members);
+
+            namespaces[0].Types[0].Fields[0].Summary.CountShouldEqual(1);
+            ((InlineText)namespaces[0].Types[0].Fields[0].Summary[0]).Text.ShouldEqual("A field");
+        }
+
+        [Test]
         public void ShouldHaveSummaryForMethodParameter()
         {
             var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);

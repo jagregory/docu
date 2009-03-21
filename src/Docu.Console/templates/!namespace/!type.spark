@@ -43,6 +43,13 @@
 				<li each="var property in Type.Properties"><a href="#${property.Name}" class="type">${h(property.Name)}</a></li>
 			</ul>
 		</if>
+		
+		<if condition="Type.Fields.Count > 0">
+			<h3 class="section">Fields</h3>
+			<ul>
+				<li each="var field in Type.Fields"><a href="#${field.Name}" class="type">${h(field.Name)}</a></li>
+			</ul>
+		</if>
 	</div>
 	
 	<events events="Type.Events" title="'Events'" />
@@ -54,6 +61,7 @@
 	<methods methods="publicStaticMethods" title="'Public static methods'" />
 	
 	<properties properties="Type.Properties" title="'Public properties'" />
+	<fields fields="Type.Fields" title="'Public fields'" />
 	
 	<use file="../_footer" />
   </body>

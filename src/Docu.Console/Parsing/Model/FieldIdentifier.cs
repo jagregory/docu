@@ -1,19 +1,14 @@
 namespace Docu.Parsing.Model
 {
-    public class PropertyIdentifier : Identifier
+    public class FieldIdentifier : Identifier
     {
         private readonly Identifier typeId;
 
-        public PropertyIdentifier(string name, bool hasGet, bool hasSet, TypeIdentifier typeId)
+        public FieldIdentifier(string name, TypeIdentifier typeId)
             : base(name)
         {
             this.typeId = typeId;
-            HasGet = hasGet;
-            HasSet = hasSet;
         }
-
-        public bool HasGet { get; private set; }
-        public bool HasSet { get; private set; }
 
         public override NamespaceIdentifier CloneAsNamespace()
         {
@@ -27,15 +22,15 @@ namespace Docu.Parsing.Model
 
         public override int CompareTo(Identifier other)
         {
-            if (other is PropertyIdentifier)
+            if (other is FieldIdentifier)
             {
-                var p = (PropertyIdentifier)other;
-                int comparison = ToString().CompareTo(p.ToString());
+                var f = (FieldIdentifier)other;
+                int comparison = ToString().CompareTo(f.ToString());
 
                 if (comparison != 0)
                     return comparison;
 
-                comparison = typeId.CompareTo(p.typeId);
+                comparison = typeId.CompareTo(f.typeId);
 
                 if (comparison != 0)
                     return comparison;
@@ -43,17 +38,18 @@ namespace Docu.Parsing.Model
                 return 0;
             }
 
+            if (other is TypeIdentifier || other is NamespaceIdentifier ||
+                other is MethodIdentifier || other is PropertyIdentifier)
+                return 1;
+
             return -1;
         }
 
         public override bool Equals(Identifier obj)
         {
-            if (obj is PropertyIdentifier)
+            if (obj is FieldIdentifier)
             {
-                var other = (PropertyIdentifier)obj;
-
-                if (HasGet != other.HasGet || HasSet != other.HasSet)
-                    return false;
+                var other = (FieldIdentifier)obj;
 
                 return base.Equals(obj) && typeId.Equals(other.typeId);
             }

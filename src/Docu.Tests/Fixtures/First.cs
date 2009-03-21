@@ -80,6 +80,11 @@ namespace Example
         public event EventHandler<EventArgs> AnEvent;
     }
 
+    public class FieldType
+    {
+        public string aField;
+    }
+
     public class ReturnMethodClass
     {
         public string Method()

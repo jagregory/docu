@@ -23,6 +23,8 @@ namespace Docu.Parsing
                     ParseProperty(members, node);
                 else if (name.StartsWith("E"))
                     ParseEvent(members, node);
+                else if (name.StartsWith("F"))
+                    ParseField(members, node);
             }
 
             return members;
@@ -64,6 +66,19 @@ namespace Docu.Parsing
 
                 if (eventMember != null && eventMember.Match(member))
                     members[i] = new DocumentedEvent(member, node, eventMember.Event, eventMember.TargetType);
+            }
+        }
+
+        private void ParseField(List<IDocumentationMember> members, XmlNode node)
+        {
+            var member = Identifier.FromString(node.Attributes["name"].Value);
+
+            for (int i = 0; i < members.Count; i++)
+            {
+                var eventMember = members[i] as UndocumentedField;
+
+                if (eventMember != null && eventMember.Match(member))
+                    members[i] = new DocumentedField(member, node, eventMember.Field, eventMember.TargetType);
             }
         }
 
