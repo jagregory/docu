@@ -19,7 +19,7 @@
     <div class="sub-header">
 		<if condition="Type.Summary.Count > 0">
 			<div id="summary">
-				<summary content="Type.Summary" />
+				<comment content="Type.Summary" />
 				<remarks content="Type.Remarks" />
 			</div>
 		</if>
