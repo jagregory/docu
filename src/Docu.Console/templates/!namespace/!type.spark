@@ -17,7 +17,7 @@
 		<p if="Type.Interfaces.Count > 0"><strong>Interfaces</strong> ${WriteInterfaces(Type.Interfaces)}</p>
 	</div>
     <div class="sub-header">
-		<if condition="Type.Summary.Count > 0">
+		<if condition="Type.Summary.Count > 0 || Type.Remarks.Count > 0">
 			<div id="summary">
 				<comment content="Type.Summary" />
 				<remarks content="Type.Remarks" />
