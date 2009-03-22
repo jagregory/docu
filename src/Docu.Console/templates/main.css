@@ -115,11 +115,19 @@ div.method table
 	padding: 5px 10px;
 }
 
-#namespaces, #types
+#namespaces
 {
 	width: 50%;
 	float: left;
 	background: #FFF;
+}
+
+#types
+{
+	width: 50%;
+	float: left;
+	background: #FFF;
+	margin-left: -1px;
 }
 
 h2.fixed {
