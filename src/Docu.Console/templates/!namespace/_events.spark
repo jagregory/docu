@@ -4,7 +4,7 @@
   <div id="${ev.Name}" class="method" each="var ev in events">
     <h4><strong>${h(ev.Name)}</strong></h4>
     <div class="content">
-      <summary content="ev.Summary" />
+      <comment content="ev.Summary" />
       <remarks content="ev.Remarks" />
     </div>
   </div>

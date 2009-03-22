@@ -63,6 +63,7 @@
     <Compile Include="DocumentationGeneratorTests\SetTemplatePath.cs" />
     <Compile Include="DocumentationGeneratorTests\SetXml.cs" />
     <Compile Include="DocumentationGeneratorTests\SetAssembly.cs" />
+    <Compile Include="Documentation\DocumentModelGeneratorTests\Returns.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Fields.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Remarks.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\UnrecognisedDocumentationTypes.cs" />

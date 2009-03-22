@@ -15,7 +15,7 @@ namespace Docu.Documentation
         public Method(MethodIdentifier identifier)
             : base(identifier)
         {
-            Summary = new List<IComment>();
+            Returns = new List<IComment>();
         }
 
         public IList<MethodParameter> Parameters
@@ -34,6 +34,7 @@ namespace Docu.Documentation
         }
 
         public IReferencable ReturnType { get; set; }
+        public IList<IComment> Returns { get; set; }
 
         public string FullName
         {

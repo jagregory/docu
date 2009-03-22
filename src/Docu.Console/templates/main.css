@@ -94,6 +94,19 @@ div.method .content
 	padding: 0 10px 5px 10px;
 }
 
+div.method table caption
+{
+	font-size: 12px;
+	font-weight: bold;
+	margin: 0;
+	text-align: left;
+}
+
+div.method table
+{
+	margin: 10px 0 0 0;
+}
+
 #summary 
 {
 	background:#EFEFEF;

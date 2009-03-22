@@ -125,6 +125,7 @@ namespace Docu.Documentation
 
             ParseSummary(association, doc);
             ParseRemarks(association, doc);
+            ParseReturns(association, doc);
 
             foreach (var parameter in association.Method.GetParameters())
             {
@@ -263,6 +264,16 @@ namespace Docu.Documentation
 
             if (node != null)
                 doc.Remarks = commentContentParser.Parse(node);
+        }
+
+        private void ParseReturns(IDocumentationMember member, Method doc)
+        {
+            if (member.Xml == null) return;
+
+            var node = member.Xml.SelectSingleNode("returns");
+
+            if (node != null)
+                doc.Returns = commentContentParser.Parse(node);
         }
     }
 }

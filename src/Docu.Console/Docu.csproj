@@ -223,7 +223,7 @@
     <Content Include="templates\!namespace\_remarks.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="templates\!namespace\_summary.spark">
+    <Content Include="templates\!namespace\_comment.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="utils\ilmerge.bat" />
