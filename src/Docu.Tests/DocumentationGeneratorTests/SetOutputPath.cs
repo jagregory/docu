@@ -1,5 +1,4 @@
 using Docu.Generation;
-using Docu.Generation;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Is=Rhino.Mocks.Constraints.Is;

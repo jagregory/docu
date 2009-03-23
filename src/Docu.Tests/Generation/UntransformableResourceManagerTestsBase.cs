@@ -1,6 +1,5 @@
 using System.IO;
 using Docu.Generation;
-using Docu.Generation;
 using NUnit.Framework;
 
 namespace Docu.Tests.Generation

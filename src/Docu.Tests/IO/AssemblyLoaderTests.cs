@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Docu.IO;
-using Docu.IO;
 using NUnit.Framework;
 
 namespace Docu.Tests.IO

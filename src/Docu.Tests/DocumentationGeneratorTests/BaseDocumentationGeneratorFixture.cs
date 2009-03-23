@@ -2,9 +2,6 @@ using Docu.Events;
 using Docu.Generation;
 using Docu.IO;
 using Docu.Parsing;
-using Docu.Generation;
-using Docu.IO;
-using Docu.Parsing;
 using NUnit.Framework;
 using Rhino.Mocks;
 

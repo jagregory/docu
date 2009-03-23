@@ -1,8 +1,6 @@
 using System.Linq;
 using Docu.Parsing;
 using Docu.Parsing.Model;
-using Docu.Parsing.Model;
-using Docu.Parsing;
 using Example;
 using NUnit.Framework;
 

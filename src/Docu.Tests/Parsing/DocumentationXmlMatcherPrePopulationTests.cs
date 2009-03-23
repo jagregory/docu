@@ -6,8 +6,6 @@ using System.Reflection;
 using System.Xml;
 using Docu.Parsing;
 using Docu.Parsing.Model;
-using Docu.Parsing.Model;
-using Docu.Parsing;
 using Example;
 using NUnit.Framework;
 

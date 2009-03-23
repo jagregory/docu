@@ -1,8 +1,6 @@
 using System.IO;
 using Docu.Documentation;
 using Docu.Generation;
-using Docu.Documentation;
-using Docu.Generation;
 using NUnit.Framework;
 using Rhino.Mocks;
 

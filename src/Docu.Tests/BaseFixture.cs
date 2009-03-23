@@ -5,9 +5,6 @@ using System.Reflection;
 using Docu.Documentation;
 using Docu.Parsing;
 using Docu.Parsing.Model;
-using Docu.Documentation;
-using Docu.Parsing.Model;
-using Docu.Parsing;
 using DeclaredType=Docu.Documentation.DeclaredType;
 
 namespace Docu.Tests
