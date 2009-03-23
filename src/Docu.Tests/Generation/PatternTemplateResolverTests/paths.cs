@@ -21,6 +21,17 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
         }
 
         [Test]
+        public void ShouldResolveDirectoriesOfSameName()
+        {
+            var resolver = new PatternTemplateResolver();
+            var namespaces = new Namespace[0];
+            var results = resolver.Resolve("dir\\dir\\template.spark", namespaces);
+
+            results[0].OutputPath.ShouldEqual("dir\\dir\\template.htm");
+            results[0].TemplatePath.ShouldEqual("dir\\dir\\template.spark");
+        }
+
+        [Test]
         public void MatchesNamespacePatternFilename()
         {
             var resolver = new PatternTemplateResolver();

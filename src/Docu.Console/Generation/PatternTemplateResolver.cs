@@ -15,12 +15,10 @@ namespace Docu.Generation
 
         public IList<TemplateMatch> Resolve(string path, IList<Namespace> namespaces)
         {
-            var current = path;
+            var parts = new List<string>(path.Split('\\'));
+            var head = parts[0];
 
-            if (current.Contains("\\"))
-                current = current.Substring(0, current.IndexOf('\\'));
-
-            return ResolveRecursive(current, path, path, namespaces, new ViewData { Namespaces = namespaces, Assemblies = new List<Assembly>(usedAssemblies) });
+            return ResolveRecursive(head, parts.ToTail(), path, path, namespaces, new ViewData { Namespaces = namespaces, Assemblies = new List<Assembly>(usedAssemblies) });
         }
 
         public void SetAssemblies(IEnumerable<Assembly> assemblies)
@@ -28,18 +26,18 @@ namespace Docu.Generation
             usedAssemblies = assemblies;
         }
 
-        private IList<TemplateMatch> ResolveRecursive(string current, string outputPath, string templatePath, IEnumerable<Namespace> namespaces, ViewData data)
+        private IList<TemplateMatch> ResolveRecursive(string head, IList<string> tail, string outputPath, string templatePath, IEnumerable<Namespace> namespaces, ViewData data)
         {
-            if (Path.GetExtension(current) == ".spark")
+            if (Path.GetExtension(head) == ".spark")
             {
-                if (current == "!namespace.spark")
+                if (head == "!namespace.spark")
                 {
                     foreach (var ns in namespaces)
                     {
                         AddMatch(outputPath.Replace("!namespace", ns.Name), templatePath, data, ns);
                     }
                 }
-                else if (current == "!type.spark")
+                else if (head == "!type.spark")
                 {
                     var foundTypes = from n in namespaces
                                      from t in n.Types
@@ -56,21 +54,15 @@ namespace Docu.Generation
             }
             else
             {
-                if (!IsSpecial(current))
+                if (!IsSpecial(head))
+                    ResolveRecursive(tail[0], tail.ToTail(), templatePath, templatePath, namespaces, data.Clone());
+                else if (head == "!namespace")
                 {
-                    string[] parts = templatePath.Substring(templatePath.IndexOf(current) + current.Length).Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    ResolveRecursive(parts[0], templatePath, templatePath, namespaces, data.Clone());
-                }
-                else if (current == "!namespace")
-                {
-                    string[] parts = templatePath.Substring(templatePath.IndexOf(current) + current.Length).Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-
                     HACK_inNamespace = false;
 
                     foreach (var ns in namespaces)
                     {
-                        string nsPath = templatePath.Replace(current, ns.Name);
+                        string nsPath = templatePath.Replace(head, ns.Name);
 
                         HACK_inNamespace = true;
 
@@ -78,28 +70,25 @@ namespace Docu.Generation
 
                         clone.Namespace = ns;
 
-                        ResolveRecursive(parts[0], nsPath, templatePath, new List<Namespace> { ns }, clone);
+                        ResolveRecursive(tail[0], tail.ToTail(), nsPath, templatePath, new List<Namespace> { ns }, clone);
                     }
 
                     HACK_inNamespace = false;
                 }
-                else if (current == "!type")
+                else if (head == "!type")
                 {
-                    string[] parts = templatePath.Replace(current, "").Split(new[] { '\\' },
-                                                                             StringSplitOptions.RemoveEmptyEntries);
-
                     foreach (var found in from n in namespaces
                                           from t in n.Types
                                           select new { Type = t, Namespace = n })
                     {
-                        string typePath = templatePath.Replace(current, found.Namespace.Name + "." + found.Type.Name);
+                        string typePath = templatePath.Replace(head, found.Namespace.Name + "." + found.Type.Name);
 
                         var clone = data.Clone();
 
                         clone.Namespace = found.Namespace;
                         clone.Type = found.Type;
 
-                        ResolveRecursive(parts[0], typePath, templatePath, new List<Namespace> { found.Namespace }, clone);
+                        ResolveRecursive(tail[0], tail.ToTail(), typePath, templatePath, new List<Namespace> { found.Namespace }, clone);
                     }
                 }
             }

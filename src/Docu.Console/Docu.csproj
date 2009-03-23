@@ -99,6 +99,7 @@
     <Compile Include="Events\EventAggregator.cs" />
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\IEventAggregator.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="IDocumentationGenerator.cs" />
     <Compile Include="IO\AssemblyLoader.cs" />
     <Compile Include="DocumentationGenerator.cs" />
