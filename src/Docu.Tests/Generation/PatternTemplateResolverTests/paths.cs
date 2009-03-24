@@ -14,10 +14,10 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
         {
             var resolver = new PatternTemplateResolver();
             var namespaces = new Namespace[0];
-            var results = resolver.Resolve("template.spark", namespaces);
+            var results = resolver.Resolve("template.htm.spark", namespaces);
 
             results[0].OutputPath.ShouldEqual("template.htm");
-            results[0].TemplatePath.ShouldEqual("template.spark");
+            results[0].TemplatePath.ShouldEqual("template.htm.spark");
         }
 
         [Test]
@@ -25,10 +25,10 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
         {
             var resolver = new PatternTemplateResolver();
             var namespaces = new Namespace[0];
-            var results = resolver.Resolve("dir\\dir\\template.spark", namespaces);
+            var results = resolver.Resolve("dir\\dir\\template.htm.spark", namespaces);
 
             results[0].OutputPath.ShouldEqual("dir\\dir\\template.htm");
-            results[0].TemplatePath.ShouldEqual("dir\\dir\\template.spark");
+            results[0].TemplatePath.ShouldEqual("dir\\dir\\template.htm.spark");
         }
 
         [Test]
@@ -36,13 +36,13 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
         {
             var resolver = new PatternTemplateResolver();
             var namespaces = Namespaces("One", "Two");
-            var results = resolver.Resolve("!namespace.spark", namespaces);
+            var results = resolver.Resolve("!namespace.htm.spark", namespaces);
 
             results.CountShouldEqual(2);
             results[0].OutputPath.ShouldEqual("One.htm");
-            results[0].TemplatePath.ShouldEqual("!namespace.spark");
+            results[0].TemplatePath.ShouldEqual("!namespace.htm.spark");
             results[1].OutputPath.ShouldEqual("Two.htm");
-            results[1].TemplatePath.ShouldEqual("!namespace.spark");
+            results[1].TemplatePath.ShouldEqual("!namespace.htm.spark");
         }
 
         [Test]
@@ -54,13 +54,13 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
             namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
             namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
 
-            var results = resolver.Resolve("!type.spark", namespaces);
+            var results = resolver.Resolve("!type.htm.spark", namespaces);
 
             results.CountShouldEqual(2);
             results[0].OutputPath.ShouldEqual("One.First.htm");
-            results[0].TemplatePath.ShouldEqual("!type.spark");
+            results[0].TemplatePath.ShouldEqual("!type.htm.spark");
             results[1].OutputPath.ShouldEqual("Two.Second.htm");
-            results[1].TemplatePath.ShouldEqual("!type.spark");
+            results[1].TemplatePath.ShouldEqual("!type.htm.spark");
         }
 
         [Test]
@@ -68,11 +68,11 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
         {
             var resolver = new PatternTemplateResolver();
             var namespaces = new Namespace[0];
-            var results = resolver.Resolve("directory\\template.spark", namespaces);
+            var results = resolver.Resolve("directory\\template.htm.spark", namespaces);
 
             results.CountShouldEqual(1);
             results[0].OutputPath.ShouldEqual("directory\\template.htm");
-            results[0].TemplatePath.ShouldEqual("directory\\template.spark");
+            results[0].TemplatePath.ShouldEqual("directory\\template.htm.spark");
         }
 
         [Test]
@@ -80,13 +80,13 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
         {
             var resolver = new PatternTemplateResolver();
             var namespaces = Namespaces("One", "Two");
-            var results = resolver.Resolve("directory\\!namespace.spark", namespaces);
+            var results = resolver.Resolve("directory\\!namespace.htm.spark", namespaces);
 
             results.CountShouldEqual(2);
             results[0].OutputPath.ShouldEqual("directory\\One.htm");
-            results[0].TemplatePath.ShouldEqual("directory\\!namespace.spark");
+            results[0].TemplatePath.ShouldEqual("directory\\!namespace.htm.spark");
             results[1].OutputPath.ShouldEqual("directory\\Two.htm");
-            results[1].TemplatePath.ShouldEqual("directory\\!namespace.spark");
+            results[1].TemplatePath.ShouldEqual("directory\\!namespace.htm.spark");
         }
 
         [Test]
@@ -94,13 +94,13 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
         {
             var resolver = new PatternTemplateResolver();
             var namespaces = Namespaces("One", "Two");
-            var results = resolver.Resolve("!namespace\\template.spark", namespaces);
+            var results = resolver.Resolve("!namespace\\template.htm.spark", namespaces);
 
             results.CountShouldEqual(2);
             results[0].OutputPath.ShouldEqual("One\\template.htm");
-            results[0].TemplatePath.ShouldEqual("!namespace\\template.spark");
+            results[0].TemplatePath.ShouldEqual("!namespace\\template.htm.spark");
             results[1].OutputPath.ShouldEqual("Two\\template.htm");
-            results[1].TemplatePath.ShouldEqual("!namespace\\template.spark");
+            results[1].TemplatePath.ShouldEqual("!namespace\\template.htm.spark");
         }
 
         [Test]
@@ -112,13 +112,13 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
             namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
             namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
 
-            var results = resolver.Resolve("!type\\template.spark", namespaces);
+            var results = resolver.Resolve("!type\\template.htm.spark", namespaces);
 
             results.Count.ShouldEqual(2);
             results[0].OutputPath.ShouldEqual("One.First\\template.htm");
-            results[0].TemplatePath.ShouldEqual("!type\\template.spark");
+            results[0].TemplatePath.ShouldEqual("!type\\template.htm.spark");
             results[1].OutputPath.ShouldEqual("Two.Second\\template.htm");
-            results[1].TemplatePath.ShouldEqual("!type\\template.spark");
+            results[1].TemplatePath.ShouldEqual("!type\\template.htm.spark");
         }
 
         [Test]
@@ -132,17 +132,17 @@ namespace Docu.Tests.Generation.PatternTemplateResolverTests
             namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[1]));
             namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
 
-            var results = resolver.Resolve("!namespace\\!type.spark", namespaces);
+            var results = resolver.Resolve("!namespace\\!type.htm.spark", namespaces);
 
             results.CountShouldEqual(4);
             results[0].OutputPath.ShouldEqual("One\\First.htm");
-            results[0].TemplatePath.ShouldEqual("!namespace\\!type.spark");
+            results[0].TemplatePath.ShouldEqual("!namespace\\!type.htm.spark");
             results[1].OutputPath.ShouldEqual("One\\Second.htm");
-            results[1].TemplatePath.ShouldEqual("!namespace\\!type.spark");
+            results[1].TemplatePath.ShouldEqual("!namespace\\!type.htm.spark");
             results[2].OutputPath.ShouldEqual("Two\\First.htm");
-            results[2].TemplatePath.ShouldEqual("!namespace\\!type.spark");
+            results[2].TemplatePath.ShouldEqual("!namespace\\!type.htm.spark");
             results[3].OutputPath.ShouldEqual("Two\\Second.htm");
-            results[3].TemplatePath.ShouldEqual("!namespace\\!type.spark");
+            results[3].TemplatePath.ShouldEqual("!namespace\\!type.htm.spark");
         }
     }
 }

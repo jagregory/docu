@@ -1,9 +1,5 @@
 using Docu.Parsing;
-using Docu.Documentation;
 using Docu.Documentation.Comments;
-using Docu.Parsing.Model;
-using Docu.Parsing;
-using Example;
 using NUnit.Framework;
 
 namespace Docu.Tests.Parsing

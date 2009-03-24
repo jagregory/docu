@@ -30,14 +30,14 @@ namespace Docu.Generation
         {
             if (Path.GetExtension(head) == ".spark")
             {
-                if (head == "!namespace.spark")
+                if (head.StartsWith("!namespace"))
                 {
                     foreach (var ns in namespaces)
                     {
                         AddMatch(outputPath.Replace("!namespace", ns.Name), templatePath, data, ns);
                     }
                 }
-                else if (head == "!type.spark")
+                else if (head.StartsWith("!type"))
                 {
                     var foundTypes = from n in namespaces
                                      from t in n.Types
@@ -98,7 +98,7 @@ namespace Docu.Generation
 
         private void AddMatch(string outputPath, string templatePath, ViewData data)
         {
-            var path = outputPath.Replace(".spark", ".htm");
+            var path = outputPath.Replace(".spark", "");
             var clone = data.Clone();
 
             if (clone.Types.Count == 0)

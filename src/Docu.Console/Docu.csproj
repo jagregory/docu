@@ -168,12 +168,12 @@
     <Compile Include="Generation\UntransformableResourceManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="templates\index.spark">
+    <Content Include="templates\index.htm.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="templates\!namespace\index.spark">
+    <Content Include="templates\!namespace\index.htm.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -183,7 +183,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="templates\!namespace\!type.spark">
+    <Content Include="templates\!namespace\!type.htm.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="templates\main.css">
