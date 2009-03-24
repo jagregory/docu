@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
-using Docu.Parsing;
+using Docu.Parsing.Comments;
 using Example;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -14,7 +14,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveRemarksForType()
         {
-            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
+            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
             var members = new[]
             {
                 Type<First>(@"<member name=""T:Example.First""><remarks>First remark</remarks></member>"),
@@ -31,7 +31,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldPassRemarksToContentParser()
         {
-            var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
+            var contentParser = MockRepository.GenerateMock<ICommentParser>();
             var model = new DocumentModel(contentParser, StubEventAggregator);
             var members = new[] { Type<First>(@"<member name=""T:Example.First""><remarks>First remark</remarks></member>") };
 
@@ -47,7 +47,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveRemarksForMethods()
         {
-            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
+            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
             var members = new[]
             {
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod""><remarks>Second method</remarks></member>", x => x.SecondMethod()),
@@ -64,7 +64,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldPassMethodRemarksToContentParser()
         {
-            var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
+            var contentParser = MockRepository.GenerateMock<ICommentParser>();
             var model = new DocumentModel(contentParser, StubEventAggregator);
             var members = new[] { Method<Second>(@"<member name=""M:Example.Second.SecondMethod""><remarks>First remark</remarks></member>", x => x.SecondMethod()) };
 
@@ -80,7 +80,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveRemarksForProperties()
         {
-            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
+            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
             var members = new[]
             {
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty""><remarks>Second property</remarks></member>", x => x.SecondProperty),
@@ -94,7 +94,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveRemarksForEvents()
         {
-            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
+            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
             var members = new[]
             {
                 Event<Second>(@"<member name=""E:Example.Second.AnEvent""><remarks>An event</remarks></member>", "AnEvent"),
@@ -108,7 +108,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveSummaryForFields()
         {
-            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
+            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
             var members = new[]
             {
                 Field<Second>(@"<member name=""F:Example.Second.aField""><remarks>A field</remarks></member>", x => x.aField),

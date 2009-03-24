@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
-using Docu.Parsing;
+using Docu.Parsing.Comments;
 using Example;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -14,7 +14,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveReturnsForMethods()
         {
-            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
+            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
             var members = new[]
             {
                 Method<Second>(@"<member name=""M:Example.Second.ReturnType""><returns>Method with return</returns></member>", x => x.ReturnType()),
@@ -28,7 +28,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldPassMethodReturnsToContentParser()
         {
-            var contentParser = MockRepository.GenerateMock<ICommentContentParser>();
+            var contentParser = MockRepository.GenerateMock<ICommentParser>();
             var model = new DocumentModel(contentParser, StubEventAggregator);
             var members = new[] { Method<Second>(@"<member name=""M:Example.Second.ReturnType""><returns>Method with return</returns></member>", x => x.ReturnType()), };
 

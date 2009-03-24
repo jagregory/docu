@@ -67,7 +67,14 @@
     <Compile Include="Console\ISwitch.cs" />
     <Compile Include="Console\ParameterSwitch.cs" />
     <Compile Include="Console\Switch.cs" />
+    <Compile Include="Documentation\Generators\BaseGenerator.cs" />
+    <Compile Include="Documentation\Generators\EventGenerator.cs" />
     <Compile Include="Documentation\Field.cs" />
+    <Compile Include="Documentation\Generators\FieldGenerator.cs" />
+    <Compile Include="Documentation\Generators\MethodGenerator.cs" />
+    <Compile Include="Documentation\Generators\NamespaceGenerator.cs" />
+    <Compile Include="Documentation\Generators\PropertyGenerator.cs" />
+    <Compile Include="Documentation\Generators\TypeGenerator.cs" />
     <Compile Include="Events\BadFileEvent.cs" />
     <Compile Include="Console\AssemblyNotFoundMessage.cs" />
     <Compile Include="Console\ConsoleApplication.cs" />
@@ -91,9 +98,9 @@
     <Compile Include="DefaultRegistry.cs" />
     <Compile Include="Documentation\BaseDocumentationElement.cs" />
     <Compile Include="Documentation\Event.cs" />
-    <Compile Include="Documentation\GenerationStep.cs" />
+    <Compile Include="Documentation\Generators\GenerationStep.cs" />
     <Compile Include="Documentation\IDocumentationElement.cs" />
-    <Compile Include="Documentation\IGenerationStep.cs" />
+    <Compile Include="Documentation\Generators\IGenerationStep.cs" />
     <Compile Include="Documentation\PrettyNameExtensions.cs" />
     <Compile Include="Events\DocuEvent.cs" />
     <Compile Include="Events\EventAggregator.cs" />

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Docu.Documentation.Comments;
 using Docu.Events;
-using Docu.Parsing;
+using Docu.Parsing.Comments;
 using Docu.Parsing.Model;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -13,14 +13,14 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 {
     public abstract class BaseDocumentModelGeneratorFixture : BaseFixture
     {
-        protected ICommentContentParser StubParser;
+        protected ICommentParser StubParser;
         public IEventAggregator StubEventAggregator;
 
         [SetUp]
         public void CreateStubs()
         {
             StubEventAggregator = MockRepository.GenerateStub<IEventAggregator>();
-            StubParser = MockRepository.GenerateStub<ICommentContentParser>();
+            StubParser = MockRepository.GenerateStub<ICommentParser>();
             StubParser.Stub(x => x.Parse(null))
                 .IgnoreArguments()
                 .Return(new List<IComment>());

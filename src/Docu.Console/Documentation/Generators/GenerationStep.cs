@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Docu.Parsing.Model;
 
-namespace Docu.Documentation
+namespace Docu.Documentation.Generators
 {
     internal class GenerationStep<T> : IGenerationStep
     {

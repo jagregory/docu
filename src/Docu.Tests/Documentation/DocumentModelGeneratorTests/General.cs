@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
-using Docu.Parsing;
+using Docu.Parsing.Comments;
 using Docu.Parsing.Model;
 using Example;
 using Example.Deep;
@@ -116,7 +116,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldntHaveAnyUnresolvedReferencesLeftIfAllValid()
         {
-            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
+            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
             var members = new[]
             {
                 Type<First>(@"<member name=""T:Example.First"" />"),  
@@ -131,7 +131,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void UnresolvedReferencesBecomeExternalReferencesIfStillExist()
         {
-            var model = new DocumentModel(new CommentContentParser(), StubEventAggregator);
+            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
             var members = new[] { Type<Second>(@"<member name=""T:Example.Second""><summary><see cref=""T:Example.First"" /></summary></member>") };
             var namespaces = model.Create(members);
 

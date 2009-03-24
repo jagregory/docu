@@ -1,34 +1,47 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
+using Docu.Documentation.Generators;
 using Docu.Events;
 using Docu.Parsing;
+using Docu.Parsing.Comments;
 using Docu.Parsing.Model;
 
 namespace Docu.Documentation
 {
     public class DocumentModel : IDocumentModel
     {
-        private readonly ICommentContentParser commentContentParser;
         private readonly IEventAggregator eventAggregator;
         private readonly IDictionary<Identifier, IReferencable> matchedAssociations = new Dictionary<Identifier, IReferencable>();
 
         private readonly IList<IGenerationStep> steps;
+        private readonly NamespaceGenerator Namespaces;
+        private readonly TypeGenerator Types;
+        private readonly MethodGenerator Methods;
+        private readonly PropertyGenerator Properties;
+        private readonly EventGenerator Events;
+        private readonly FieldGenerator Fields;
 
-        public DocumentModel(ICommentContentParser commentContentParser, IEventAggregator eventAggregator)
+        public DocumentModel(ICommentParser commentParser, IEventAggregator eventAggregator)
         {
-            this.commentContentParser = commentContentParser;
+            Namespaces = new NamespaceGenerator(matchedAssociations);
+            Types = new TypeGenerator(matchedAssociations, commentParser);
+            Methods = new MethodGenerator(matchedAssociations, commentParser);
+            Properties = new PropertyGenerator(matchedAssociations, commentParser);
+            Events = new EventGenerator(matchedAssociations, commentParser);
+            Fields = new FieldGenerator(matchedAssociations, commentParser);
+
             this.eventAggregator = eventAggregator;
 
             steps = new List<IGenerationStep>
             {
-                new GenerationStep<DocumentedType>(AddNamespace),
-                new GenerationStep<DocumentedType>(AddType),
-                new GenerationStep<DocumentedMethod>(AddMethod),
-                new GenerationStep<DocumentedProperty>(AddProperty),
-                new GenerationStep<DocumentedEvent>(AddEvent),
-                new GenerationStep<DocumentedField>(AddField),
+                new GenerationStep<IDocumentationMember>(Namespaces.Add),
+                new GenerationStep<IDocumentationMember>(Types.PrePopulate),
+                new GenerationStep<DocumentedType>(Types.Add),
+                new GenerationStep<DocumentedMethod>(Methods.Add),
+                new GenerationStep<DocumentedProperty>(Properties.Add),
+                new GenerationStep<DocumentedEvent>(Events.Add),
+                new GenerationStep<DocumentedField>(Fields.Add),
             };
         }
 
@@ -79,201 +92,6 @@ namespace Docu.Documentation
             {
                 ns.Sort();
             }
-        }
-
-        private Namespace FindOrCreateNamespace(IDocumentationMember member, List<Namespace> namespaces)
-        {
-            var identifier = Identifier.FromNamespace(member.TargetType.Namespace);
-            var ns = namespaces.Find(x => x.IsIdentifiedBy(identifier));
-
-            if (ns == null)
-            {
-                AddNamespace(namespaces, new DocumentedType(member.Name.CloneAsNamespace(), null, member.TargetType));
-                ns = namespaces.Find(x => x.IsIdentifiedBy(identifier));
-            }
-
-            return ns;
-        }
-
-        private DeclaredType FindOrCreateType(IDocumentationMember member, Namespace ns, List<Namespace> namespaces)
-        {
-            var typeName = Identifier.FromType(member.TargetType);
-            var type = ns.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
-
-            if (type == null)
-            {
-                AddType(namespaces, new DocumentedType(member.Name.CloneAsType(), null, member.TargetType));
-                type = ns.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
-            }
-
-            return type;
-        }
-
-        private void AddMethod(List<Namespace> namespaces, DocumentedMethod association)
-        {
-            if (association.Method == null) return;
-
-            var ns = FindOrCreateNamespace(association, namespaces);
-            var type = FindOrCreateType(association, ns, namespaces);
-
-            DeclaredType methodReturnType = DeclaredType.Unresolved(
-                Identifier.FromType(association.Method.ReturnType),
-                association.Method.ReturnType,
-                Namespace.Unresolved(Identifier.FromNamespace(association.Method.ReturnType.Namespace)));
-            Method doc = Method.Unresolved(Identifier.FromMethod(association.Method, association.TargetType),
-                                           association.Method, methodReturnType);
-
-            ParseSummary(association, doc);
-            ParseRemarks(association, doc);
-            ParseReturns(association, doc);
-
-            foreach (var parameter in association.Method.GetParameters())
-            {
-                var reference = DeclaredType.Unresolved(
-                    Identifier.FromType(parameter.ParameterType),
-                    parameter.ParameterType,
-                    Namespace.Unresolved(Identifier.FromNamespace(parameter.ParameterType.Namespace)));
-                var docParam = new MethodParameter(parameter.Name, reference);
-
-                ParseParamSummary(association, docParam);
-
-                doc.AddParameter(docParam);
-            }
-
-            if (matchedAssociations.ContainsKey(association.Name))
-                return; // weird case when a type has the same method declared twice
-
-            matchedAssociations.Add(association.Name, doc);
-            type.AddMethod(doc);
-        }
-
-        private void AddProperty(List<Namespace> namespaces, DocumentedProperty association)
-        {
-            if (association.Property == null) return;
-
-            var ns = FindOrCreateNamespace(association, namespaces);
-            var type = FindOrCreateType(association, ns, namespaces);
-
-            DeclaredType propertyReturnType =
-                DeclaredType.Unresolved(Identifier.FromType(association.Property.PropertyType),
-                                        association.Property.PropertyType,
-                                        Namespace.Unresolved(
-                                            Identifier.FromNamespace(association.Property.PropertyType.Namespace)));
-            Property doc = Property.Unresolved(Identifier.FromProperty(association.Property, association.TargetType),
-                                               propertyReturnType);
-
-            ParseSummary(association, doc);
-            ParseRemarks(association, doc);
-
-            matchedAssociations.Add(association.Name, doc);
-            type.AddProperty(doc);
-        }
-
-        private void AddEvent(List<Namespace> namespaces, DocumentedEvent association)
-        {
-            if (association.Event == null) return;
-
-            var ns = FindOrCreateNamespace(association, namespaces);
-            var type = FindOrCreateType(association, ns, namespaces);
-
-            var doc = Event.Unresolved(Identifier.FromEvent(association.Event, association.TargetType));
-
-            ParseSummary(association, doc);
-            ParseRemarks(association, doc);
-
-            matchedAssociations.Add(association.Name, doc);
-            type.AddEvent(doc);
-        }
-
-        private void AddField(List<Namespace> namespaces, DocumentedField association)
-        {
-            if (association.Field == null) return;
-
-            var ns = FindOrCreateNamespace(association, namespaces);
-            var type = FindOrCreateType(association, ns, namespaces);
-
-            var returnType = DeclaredType.Unresolved(Identifier.FromType(association.Field.FieldType),
-                                        association.Field.FieldType,
-                                        Namespace.Unresolved(
-                                            Identifier.FromNamespace(association.Field.FieldType.Namespace)));
-            var doc = Field.Unresolved(Identifier.FromField(association.Field, association.TargetType), returnType);
-
-            ParseSummary(association, doc);
-            ParseRemarks(association, doc);
-
-            matchedAssociations.Add(association.Name, doc);
-            type.AddField(doc);
-        }
-
-        private void AddNamespace(List<Namespace> namespaces, DocumentedType association)
-        {
-            var ns = Identifier.FromNamespace(association.TargetType.Namespace);
-
-            if (!namespaces.Exists(x => x.IsIdentifiedBy(ns)))
-            {
-                var doc = Namespace.Unresolved(ns);
-                matchedAssociations.Add(association.Name.CloneAsNamespace(), doc);
-                namespaces.Add(doc);
-            }
-        }
-
-        private void AddType(List<Namespace> namespaces, DocumentedType association)
-        {
-            var ns = FindOrCreateNamespace(association, namespaces);
-            DeclaredType doc = DeclaredType.Unresolved((TypeIdentifier)association.Name, association.TargetType, ns);
-
-            ParseSummary(association, doc);
-            ParseRemarks(association, doc);
-
-            if (matchedAssociations.ContainsKey(association.Name))
-                return; // weird case when a type has the same method declared twice
-
-            matchedAssociations.Add(association.Name, doc);
-            ns.AddType(doc);
-        }
-
-        private void ParseSummary(XmlNode node, IDocumentationElement doc)
-        {
-            if (node != null)
-                doc.Summary = commentContentParser.Parse(node);
-        }
-
-        private void ParseParamSummary(IDocumentationMember member, IDocumentationElement doc)
-        {
-            if (member.Xml == null) return;
-
-            var node = member.Xml.SelectSingleNode("param[@name='" + doc.Name + "']");
-
-            ParseSummary(node, doc);
-        }
-
-        private void ParseSummary(IDocumentationMember member, IDocumentationElement doc)
-        {
-            if (member.Xml == null) return;
-
-            var node = member.Xml.SelectSingleNode("summary");
-
-            ParseSummary(node, doc);
-        }
-
-        private void ParseRemarks(IDocumentationMember member, IDocumentationElement doc)
-        {
-            if (member.Xml == null) return;
-
-            var node = member.Xml.SelectSingleNode("remarks");
-
-            if (node != null)
-                doc.Remarks = commentContentParser.Parse(node);
-        }
-
-        private void ParseReturns(IDocumentationMember member, Method doc)
-        {
-            if (member.Xml == null) return;
-
-            var node = member.Xml.SelectSingleNode("returns");
-
-            if (node != null)
-                doc.Returns = commentContentParser.Parse(node);
         }
     }
 }
