@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Xml;
 using Docu.Documentation.Comments;
 
-namespace Docu.Parsing
+namespace Docu.Parsing.Comments
 {
-    public interface ICommentContentParser
+    public interface ICommentParser
     {
         IList<IComment> Parse(XmlNode content);
     }

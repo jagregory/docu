@@ -107,6 +107,12 @@
     <Compile Include="Generation\IUntransformableResourceManager.cs" />
     <Compile Include="IO\IAssemblyLoader.cs" />
     <Compile Include="IO\IXmlLoader.cs" />
+    <Compile Include="Parsing\Comments\CommentParserBase.cs" />
+    <Compile Include="Parsing\Comments\InlineCodeCommentParser.cs" />
+    <Compile Include="Parsing\Comments\InlineTextCommentParser.cs" />
+    <Compile Include="Parsing\Comments\MultilineCodeCommentParser.cs" />
+    <Compile Include="Parsing\Comments\ParagraphCommentParser.cs" />
+    <Compile Include="Parsing\Comments\SeeCodeCommentParser.cs" />
     <Compile Include="Parsing\DocumentationXmlMatcher.cs" />
     <Compile Include="Parsing\DocumentableMemberFinder.cs" />
     <Compile Include="Parsing\IAssemblyXmlParser.cs" />
@@ -155,11 +161,11 @@
     <Compile Include="Generation\PageWriter.cs" />
     <Compile Include="Documentation\IReferencable.cs" />
     <Compile Include="Documentation\IReferrer.cs" />
-    <Compile Include="Parsing\CommentContentParser.cs" />
+    <Compile Include="Parsing\Comments\CommentParser.cs" />
     <Compile Include="Documentation\Comments\IComment.cs" />
     <Compile Include="Documentation\IDocumentModel.cs" />
     <Compile Include="Parsing\AssemblyXmlParser.cs" />
-    <Compile Include="Parsing\ICommentContentParser.cs" />
+    <Compile Include="Parsing\Comments\ICommentParser.cs" />
     <Compile Include="Parsing\IDocumentableMemberFinder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

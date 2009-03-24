@@ -1,18 +1,18 @@
-using Docu.Parsing;
 using Docu.Documentation.Comments;
+using Docu.Parsing.Comments;
 using NUnit.Framework;
 
 namespace Docu.Tests.Parsing
 {
     [TestFixture]
-    public class CommentContentParserTests
+    public class CommentParserTests
     {
-        private CommentContentParser parser;
+        private CommentParser parser;
 
         [SetUp]
         public void CreateParser()
         {
-            parser = new CommentContentParser();
+            parser = new CommentParser();
         }
 
         [Test]

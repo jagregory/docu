@@ -89,7 +89,7 @@
     <Compile Include="Parsing\DocumentationXmlMatcherPrePopulationTests.cs" />
     <Compile Include="BaseFixture.cs" />
     <Compile Include="Generation\BulkTransformer_Directory_Tests.cs" />
-    <Compile Include="Parsing\CommentContentParserTests.cs" />
+    <Compile Include="Parsing\CommentParserTests.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Fixtures\First.cs" />
     <Compile Include="Fixtures\Second.cs" />
