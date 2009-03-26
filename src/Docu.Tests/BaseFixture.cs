@@ -48,9 +48,9 @@ namespace Docu.Tests
             return list;
         }
 
-        protected Docu.Documentation.Namespace Namespace(string ns)
+        protected Namespace Namespace(string ns)
         {
-            return new Docu.Documentation.Namespace(Identifier.FromNamespace(ns));
+            return new Namespace(Identifier.FromNamespace(ns));
         }
 
         protected DeclaredType Type<T>(Namespace ns)
@@ -62,7 +62,7 @@ namespace Docu.Tests
             return type;
         }
 
-        protected IList<IDocumentationMember> DocMembers(params System.Type[] types)
+        protected IList<IDocumentationMember> DocMembers(params Type[] types)
         {
             var documentableMembers = new DocumentableMemberFinder();
 

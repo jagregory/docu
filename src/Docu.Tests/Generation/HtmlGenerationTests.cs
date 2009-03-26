@@ -87,8 +87,8 @@ namespace Docu.Tests.Generation
             var type = Type<ClassWithOverload>(ns);
             var parameterType = DeclaredType.Unresolved(Identifier.FromType(typeof(string)), typeof(string), Namespace("System"));
 
-            type.Methods.Add(new Docu.Documentation.Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload))));
-            type.Methods.Add(new Docu.Documentation.Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload))));
+            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload))));
+            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload))));
             type.Methods[1].Parameters.Add(new MethodParameter("one", parameterType));
             
             var data = new ViewData { Type = type };

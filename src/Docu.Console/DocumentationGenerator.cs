@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
-using Docu.Documentation;
 using Docu.Events;
 using Docu.Generation;
 using Docu.IO;

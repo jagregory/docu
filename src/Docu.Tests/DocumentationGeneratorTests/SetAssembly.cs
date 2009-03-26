@@ -58,7 +58,6 @@ namespace Docu.Tests.DocumentationGeneratorTests
         {
             var ev = MockRepository.GenerateMock<BadFileEvent>();
             var parser = MockRepository.GenerateMock<IAssemblyXmlParser>();
-            var badFileFound = false;
 
             StubEventAggregator.Stub(x => x.GetEvent<BadFileEvent>())
                 .Return(ev);

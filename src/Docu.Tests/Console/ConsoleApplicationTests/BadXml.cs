@@ -1,7 +1,6 @@
 using System.Linq;
 using Docu.Console;
 using Docu.Events;
-using Docu.Parsing;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;

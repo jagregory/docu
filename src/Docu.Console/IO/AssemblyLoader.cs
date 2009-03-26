@@ -8,19 +8,20 @@ namespace Docu.IO
     {
         public Assembly LoadFrom(string assemblyPath)
         {
-            if (File.Exists(assemblyPath))
+            if (!File.Exists(assemblyPath)) 
+                throw new FileNotFoundException(string.Format("The file could not be found at {0}", assemblyPath));
+            
+            try
             {
-                try
-                {
-                    return Assembly.LoadFrom(assemblyPath);
-                }
-                catch (BadImageFormatException err)
-                {
-                    var exception = new BadImageFormatException("This file is in a bad format and will not be loaded.", err);
-                    throw exception;
-                }
+                return Assembly.LoadFrom(assemblyPath);
             }
-            throw new FileNotFoundException(string.Format("The file could not be found at {0}", assemblyPath));
+            catch (BadImageFormatException err)
+            {
+                var exception = new BadImageFormatException("This file is in a bad format and will not be loaded.", err);
+                throw exception;
+            }
+            
+            
         }
     }
 }

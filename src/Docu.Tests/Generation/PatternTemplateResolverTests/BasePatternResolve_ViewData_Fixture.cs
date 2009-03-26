@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Docu.Documentation;
 using Docu.Generation;
-using Docu.Parsing.Model;
 using Example;
 using NUnit.Framework;
 

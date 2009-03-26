@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Docu.Parsing;
 using Docu.Parsing.Model;
 
 namespace Docu.Documentation

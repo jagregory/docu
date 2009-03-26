@@ -1,11 +1,8 @@
 using Docu.Generation;
-using Docu.IO;
-using Docu.Parsing;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;
 using Test = NUnit.Framework.TestAttribute;
-using SetUp = NUnit.Framework.SetUpAttribute;
 
 namespace Docu.Tests.DocumentationGeneratorTests
 {

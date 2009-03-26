@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Docu.Documentation;
 using Docu.Generation;
 using Docu.IO;
 using Example;
 using Rhino.Mocks;
-using Rhino.Mocks.Constraints;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;
 using Test = NUnit.Framework.TestAttribute;
 

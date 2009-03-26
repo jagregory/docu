@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Docu.Events;
-using Docu.Parsing;
 using StructureMap;
 
 namespace Docu.Console
