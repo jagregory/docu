@@ -18,7 +18,6 @@ namespace Docu.Documentation
             : base(name)
         {
             Namespace = ns;
-            Summary = new List<IComment>();
             Interfaces = new List<IReferencable>();
         }
 
@@ -85,11 +84,8 @@ namespace Docu.Documentation
                         face.Resolve(referencables);
                 }
 
-                foreach (IReferrer comment in Summary.Where(x => x is IReferrer))
-                {
-                    if (!comment.Reference.IsResolved)
-                        comment.Reference.Resolve(referencables);
-                }
+                if (!Summary.IsResolved)
+                    Summary.Resolve(referencables);
 
                 foreach (var method in Methods)
                 {

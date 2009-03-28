@@ -1,6 +1,6 @@
 namespace Docu.Documentation.Comments
 {
-    public class InlineText : IComment
+    public class InlineText : BaseComment
     {
         public InlineText(string text)
         {

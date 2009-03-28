@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2FB9E7C3-B602-4343-B510-9C8DBFC7B8FD}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -67,6 +67,11 @@
     <Compile Include="Console\ISwitch.cs" />
     <Compile Include="Console\ParameterSwitch.cs" />
     <Compile Include="Console\Switch.cs" />
+    <Compile Include="Documentation\Comments\BaseComment.cs" />
+    <Compile Include="Documentation\Comments\Remarks.cs" />
+    <Compile Include="Documentation\Comments\Returns.cs" />
+    <Compile Include="Documentation\Comments\Summary.cs" />
+    <Compile Include="Documentation\Comments\Value.cs" />
     <Compile Include="Documentation\Generators\BaseGenerator.cs" />
     <Compile Include="Documentation\Generators\EventGenerator.cs" />
     <Compile Include="Documentation\Field.cs" />
@@ -164,6 +169,8 @@
     <Compile Include="Generation\TemplateMatch.cs" />
     <Compile Include="IO\FileSystemOutputWriter.cs" />
     <Compile Include="IO\IOutputWriter.cs" />
+    <Compile Include="UI\IOutputFormatterPart.cs" />
+    <Compile Include="UI\OutputFormatterPart.cs" />
     <Compile Include="UI\SparkTemplateBase.cs" />
     <Compile Include="Generation\PageWriter.cs" />
     <Compile Include="Documentation\IReferencable.cs" />

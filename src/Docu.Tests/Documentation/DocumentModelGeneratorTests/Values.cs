@@ -1,4 +1,5 @@
-﻿using Docu.Documentation;
+﻿using System.Linq;
+using Docu.Documentation;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Comments;
 using Example;
@@ -19,8 +20,8 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             };
             var namespaces = model.Create(properties);
 
-            namespaces[0].Types[0].Properties[0].Value.CountShouldEqual(1);
-            ((InlineText)namespaces[0].Types[0].Properties[0].Value[0]).Text.ShouldEqual("The string representation.");
+            namespaces[0].Types[0].Properties[0].Value.Children.Count().ShouldEqual(1);
+            ((InlineText)namespaces[0].Types[0].Properties[0].Value.Children.First()).Text.ShouldEqual("The string representation.");
         }
 
         [Test]
@@ -33,8 +34,8 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             };
             var namespaces = model.Create(methods);
 
-            namespaces[0].Types[0].Methods[0].Value.CountShouldEqual(1);
-            ((InlineText)namespaces[0].Types[0].Methods[0].Value[0]).Text.ShouldEqual("A string.");
+            namespaces[0].Types[0].Methods[0].Value.Children.Count().ShouldEqual(1);
+            ((InlineText)namespaces[0].Types[0].Methods[0].Value.Children.First()).Text.ShouldEqual("A string.");
         }
     }
 }

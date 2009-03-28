@@ -10,7 +10,6 @@ namespace Docu.Documentation
             : base(new NullIdentifier(name))
         {
             Reference = reference;
-            Summary = new List<IComment>();
         }
 
         public string PrettyName

@@ -10,9 +10,7 @@ namespace Docu.Documentation
     {
         public Field(FieldIdentifier identifier)
             : base(identifier)
-        {
-            Summary = new List<IComment>();
-        }
+        {}
 
         public string FullName
         {
@@ -42,11 +40,11 @@ namespace Docu.Documentation
                 if (!ReturnType.IsResolved)
                     ReturnType.Resolve(referencables);
 
-                foreach (IReferrer comment in Summary.Where(x => x is IReferrer))
-                {
-                    if (!comment.Reference.IsResolved)
-                        comment.Reference.Resolve(referencables);
-                }
+                if (!Summary.IsResolved)
+                    Summary.Resolve(referencables);
+
+                if (!Remarks.IsResolved)
+                    Remarks.Resolve(referencables);
             }
             else
                 ConvertToExternalReference();

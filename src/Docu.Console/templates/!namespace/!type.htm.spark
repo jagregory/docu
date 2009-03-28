@@ -13,11 +13,11 @@
     <div class="header">
 		<p class="class"><strong>Type</strong> ${h(Type.PrettyName)}</p>
 		<p><strong>Namespace</strong> ${Namespace.Name}</p>
-		<p if="Type.ParentType != null && Type.ParentType.PrettyName != 'object'"><strong>Parent</strong> ${WriteReference(Type.ParentType)}</p>
+		<p if="Type.ParentType != null && Type.ParentType.PrettyName != 'object'"><strong>Parent</strong> ${Format(Type.ParentType)}</p>
 		<p if="Type.Interfaces.Count > 0"><strong>Interfaces</strong> ${WriteInterfaces(Type.Interfaces)}</p>
 	</div>
     <div class="sub-header">
-		<if condition="Type.Summary.Count > 0 || Type.Remarks.Count > 0">
+		<if condition="(Type.Summary != null && Type.Summary.Children.Count() > 0) || (Type.Remarks != null && Type.Remarks.Children.Count() > 0)">
 			<div id="summary">
 				<comment content="Type.Summary" />
 				<remarks content="Type.Remarks" />

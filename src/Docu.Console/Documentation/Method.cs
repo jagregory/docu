@@ -15,7 +15,7 @@ namespace Docu.Documentation
         public Method(MethodIdentifier identifier)
             : base(identifier)
         {
-            Returns = new List<IComment>();
+            Returns = new Returns();
         }
 
         public IList<MethodParameter> Parameters
@@ -34,7 +34,7 @@ namespace Docu.Documentation
         }
 
         public IReferencable ReturnType { get; set; }
-        public IList<IComment> Returns { get; set; }
+        public Returns Returns { get; set; }
 
         public string FullName
         {
@@ -64,11 +64,11 @@ namespace Docu.Documentation
 
                 representedMethod = method.representedMethod;
 
-                foreach (IReferrer comment in Summary.Where(x => x is IReferrer))
-                {
-                    if (!comment.Reference.IsResolved)
-                        comment.Reference.Resolve(referencables);
-                }
+                if (!Summary.IsResolved)
+                    Summary.Resolve(referencables);
+
+                if (!Remarks.IsResolved)
+                    Remarks.Resolve(referencables);
 
                 foreach (var para in Parameters)
                 {

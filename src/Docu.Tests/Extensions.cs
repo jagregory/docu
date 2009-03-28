@@ -10,11 +10,6 @@ namespace Docu.Tests
 {
     public static class Extensions
     {
-        public static void CountShouldEqual<T>(this IEnumerable<T> actual, int count)
-        {
-            (actual.Count() == count).ShouldBeTrue();
-        }
-
         public static void ShouldBeTrue(this bool actual)
         {
             Assert.That(actual, Is.True);
@@ -95,6 +90,16 @@ namespace Docu.Tests
             doc.LoadXml(original);
 
             return doc.DocumentElement;
+        }
+
+        public static T First<T>(this IEnumerable<T> list)
+        {
+            return list.FirstOrDefault();
+        }
+
+        public static T Second<T>(this IEnumerable<T> list)
+        {
+            return list.ElementAtOrDefault(1);
         }
     }
 }

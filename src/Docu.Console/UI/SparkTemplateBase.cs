@@ -68,38 +68,14 @@ namespace Docu.UI
             return Formatter.Escape(content);
         }
 
-        public string WriteReference(IReferencable reference)
+        public string Format(IComment comment)
         {
-            return Formatter.Format(reference);
+            return Formatter.Format(comment);
         }
 
-        public string WriteSummary(IList<IComment> summary)
+        public string Format(IReferencable referencable)
         {
-            var sb = new StringBuilder();
-
-            foreach (IComment block in summary)
-            {
-                if (block is InlineCode)
-                {
-                    sb.Append(Formatter.Format((InlineCode)block));
-                    sb.Append(" ");
-                    continue;
-                }
-                if (block is IReferrer)
-                {
-                    sb.Append(WriteReference(((IReferrer)block).Reference));
-                    sb.Append(" ");
-                    continue;
-                }
-
-                sb.Append(block.ToString());
-                sb.Append(" ");
-            }
-
-            if (sb.Length > 0)
-                sb.Length--; // trim trailing whitespace
-
-            return sb.ToString();
+            return Formatter.FormatReferencable(referencable);
         }
 
         public string WriteInterfaces(IList<IReferencable> interfaces)
@@ -108,7 +84,7 @@ namespace Docu.UI
 
             foreach (IReferencable face in interfaces)
             {
-                sb.Append(WriteReference(face));
+                sb.Append(Format(face));
                 sb.Append(", ");
             }
 

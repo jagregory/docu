@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Comments;
@@ -21,8 +22,8 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             };
             var namespaces = model.Create(members);
 
-            namespaces[0].Types[0].Methods[0].Returns.CountShouldEqual(1);
-            ((InlineText)namespaces[0].Types[0].Methods[0].Returns[0]).Text.ShouldEqual("Method with return");
+            namespaces[0].Types[0].Methods[0].Returns.Children.Count().ShouldEqual(1);
+            ((InlineText)namespaces[0].Types[0].Methods[0].Returns.Children.First()).Text.ShouldEqual("Method with return");
         }
 
         [Test]

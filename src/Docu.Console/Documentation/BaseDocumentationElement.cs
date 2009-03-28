@@ -13,17 +13,17 @@ namespace Docu.Documentation
             Name = identifier.ToString();
             this.identifier = identifier;
             IsResolved = true;
-            Summary = new List<IComment>();
-            Remarks = new List<IComment>();
-            Value = new List<IComment>();
+            Summary = new Summary();
+            Remarks = new Remarks();
+            Value = new Value();
         }
 
         public string Name { get; private set; }
         public bool IsExternal { get; private set; }
         public bool IsResolved { get; protected set; }
-        public IList<IComment> Summary { get; set; }
-        public IList<IComment> Remarks { get; set; }
-        public IList<IComment> Value { get; set; }
+        public Summary Summary { get; set; }
+        public Remarks Remarks { get; set; }
+        public Value Value { get; set; }
 
         public bool IsIdentifiedBy(Identifier otherIdentifier)
         {
