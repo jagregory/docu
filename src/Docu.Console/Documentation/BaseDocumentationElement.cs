@@ -15,6 +15,7 @@ namespace Docu.Documentation
             IsResolved = true;
             Summary = new List<IComment>();
             Remarks = new List<IComment>();
+            Value = new List<IComment>();
         }
 
         public string Name { get; private set; }
@@ -22,6 +23,7 @@ namespace Docu.Documentation
         public bool IsResolved { get; protected set; }
         public IList<IComment> Summary { get; set; }
         public IList<IComment> Remarks { get; set; }
+        public IList<IComment> Value { get; set; }
 
         public bool IsIdentifiedBy(Identifier otherIdentifier)
         {
