@@ -11,6 +11,7 @@ namespace Docu.Documentation
         bool IsResolved { get; }
         IList<IComment> Summary { get; set; }
         IList<IComment> Remarks { get; set; }
+        IList<IComment> Value { get; set; }
         bool IsIdentifiedBy(Identifier otherIdentifier);
         void ConvertToExternalReference();
     }

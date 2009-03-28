@@ -1,0 +1,3 @@
+﻿<blockquote class="value" if="content.Count > 0">
+  <strong>Value: </strong>${WriteSummary(content)}
+</blockquote>

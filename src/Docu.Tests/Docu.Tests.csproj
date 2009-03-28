@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{76E3611F-A908-4A1B-8673-A221DD8C5301}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -71,6 +71,7 @@
     <Compile Include="Documentation\DocumentModelGeneratorTests\Events.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Namespaces.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Summaries.cs" />
+    <Compile Include="Documentation\DocumentModelGeneratorTests\Values.cs" />
     <Compile Include="Events\EventAggregatorTests.cs" />
     <Compile Include="Generation\PatternTemplateResolverTests\BasePatternResolve_ViewData_Fixture.cs" />
     <Compile Include="Generation\PatternTemplateResolverTests\type_template_in_directory.cs" />

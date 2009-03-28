@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2FB9E7C3-B602-4343-B510-9C8DBFC7B8FD}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -238,6 +238,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="templates\!namespace\_comment.spark">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="templates\!namespace\_value.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="utils\ilmerge.bat" />

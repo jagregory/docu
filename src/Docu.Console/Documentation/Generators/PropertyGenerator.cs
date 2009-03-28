@@ -31,6 +31,7 @@ namespace Docu.Documentation
                                                propertyReturnType);
 
             ParseSummary(association, doc);
+            ParseValue(association, doc);
             ParseRemarks(association, doc);
 
             matchedAssociations.Add(association.Name, doc);

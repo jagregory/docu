@@ -13,6 +13,7 @@
           </td>
         </tr>
       </table>
+      <value content="property.Value" />
     </div>
   </div>
 </if>

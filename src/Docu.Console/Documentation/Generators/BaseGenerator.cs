@@ -30,6 +30,16 @@ namespace Docu.Documentation.Generators
             ParseSummary(node, doc);
         }
 
+        protected void ParseValue(IDocumentationMember member, IDocumentationElement doc)
+        {
+            if (member.Xml == null) return;
+
+            var node = member.Xml.SelectSingleNode("value");
+
+            if (node != null)
+                doc.Value = commentParser.Parse(node);
+        }
+
         protected void ParseSummary(IDocumentationMember member, IDocumentationElement doc)
         {
             if (member.Xml == null) return;

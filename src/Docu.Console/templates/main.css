@@ -194,3 +194,9 @@ blockquote
 	border-top: 3px solid #CCC;
 	border-bottom: 3px solid #CCC;
 }
+.value
+{
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	font-size: 90%;
+}

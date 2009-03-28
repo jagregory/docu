@@ -21,6 +21,7 @@
 					<td><comment content="param.Summary" /></td>
 				</tr>
 			</table>
+      <value content="method.Value" />
 		</div>
 	</div>
 </if>

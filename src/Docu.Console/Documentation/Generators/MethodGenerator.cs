@@ -30,6 +30,7 @@ namespace Docu.Documentation.Generators
 
             ParseSummary(association, doc);
             ParseRemarks(association, doc);
+            ParseValue(association, doc);
             ParseReturns(association, doc);
 
             foreach (var parameter in association.Method.GetParameters())

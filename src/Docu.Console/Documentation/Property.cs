@@ -12,6 +12,7 @@ namespace Docu.Documentation
             : base(identifier)
         {
             Summary = new List<IComment>();
+            Value = new List<IComment>();
             HasGet = identifier.HasGet;
             HasSet = identifier.HasSet;
         }

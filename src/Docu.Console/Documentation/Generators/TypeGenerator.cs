@@ -21,6 +21,7 @@ namespace Docu.Documentation.Generators
 
             ParseSummary(association, doc);
             ParseRemarks(association, doc);
+            ParseValue(association, doc);
 
             if (matchedAssociations.ContainsKey(association.Name))
                 return; // weird case when a type has the same method declared twice
