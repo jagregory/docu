@@ -8,9 +8,13 @@ namespace Docu.Documentation
 {
     public class Event : BaseDocumentationElement, IReferencable
     {
-        public Event(EventIdentifier identifier)
+        public DeclaredType Type { get; set; }
+
+        public Event(EventIdentifier identifier, DeclaredType type)
             : base(identifier)
-        {}
+        {
+            Type = type;
+        }
 
         public string FullName
         {
@@ -42,9 +46,9 @@ namespace Docu.Documentation
                 ConvertToExternalReference();
         }
 
-        public static Event Unresolved(EventIdentifier eventIdentifier)
+        public static Event Unresolved(EventIdentifier eventIdentifier, DeclaredType type)
         {
-            return new Event(eventIdentifier) { IsResolved = false };
+            return new Event(eventIdentifier, type) { IsResolved = false };
         }
     }
 }

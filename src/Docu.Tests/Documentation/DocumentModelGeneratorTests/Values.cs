@@ -16,7 +16,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
             var properties = new[]
             {
-                Property<Second>(@"<member name=""M:Example.Second.SecondProperty""><summary>Second method</summary><value>The string representation.</value></member>", x => x.SecondProperty)
+                Property<Second>(@"<member name=""P:Example.Second.SecondProperty""><value>The string representation.</value></member>", x => x.SecondProperty)
             };
             var namespaces = model.Create(properties);
 

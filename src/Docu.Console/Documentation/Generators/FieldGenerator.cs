@@ -24,7 +24,7 @@ namespace Docu.Documentation.Generators
                                                      association.Field.FieldType,
                                                      Namespace.Unresolved(
                                                          Identifier.FromNamespace(association.Field.FieldType.Namespace)));
-            var doc = Field.Unresolved(Identifier.FromField(association.Field, association.TargetType), returnType);
+            var doc = Field.Unresolved(Identifier.FromField(association.Field, association.TargetType), type, returnType);
 
             ParseSummary(association, doc);
             ParseRemarks(association, doc);

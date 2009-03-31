@@ -23,6 +23,10 @@ namespace Docu.UI
 
             NamespaceUrlFormat = "{namespace}.htm";
             TypeUrlFormat = "{type.namespace}/{type}.htm";
+            MethodUrlFormat = "{type.namespace}/{type}.htm#{method}";
+            PropertyUrlFormat = "{type.namespace}/{type}.htm#{property}";
+            FieldUrlFormat = "{type.namespace}/{type}.htm#{field}";
+            EventUrlFormat = "{type.namespace}/{type}.htm#{event}";
         }
 
         public string Format(IComment comment)
@@ -65,20 +69,7 @@ namespace Docu.UI
 
         private string FormatSee(See block)
         {
-            string url = "";
-
-            if (block.Reference is Namespace)
-                url = Format(NamespaceUrlFormat,
-                             new Dictionary<string, string> { { "namespace", block.Reference.Name } });
-            else if (block.Reference is DeclaredType)
-                url = Format(TypeUrlFormat,
-                             new Dictionary<string, string>
-                             {
-                                 { "type.namespace", ((DeclaredType)block.Reference).Namespace.Name },
-                                 { "type", block.Reference.Name }
-                             });
-
-            return "<a href=\"" + url + "\">" + block.Reference.Name + "</a>";
+            return FormatReferencable(block.Reference);
         }
 
         public string FormatReferencable(IReferencable reference)
@@ -87,14 +78,47 @@ namespace Docu.UI
             string name = reference.PrettyName;
 
             if (reference is Namespace)
-                url = Format(NamespaceUrlFormat, new Dictionary<string, string> { { "namespace", reference.Name } });
+                url = Format(NamespaceUrlFormat, new Replacement("namespace", reference.Name));
             else if (reference is DeclaredType)
                 url = Format(TypeUrlFormat,
-                             new Dictionary<string, string>
-                             {
-                                 { "type.namespace", ((DeclaredType)reference).Namespace.Name },
-                                 { "type", reference.Name }
-                             });
+                             new Replacement("type.namespace", ((DeclaredType)reference).Namespace.Name),
+                             new Replacement("type", reference.Name));
+            else if (reference is Method)
+            {
+                var type = ((Method)reference).Type;
+
+                url = Format(MethodUrlFormat,
+                             new Replacement("type.namespace", type.Namespace.Name),
+                             new Replacement("type", type.Name),
+                             new Replacement("method", reference.Name));
+            }
+            else if (reference is Property)
+            {
+                var type = ((Property)reference).Type;
+
+                url = Format(PropertyUrlFormat,
+                             new Replacement("type.namespace", type.Namespace.Name),
+                             new Replacement("type", type.Name),
+                             new Replacement("property", reference.Name));
+            }
+            else if (reference is Field)
+            {
+                var type = ((Field)reference).Type;
+
+                url = Format(FieldUrlFormat,
+                             new Replacement("type.namespace", type.Namespace.Name),
+                             new Replacement("type", type.Name),
+                             new Replacement("field", reference.Name));
+            }
+            else if (reference is Event)
+            {
+                var type = ((Event)reference).Type;
+
+                url = Format(EventUrlFormat,
+                             new Replacement("type.namespace", type.Namespace.Name),
+                             new Replacement("type", type.Name),
+                             new Replacement("event", reference.Name));
+            }
 
             if (reference.IsExternal)
                 return "<span title=\"" + reference.FullName + "\">" + Escape(reference.PrettyName) + "</span>";
@@ -114,17 +138,33 @@ namespace Docu.UI
 
         public string NamespaceUrlFormat { get; set; }
         public string TypeUrlFormat { get; set; }
+        public string MethodUrlFormat { get; set; }
+        public string PropertyUrlFormat { get; set; }
+        public string FieldUrlFormat { get; set; }
+        public string EventUrlFormat { get; set; }
 
-        private string Format(string pattern, IDictionary<string, string> pairs)
+        private string Format(string pattern, params Replacement[] replacements)
         {
             string output = pattern;
 
-            foreach (var pair in pairs)
+            foreach (var replacement in replacements)
             {
-                output = output.Replace("{" + pair.Key + "}", pair.Value);
+                output = output.Replace("{" + replacement.Key + "}", replacement.Value);
             }
 
             return output;
+        }
+
+        private class Replacement
+        {
+            public string Key { get; private set; }
+            public string Value { get; private set; }
+
+            public Replacement(string key, string value)
+            {
+                Key = key;
+                Value = value;
+            }
         }
     }
 }

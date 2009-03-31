@@ -8,9 +8,13 @@ namespace Docu.Documentation
 {
     public class Field : BaseDocumentationElement, IReferencable
     {
-        public Field(FieldIdentifier identifier)
+        public DeclaredType Type { get; set; }
+
+        public Field(FieldIdentifier identifier, DeclaredType type)
             : base(identifier)
-        {}
+        {
+            Type = type;
+        }
 
         public string FullName
         {
@@ -50,14 +54,14 @@ namespace Docu.Documentation
                 ConvertToExternalReference();
         }
 
-        public static Field Unresolved(FieldIdentifier fieldIdentifier)
+        public static Field Unresolved(FieldIdentifier fieldIdentifier, DeclaredType type)
         {
-            return new Field(fieldIdentifier) { IsResolved = false };
+            return new Field(fieldIdentifier, type) { IsResolved = false };
         }
 
-        public static Field Unresolved(FieldIdentifier fieldIdentifier, IReferencable returnType)
+        public static Field Unresolved(FieldIdentifier fieldIdentifier, DeclaredType type, IReferencable returnType)
         {
-            return new Field(fieldIdentifier) { IsResolved = false, ReturnType = returnType };
+            return new Field(fieldIdentifier, type) { IsResolved = false, ReturnType = returnType };
         }
     }
 }

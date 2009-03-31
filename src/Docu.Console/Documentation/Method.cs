@@ -12,9 +12,10 @@ namespace Docu.Documentation
         private readonly IList<MethodParameter> parameters = new List<MethodParameter>();
         private MethodInfo representedMethod;
 
-        public Method(MethodIdentifier identifier)
+        public Method(MethodIdentifier identifier, DeclaredType type)
             : base(identifier)
         {
+            Type = type;
             Returns = new Returns();
         }
 
@@ -33,6 +34,7 @@ namespace Docu.Documentation
             get { return ((MethodIdentifier)identifier).IsStatic; }
         }
 
+        public DeclaredType Type { get; set; }
         public IReferencable ReturnType { get; set; }
         public Returns Returns { get; set; }
 
@@ -85,16 +87,19 @@ namespace Docu.Documentation
             parameters.Add(parameter);
         }
 
-        public static Method Unresolved(MethodIdentifier methodIdentifier)
+        public static Method Unresolved(MethodIdentifier methodIdentifier, DeclaredType type)
         {
-            return new Method(methodIdentifier) { IsResolved = false };
+            return new Method(methodIdentifier, type) { IsResolved = false };
         }
 
-        public static Method Unresolved(MethodIdentifier methodIdentifier, MethodInfo representedMethod,
-                                        IReferencable returnType)
+        public static Method Unresolved(MethodIdentifier methodIdentifier, DeclaredType type, MethodInfo representedMethod, IReferencable returnType)
         {
-            return new Method(methodIdentifier)
-            { IsResolved = false, representedMethod = representedMethod, ReturnType = returnType };
+            return new Method(methodIdentifier, type)
+            {
+                IsResolved = false,
+                representedMethod = representedMethod,
+                ReturnType = returnType
+            };
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Docu.Documentation.Generators
             var ns = FindNamespace(association, namespaces);
             var type = FindType(ns, association);
 
-            var doc = Event.Unresolved(Identifier.FromEvent(association.Event, association.TargetType));
+            var doc = Event.Unresolved(Identifier.FromEvent(association.Event, association.TargetType), type);
 
             ParseSummary(association, doc);
             ParseRemarks(association, doc);

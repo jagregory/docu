@@ -85,8 +85,8 @@ namespace Docu.Tests.Generation
             var type = Type<ClassWithOverload>(ns);
             var parameterType = DeclaredType.Unresolved(Identifier.FromType(typeof(string)), typeof(string), Namespace("System"));
 
-            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload))));
-            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload))));
+            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload)), null));
+            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload)), null));
             type.Methods[1].Parameters.Add(new MethodParameter("one", parameterType));
             
             Convert(new ViewData { Type = type })
@@ -100,7 +100,7 @@ namespace Docu.Tests.Generation
             var type = Type<ReturnMethodClass>(ns);
             var returnType = DeclaredType.Unresolved(Identifier.FromType(typeof(string)), typeof(string), Namespace("System"));
 
-            type.Methods.Add(new Method(Identifier.FromMethod(Method<ReturnMethodClass>(x => x.Method()), typeof(ReturnMethodClass))));
+            type.Methods.Add(new Method(Identifier.FromMethod(Method<ReturnMethodClass>(x => x.Method()), typeof(ReturnMethodClass)), null));
             type.Methods[0].ReturnType = returnType;
 
             Convert(new ViewData { Type = type })
@@ -114,7 +114,7 @@ namespace Docu.Tests.Generation
             var type = Type<PropertyType>(ns);
             var returnType = DeclaredType.Unresolved(Identifier.FromType(typeof(string)), typeof(string), Namespace("System"));
 
-            type.Properties.Add(new Property(Identifier.FromProperty(Property<PropertyType>(x => x.Property), typeof(PropertyType))));
+            type.Properties.Add(new Property(Identifier.FromProperty(Property<PropertyType>(x => x.Property), typeof(PropertyType)), null));
             type.Properties[0].ReturnType = returnType;
 
             Convert(new ViewData { Type = type })

@@ -21,12 +21,13 @@ namespace Docu.Documentation.Generators
             var ns = FindNamespace(association, namespaces);
             var type = FindType(ns, association);
 
-            DeclaredType methodReturnType = DeclaredType.Unresolved(
+            var methodReturnType = DeclaredType.Unresolved(
                 Identifier.FromType(association.Method.ReturnType),
                 association.Method.ReturnType,
                 Namespace.Unresolved(Identifier.FromNamespace(association.Method.ReturnType.Namespace)));
-            Method doc = Method.Unresolved(Identifier.FromMethod(association.Method, association.TargetType),
-                                           association.Method, methodReturnType);
+            var doc = Method.Unresolved(
+                Identifier.FromMethod(association.Method, association.TargetType),
+                type, association.Method, methodReturnType);
 
             ParseSummary(association, doc);
             ParseRemarks(association, doc);

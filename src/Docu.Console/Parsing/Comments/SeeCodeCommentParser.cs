@@ -17,13 +17,37 @@ namespace Docu.Parsing.Comments
             else if (referenceTarget is TypeIdentifier)
                 reference = DeclaredType.Unresolved((TypeIdentifier)referenceTarget, Namespace.Unresolved(referenceTarget.CloneAsNamespace()));
             else if (referenceTarget is MethodIdentifier)
-                reference = Method.Unresolved((MethodIdentifier)referenceTarget);
+                reference = Method.Unresolved(
+                    (MethodIdentifier)referenceTarget,
+                    DeclaredType.Unresolved(
+                        referenceTarget.CloneAsType(),
+                        Namespace.Unresolved(referenceTarget.CloneAsNamespace())
+                    )
+                );
             else if (referenceTarget is PropertyIdentifier)
-                reference = Property.Unresolved((PropertyIdentifier)referenceTarget);
+                reference = Property.Unresolved(
+                    (PropertyIdentifier)referenceTarget,
+                    DeclaredType.Unresolved(
+                        referenceTarget.CloneAsType(),
+                        Namespace.Unresolved(referenceTarget.CloneAsNamespace())
+                    )
+                );
             else if (referenceTarget is EventIdentifier)
-                reference = Event.Unresolved((EventIdentifier)referenceTarget);
+                reference = Event.Unresolved(
+                    (EventIdentifier)referenceTarget,
+                    DeclaredType.Unresolved(
+                        referenceTarget.CloneAsType(),
+                        Namespace.Unresolved(referenceTarget.CloneAsNamespace())
+                    )
+                );
             else if (referenceTarget is FieldIdentifier)
-                reference = Field.Unresolved((FieldIdentifier)referenceTarget);
+                reference = Field.Unresolved(
+                    (FieldIdentifier)referenceTarget,
+                    DeclaredType.Unresolved(
+                        referenceTarget.CloneAsType(),
+                        Namespace.Unresolved(referenceTarget.CloneAsNamespace())
+                    )
+                );
 
             return new See(reference);
         }

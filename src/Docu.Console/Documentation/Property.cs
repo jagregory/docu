@@ -8,13 +8,15 @@ namespace Docu.Documentation
 {
     public class Property : BaseDocumentationElement, IReferencable
     {
-        public Property(PropertyIdentifier identifier)
+        public Property(PropertyIdentifier identifier, DeclaredType type)
             : base(identifier)
         {
+            Type = type;
             HasGet = identifier.HasGet;
             HasSet = identifier.HasSet;
         }
 
+        public DeclaredType Type { get; set; }
         public bool HasGet { get; private set; }
         public bool HasSet { get; private set; }
 
@@ -56,14 +58,14 @@ namespace Docu.Documentation
                 ConvertToExternalReference();
         }
 
-        public static Property Unresolved(PropertyIdentifier propertyIdentifier)
+        public static Property Unresolved(PropertyIdentifier propertyIdentifier, DeclaredType type)
         {
-            return new Property(propertyIdentifier) { IsResolved = false };
+            return new Property(propertyIdentifier, type) { IsResolved = false };
         }
 
-        public static Property Unresolved(PropertyIdentifier propertyIdentifier, IReferencable returnType)
+        public static Property Unresolved(PropertyIdentifier propertyIdentifier, DeclaredType type, IReferencable returnType)
         {
-            return new Property(propertyIdentifier) { IsResolved = false, ReturnType = returnType };
+            return new Property(propertyIdentifier, type) { IsResolved = false, ReturnType = returnType };
         }
     }
 }
