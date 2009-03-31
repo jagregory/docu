@@ -33,7 +33,11 @@ namespace Docu.Documentation
             ParseValue(association, doc);
             ParseRemarks(association, doc);
 
+            if (matchedAssociations.ContainsKey(association.Name))
+                return;
+
             matchedAssociations.Add(association.Name, doc);
+            if (type == null) return;
             type.AddProperty(doc);
         }
     }

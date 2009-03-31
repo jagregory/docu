@@ -51,6 +51,7 @@ namespace Docu.Documentation.Generators
                 return; // weird case when a type has the same method declared twice
 
             matchedAssociations.Add(association.Name, doc);
+            if (type == null) return;
             type.AddMethod(doc);
         }
     }

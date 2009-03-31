@@ -74,7 +74,7 @@ namespace Docu.Documentation
 
                 foreach (var para in Parameters)
                 {
-                    if (!para.Reference.IsResolved)
+                    if ((para.Reference != null) && (!para.Reference.IsResolved))
                         para.Reference.Resolve(referencables);
                 }
             }

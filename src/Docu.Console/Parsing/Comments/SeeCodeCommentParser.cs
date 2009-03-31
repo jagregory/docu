@@ -9,8 +9,9 @@ namespace Docu.Parsing.Comments
     {
         public IComment Parse(XmlNode content)
         {
-            var referenceTarget = Identifier.FromString(content.Attributes["cref"].Value);
             IReferencable reference = null;
+            if (content.Attributes["cref"] == null) return new See(reference);
+            var referenceTarget = Identifier.FromString(content.Attributes["cref"].Value);
 
             if (referenceTarget is NamespaceIdentifier)
                 reference = Namespace.Unresolved((NamespaceIdentifier)referenceTarget);
