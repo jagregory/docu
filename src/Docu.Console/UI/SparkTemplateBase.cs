@@ -53,9 +53,28 @@ namespace Docu.UI
 
         public string WriteProductName(Assembly assembly)
         {
-            var info = FileVersionInfo.GetVersionInfo(assembly.Location);
+            FileVersionInfo info = FileVersionInfo.GetVersionInfo(assembly.Location);
             
-            return info.ProductName;
+            return Formatter.Escape(info.ProductName);
+        }
+
+        public string WriteFileDescription(Assembly assembly)
+        {
+            FileVersionInfo info = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+            return Formatter.Escape(info.FileDescription);
+        }
+
+        public string WriteAssemblyTitle(Assembly assembly)
+        {
+            FileVersionInfo info = FileVersionInfo.GetVersionInfo(assembly.Location);
+            string productName = info.ProductName;
+            string fileDescription = info.FileDescription;
+            if(String.IsNullOrEmpty(fileDescription) || (productName == fileDescription))
+                return Formatter.Escape(productName);
+            if(String.IsNullOrEmpty(productName))
+                return Formatter.Escape(fileDescription);
+            return Formatter.Escape(String.Format("{0} ({1})", fileDescription, productName));
         }
 
         public string WriteVersion(Assembly assembly)
