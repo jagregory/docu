@@ -13,9 +13,15 @@ namespace Docu.Parsing.Comments
             this.parser = parser;
         }
 
-        public IComment Parse(XmlNode content)
+        public IComment Parse(XmlNode content, bool first, bool last)
         {
-            var paragraph = new Paragraph();
+            // strip paragraph if there's only one
+            if (first && last)
+            {
+                return new InlineText(PrepareText(content.InnerText, true, true));
+            }
+
+            Paragraph paragraph = new Paragraph();
 
             foreach (var child in parser.Parse(content.ChildNodes))
                 paragraph.AddChild(child);

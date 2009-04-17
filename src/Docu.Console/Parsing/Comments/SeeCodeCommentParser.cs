@@ -7,7 +7,7 @@ namespace Docu.Parsing.Comments
 {
     internal class SeeCodeCommentParser : CommentParserBase
     {
-        public IComment Parse(XmlNode content)
+        public IComment Parse(XmlNode content, bool first, bool last)
         {
             IReferencable reference = null;
             if (content.Attributes["cref"] == null) return new See(reference);

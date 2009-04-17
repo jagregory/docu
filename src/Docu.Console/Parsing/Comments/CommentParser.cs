@@ -8,8 +8,8 @@ namespace Docu.Parsing.Comments
 {
     public class CommentParser : ICommentParser
     {
-        private readonly IDictionary<Func<XmlNode, bool>, Func<XmlNode, IComment>> parsers =
-            new Dictionary<Func<XmlNode, bool>, Func<XmlNode, IComment>>();
+        private readonly IDictionary<Func<XmlNode, bool>, Func<XmlNode, bool, bool, IComment>> parsers =
+            new Dictionary<Func<XmlNode, bool>, Func<XmlNode, bool, bool, IComment>>();
 
         private readonly InlineTextCommentParser InlineText = new InlineTextCommentParser();
         private readonly InlineCodeCommentParser InlineCode = new InlineCodeCommentParser();
@@ -32,19 +32,24 @@ namespace Docu.Parsing.Comments
         {
             var blocks = new List<IComment>();
 
-            foreach (XmlNode node in nodes)
+            int count = nodes.Count;
+            for(int i = 0; i < count; i++)
             {
-                foreach (var pair in parsers)
+                XmlNode node = nodes[i];
+                bool first = (i == 0);
+                bool last = (i == count);
+
+                foreach(var pair in parsers)
                 {
                     var isValid = pair.Key;
                     var parser = pair.Value;
 
-                    if (!isValid(node))
+                    if(!isValid(node))
                         continue;
 
-                    var block = parser(node);
+                    var block = parser(node, first, last);
 
-                    if (block != null)
+                    if(block != null)
                     {
                         blocks.Add(block);
                         continue;

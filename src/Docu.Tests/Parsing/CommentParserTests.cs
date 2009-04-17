@@ -184,7 +184,9 @@ namespace Docu.Tests.Parsing
             var childPara = (Paragraph)para.Children.Second();
             var childParaText = childPara.Children.First() as InlineText;
 
-            paraText.Text.ShouldEqual("some text");
+            // (cdrnet, 2009-04-17) the white space in the first test should not be stripped.
+            // Maybe a nested <see>, <b> or <a> tag would be a better example here.
+            paraText.Text.ShouldEqual("some text ");
             childParaText.Text.ShouldEqual("some more text");
         }
     }

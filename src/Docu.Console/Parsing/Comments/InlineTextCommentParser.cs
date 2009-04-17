@@ -5,9 +5,9 @@ namespace Docu.Parsing.Comments
 {
     internal class InlineTextCommentParser : CommentParserBase
     {
-        public IComment Parse(XmlNode content)
+        public IComment Parse(XmlNode content, bool first, bool last)
         {
-            return new InlineText(PrepareText(content.InnerText));
+            return new InlineText(PrepareText(content.InnerText, first, last));
         }
     }
 }
