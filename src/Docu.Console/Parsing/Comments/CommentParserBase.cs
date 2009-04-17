@@ -7,11 +7,8 @@ namespace Docu.Parsing.Comments
         protected string PrepareText(string text)
         {
             var regexp = new Regex(@"[\s]{0,}\r\n[\s]{0,}");
-            string prepared = text.Trim(); // remove leading and trailing whitespace
 
-            prepared = regexp.Replace(prepared, "\r\n");
-
-            return prepared;
+            return regexp.Replace(text, "\r\n");;
         }
     }
 }
