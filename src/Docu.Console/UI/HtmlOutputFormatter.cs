@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
 
@@ -128,7 +129,7 @@ namespace Docu.UI
 
         public string Escape(string value)
         {
-            return value.Replace("<", "&lt;").Replace(">", "&gt;");
+            return HttpUtility.HtmlEncode(value);
         }
 
         private string FormatInlineCode(InlineCode block)
