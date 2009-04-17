@@ -1,5 +1,5 @@
-**/*.suo
-**/*.user
+*.suo
+*.user
 bin
 obj
 _ReSharper*
