@@ -7,6 +7,7 @@ namespace Docu.Parsing.Model
     public abstract class Identifier : IComparable<Identifier>
     {
         private readonly string name;
+        private static Dictionary<string, Type> nameToType;
 
         protected Identifier(string name)
         {
@@ -162,6 +163,19 @@ namespace Docu.Parsing.Model
         {
             var parameters = new List<TypeIdentifier>();
 
+            if(nameToType == null)
+            {
+                // build type lookup table
+                nameToType = new Dictionary<string, Type>();
+                foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    foreach(Type type in assembly.GetTypes())
+                    {
+                        nameToType[type.FullName] = type;
+                    }
+                }
+            }
+
             if (fullName.EndsWith(")"))
             {
                 string paramList = fullName.Substring(fullName.IndexOf("(") + 1);
@@ -169,13 +183,10 @@ namespace Docu.Parsing.Model
 
                 foreach (string paramName in paramList.Split(','))
                 {
-                    foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                    Type paramType;
+                    if(nameToType.TryGetValue(paramName, out paramType))
                     {
-                        foreach (Type type in assembly.GetTypes())
-                        {
-                            if (type.FullName == paramName)
-                                parameters.Add(FromType(type));
-                        }
+                        parameters.Add(FromType(paramType));
                     }
                 }
             }
