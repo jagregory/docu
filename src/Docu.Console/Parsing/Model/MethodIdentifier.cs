@@ -2,7 +2,7 @@ using System;
 
 namespace Docu.Parsing.Model
 {
-    public sealed class MethodIdentifier : Identifier, IEquatable<MethodIdentifier>
+    public sealed class MethodIdentifier : Identifier, IEquatable<MethodIdentifier>, IComparable<MethodIdentifier>
     {
         private readonly bool isPublic;
         private readonly bool isStatic;
@@ -69,39 +69,49 @@ namespace Docu.Parsing.Model
 
         public override int CompareTo(Identifier other)
         {
-            if (other is MethodIdentifier)
+            if(other is TypeIdentifier || other is NamespaceIdentifier)
             {
-                var m = (MethodIdentifier)other;
-                int comparison = ToString().CompareTo(m.ToString());
-
-                if (comparison != 0)
-                    return comparison;
-
-                comparison = typeId.ToString().CompareTo(m.typeId.ToString());
-
-                if (comparison != 0)
-                    return comparison;
-
-                comparison = parameters.Length.CompareTo(m.parameters.Length);
-
-                if (comparison != 0)
-                    return comparison;
-
-                for (int i = 0; i < parameters.Length; i++)
-                {
-                    comparison = parameters[i].CompareTo(m.parameters[i]);
-
-                    if (comparison != 0)
-                        return comparison;
-                }
-
-                return 0;
+                return 1;
             }
 
-            if (other is TypeIdentifier || other is NamespaceIdentifier)
-                return 1;
+            return CompareTo(other as MethodIdentifier);
+        }
 
-            return -1;
+        public int CompareTo(MethodIdentifier other)
+        {
+            if(((object)other) == null)
+            {
+                return -1;
+            }
+
+            int comparison = Name.CompareTo(other.Name);
+            if(comparison != 0)
+            {
+                return comparison;
+            }
+
+            comparison = typeId.CompareTo(other.typeId);
+            if(comparison != 0)
+            {
+                return comparison;
+            }
+
+            comparison = parameters.Length.CompareTo(other.parameters.Length);
+            if(comparison != 0)
+            {
+                return comparison;
+            }
+
+            for(int i = 0; i < parameters.Length; i++)
+            {
+                comparison = parameters[i].CompareTo(other.parameters[i]);
+                if(comparison != 0)
+                {
+                    return comparison;
+                }
+            }
+
+            return 0;
         }
     }
 }

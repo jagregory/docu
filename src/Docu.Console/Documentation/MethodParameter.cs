@@ -45,11 +45,6 @@ namespace Docu.Documentation
             : base(name)
         {}
 
-        public override int CompareTo(Identifier other)
-        {
-            return -1;
-        }
-
         public override NamespaceIdentifier CloneAsNamespace()
         {
             return null;
@@ -75,6 +70,11 @@ namespace Docu.Documentation
             }
 
             return (Name == other.Name);
+        }
+
+        public override int CompareTo(Identifier other)
+        {
+            return -1;
         }
     }
 }

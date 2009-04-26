@@ -2,7 +2,7 @@ using System;
 
 namespace Docu.Parsing.Model
 {
-    public sealed class PropertyIdentifier : Identifier, IEquatable<PropertyIdentifier>
+    public sealed class PropertyIdentifier : Identifier, IEquatable<PropertyIdentifier>, IComparable<PropertyIdentifier>
     {
         private readonly TypeIdentifier typeId;
 
@@ -27,27 +27,6 @@ namespace Docu.Parsing.Model
             return typeId.CloneAsType();
         }
 
-        public override int CompareTo(Identifier other)
-        {
-            if (other is PropertyIdentifier)
-            {
-                var p = (PropertyIdentifier)other;
-                int comparison = ToString().CompareTo(p.ToString());
-
-                if (comparison != 0)
-                    return comparison;
-
-                comparison = typeId.CompareTo(p.typeId);
-
-                if (comparison != 0)
-                    return comparison;
-
-                return 0;
-            }
-
-            return -1;
-        }
-
         public override bool Equals(Identifier obj)
         {
             // no need for expensive GetType calls since the class is sealed.
@@ -63,6 +42,27 @@ namespace Docu.Parsing.Model
             }
 
             return (Name == other.Name) && typeId.Equals(other.typeId);
+        }
+
+        public override int CompareTo(Identifier other)
+        {
+            return CompareTo(other as PropertyIdentifier);
+        }
+
+        public int CompareTo(PropertyIdentifier other)
+        {
+            if(((object)other) == null)
+            {
+                return -1;
+            }
+
+            int comparison = Name.CompareTo(other.Name);
+            if(comparison != 0)
+            {
+                return comparison;
+            }
+
+            return typeId.CompareTo(other.typeId);
         }
     }
 }

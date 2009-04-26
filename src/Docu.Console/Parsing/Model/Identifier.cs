@@ -19,8 +19,6 @@ namespace Docu.Parsing.Model
             get { return name; }
         }
 
-        public abstract int CompareTo(Identifier other);
-
         public static TypeIdentifier FromType(Type type)
         {
             return new TypeIdentifier(type.Name, type.Namespace);
@@ -218,6 +216,8 @@ namespace Docu.Parsing.Model
         }
 
         public abstract bool Equals(Identifier obj);
+
+        public abstract int CompareTo(Identifier other);
 
         public override int GetHashCode()
         {
