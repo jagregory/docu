@@ -1,6 +1,8 @@
+using System;
+
 namespace Docu.Parsing.Model
 {
-    public class EventIdentifier : Identifier
+    public sealed class EventIdentifier : Identifier, IEquatable<EventIdentifier>
     {
         private readonly TypeIdentifier typeId;
 
@@ -32,14 +34,19 @@ namespace Docu.Parsing.Model
 
         public override bool Equals(Identifier obj)
         {
-            if (obj is EventIdentifier)
-            {
-                var other = (EventIdentifier)obj;
+            // no need for expensive GetType calls since the class is sealed.
+            return Equals(obj as EventIdentifier);
+        }
 
-                return base.Equals(obj) && typeId.Equals(other.typeId);
+        public bool Equals(EventIdentifier other)
+        {
+            // no need for expensive GetType calls since the class is sealed.
+            if(((object)other) == null)
+            {
+                return false;
             }
 
-            return false;
+            return (Name == other.Name) && typeId.Equals(other.typeId);
         }
 
         public override NamespaceIdentifier CloneAsNamespace()

@@ -2,7 +2,7 @@ using System;
 
 namespace Docu.Parsing.Model
 {
-    public class NamespaceIdentifier : Identifier
+    public sealed class NamespaceIdentifier : Identifier, IEquatable<NamespaceIdentifier>
     {
         public NamespaceIdentifier(string name)
             : base(name)
@@ -25,6 +25,23 @@ namespace Docu.Parsing.Model
                 return ToString().CompareTo(other.ToString());
 
             return -1;
+        }
+
+        public override bool Equals(Identifier obj)
+        {
+            // no need for expensive GetType calls since the class is sealed.
+            return Equals(obj as NamespaceIdentifier);
+        }
+
+        public bool Equals(NamespaceIdentifier other)
+        {
+            // no need for expensive GetType calls since the class is sealed.
+            if(((object)other) == null)
+            {
+                return false;
+            }
+
+            return (Name == other.Name);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Docu.Parsing.Model
 {
-    public abstract class Identifier : IComparable<Identifier>
+    public abstract class Identifier : IComparable<Identifier>, IEquatable<Identifier>
     {
         private readonly string name;
         private static Dictionary<string, Type> nameToType;
@@ -12,6 +12,11 @@ namespace Docu.Parsing.Model
         protected Identifier(string name)
         {
             this.name = name;
+        }
+
+        protected string Name
+        {
+            get { return name; }
         }
 
         public abstract int CompareTo(Identifier other);
@@ -199,7 +204,7 @@ namespace Docu.Parsing.Model
 
         public static bool operator ==(Identifier first, Identifier second)
         {
-            return first.Equals(second);
+            return (((object)first) != null) && first.Equals(second);
         }
 
         public static bool operator !=(Identifier first, Identifier second)
@@ -209,18 +214,10 @@ namespace Docu.Parsing.Model
 
         public override bool Equals(object obj)
         {
-            if (obj is Identifier)
-                return Equals((Identifier)obj);
-            return base.Equals(obj);
+            return Equals(obj as Identifier);
         }
 
-        public virtual bool Equals(Identifier obj)
-        {
-            if (GetType() != obj.GetType())
-                return false;
-
-            return Equals(obj.name, name);
-        }
+        public abstract bool Equals(Identifier obj);
 
         public override int GetHashCode()
         {

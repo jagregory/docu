@@ -1,6 +1,8 @@
+using System;
+
 namespace Docu.Parsing.Model
 {
-    public class FieldIdentifier : Identifier
+    public sealed class FieldIdentifier : Identifier, IEquatable<FieldIdentifier>
     {
         private readonly Identifier typeId;
 
@@ -47,14 +49,19 @@ namespace Docu.Parsing.Model
 
         public override bool Equals(Identifier obj)
         {
-            if (obj is FieldIdentifier)
-            {
-                var other = (FieldIdentifier)obj;
+            // no need for expensive GetType calls since the class is sealed.
+            return Equals(obj as FieldIdentifier);
+        }
 
-                return base.Equals(obj) && typeId.Equals(other.typeId);
+        public bool Equals(FieldIdentifier other)
+        {
+            // no need for expensive GetType calls since the class is sealed.
+            if(((object)other) == null)
+            {
+                return false;
             }
 
-            return false;
+            return (Name == other.Name) && typeId.Equals(other.typeId);
         }
     }
 }

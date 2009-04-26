@@ -1,6 +1,8 @@
+using System;
+
 namespace Docu.Parsing.Model
 {
-    public class TypeIdentifier : Identifier
+    public sealed class TypeIdentifier : Identifier, IEquatable<TypeIdentifier>
     {
         private readonly string _namespace;
 
@@ -41,6 +43,23 @@ namespace Docu.Parsing.Model
                 return 1;
 
             return -1;
+        }
+
+        public override bool Equals(Identifier obj)
+        {
+            // no need for expensive GetType calls since the class is sealed.
+            return Equals(obj as TypeIdentifier);
+        }
+
+        public bool Equals(TypeIdentifier other)
+        {
+            // no need for expensive GetType calls since the class is sealed.
+            if(((object)other) == null)
+            {
+                return false;
+            }
+
+            return (Name == other.Name) && (_namespace == other._namespace);
         }
     }
 }

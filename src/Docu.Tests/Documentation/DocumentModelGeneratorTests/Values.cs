@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Comments;

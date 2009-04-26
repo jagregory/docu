@@ -18,7 +18,7 @@ namespace Docu.Parsing.Model
 
         public bool Match(Identifier name)
         {
-            return Name == name;
+            return Name.Equals(name);
         }
     }
 }

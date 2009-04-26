@@ -1,6 +1,8 @@
+using System;
+
 namespace Docu.Parsing.Model
 {
-    public class MethodIdentifier : Identifier
+    public sealed class MethodIdentifier : Identifier, IEquatable<MethodIdentifier>
     {
         private readonly bool isPublic;
         private readonly bool isStatic;
@@ -39,25 +41,30 @@ namespace Docu.Parsing.Model
 
         public override bool Equals(Identifier obj)
         {
-            if (obj is MethodIdentifier)
+            // no need for expensive GetType calls since the class is sealed.
+            return Equals(obj as MethodIdentifier);
+        }
+
+        public bool Equals(MethodIdentifier other)
+        {
+            // no need for expensive GetType calls since the class is sealed.
+
+            // verify identifier-type, name and number of parameters
+            if((((object)other) == null) || (Name != other.Name) || (parameters.Length != other.parameters.Length))
             {
-                var other = (MethodIdentifier)obj;
-                bool parametersSame = true;
-
-                if (parameters.Length == other.parameters.Length)
-                {
-                    for (int i = 0; i < parameters.Length; i++)
-                    {
-                        if (!parameters[i].Equals(other.parameters[i]))
-                            parametersSame = false;
-                    }
-                }
-                else
-                    parametersSame = false;
-
-                return base.Equals(obj) && typeId.Equals(other.typeId) && parametersSame;
+                return false;
             }
-            return false;
+
+            // verify parameter types
+            for(int i = 0; i < parameters.Length; i++)
+            {
+                if(!parameters[i].Equals(other.parameters[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public override int CompareTo(Identifier other)

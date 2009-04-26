@@ -86,7 +86,7 @@ namespace Docu.Parsing
             string name = node.Attributes["name"].Value.Substring(2);
             Identifier member = Identifier.FromString(node.Attributes["name"].Value);
             string methodName = GetMethodName(name);
-            int index = members.FindIndex(x => x.Name == member);
+            int index = members.FindIndex(x => member.Equals(x.Name));
 
             if (index == -1) return; // TODO: Privates
             if (methodName == "#ctor") return; // TODO: Fix constructors

@@ -1,8 +1,10 @@
+using System;
+
 namespace Docu.Parsing.Model
 {
-    public class PropertyIdentifier : Identifier
+    public sealed class PropertyIdentifier : Identifier, IEquatable<PropertyIdentifier>
     {
-        private readonly Identifier typeId;
+        private readonly TypeIdentifier typeId;
 
         public PropertyIdentifier(string name, bool hasGet, bool hasSet, TypeIdentifier typeId)
             : base(name)
@@ -48,14 +50,19 @@ namespace Docu.Parsing.Model
 
         public override bool Equals(Identifier obj)
         {
-            if (obj is PropertyIdentifier)
-            {
-                var other = (PropertyIdentifier)obj;
+            // no need for expensive GetType calls since the class is sealed.
+            return Equals(obj as PropertyIdentifier);
+        }
 
-                return base.Equals(obj) && typeId.Equals(other.typeId);
+        public bool Equals(PropertyIdentifier other)
+        {
+            // no need for expensive GetType calls since the class is sealed.
+            if(((object)other) == null)
+            {
+                return false;
             }
 
-            return false;
+            return (Name == other.Name) && typeId.Equals(other.typeId);
         }
     }
 }

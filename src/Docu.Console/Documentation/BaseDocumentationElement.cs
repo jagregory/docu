@@ -27,7 +27,7 @@ namespace Docu.Documentation
 
         public bool IsIdentifiedBy(Identifier otherIdentifier)
         {
-            return identifier == otherIdentifier;
+            return identifier.Equals(otherIdentifier);
         }
 
         public virtual void ConvertToExternalReference()
