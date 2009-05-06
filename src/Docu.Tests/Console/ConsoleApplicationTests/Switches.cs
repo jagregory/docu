@@ -62,5 +62,17 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
 
             generator.AssertWasCalled(x => x.SetOutputPath("dir"));
         }
+
+        [Test]
+        public void should_set_template_path_on_generator_if_template_switch_given()
+        {
+            var generator = MockRepository.GenerateMock<IDocumentationGenerator>();
+            var app = new ConsoleApplication(StubWriter, generator, StubEventAggregator);
+
+            app.SetArguments(new[] { "--template=dir" });
+            app.Run();
+
+            generator.AssertWasCalled(x => x.SetTemplatePath("dir"));
+        }
     }
 }
