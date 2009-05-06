@@ -4,7 +4,7 @@
 <PropertyGroup>
   <Configuration>Debug</Configuration>
 </PropertyGroup>
-<Target Name="Build" DependsOnTargets="Compile;Test" />
+<Target Name="Build" DependsOnTargets="Compile;Test;Package" />
 
 <Target Name="Compile">
   <MSbuild Projects="src\Docu.sln" Properties="Configuration=$(Configuration)" />
@@ -14,4 +14,8 @@
   <Exec Command="lib\nunit\nunit-console.exe src\Docu.Tests\bin\$(Configuration)\Docu.Tests.dll" />
 </Target>
 
+<Target Name="Package">
+  <Exec Command="lib\ilmerge\ILMerge.exe /Out:docu.exe src\Docu.Console\bin\$(Configuration)\docu.exe lib\spark\Spark.dll lib\spark\SparkLanguage.dll lib\spark\Interop.SparkLanguagePackageLib.dll" />
+  <Message Text="Created docu.exe" />
+</Target>
 </Project>
