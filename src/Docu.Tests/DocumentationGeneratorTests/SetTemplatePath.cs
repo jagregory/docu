@@ -33,7 +33,7 @@ namespace Docu.Tests.DocumentationGeneratorTests
             generator.Generate();
 
             writer.AssertWasCalled(x => x.CreatePagesFromDirectory(null, null, null),
-                x => x.Constraints(Is.Equal("templates"), Is.Anything(), Is.Anything()));
+                x => x.Constraints(Text.EndsWith("templates"), Is.Anything(), Is.Anything()));
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Docu.Events;
 using Docu.Generation;
@@ -19,7 +20,7 @@ namespace Docu
         private readonly IXmlLoader xmlLoader;
         private readonly List<string> xmls = new List<string>();
         private string outputPath = "output";
-        private string templatePath = "templates";
+        private string templatePath = Path.Combine(Path.GetDirectoryName(typeof(DocumentationGenerator).Assembly.Location), "templates");
 
         public DocumentationGenerator(IAssemblyLoader assemblyLoader, IXmlLoader xmlLoader, IAssemblyXmlParser parser, IBulkPageWriter writer, IUntransformableResourceManager resourceManager, IEventAggregator eventAggregator)
         {

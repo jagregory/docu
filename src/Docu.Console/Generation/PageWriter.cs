@@ -52,6 +52,7 @@ namespace Docu.Generation
         public void SetTemplatePath(string templateDirectory)
         {
             templatePath = templateDirectory;
+            generator.SetTemplatePath(templateDirectory);
         }
 
         public void SetAssemblies(IEnumerable<Assembly> assemblies)
