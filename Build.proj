@@ -15,7 +15,7 @@
 </Target>
 
 <Target Name="Package">
-  <Exec Command="lib\ilmerge\ILMerge.exe /Out:docu.exe src\Docu.Console\bin\$(Configuration)\docu.exe lib\spark\Spark.dll lib\spark\SparkLanguage.dll lib\spark\Interop.SparkLanguagePackageLib.dll" />
+  <Exec Command="lib\ilmerge\ILMerge.exe /Out:docu.exe src\Docu.Console\bin\$(Configuration)\docu.exe lib\spark\Spark.dll lib\spark\SparkLanguage.dll lib\spark\Interop.SparkLanguagePackageLib.dll lib\structuremap\structuremap.dll" />
   <Message Text="Created docu.exe" />
 </Target>
 </Project>
