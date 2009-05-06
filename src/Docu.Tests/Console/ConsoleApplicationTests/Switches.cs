@@ -69,7 +69,7 @@ namespace Docu.Tests.Console.ConsoleApplicationTests
             var generator = MockRepository.GenerateMock<IDocumentationGenerator>();
             var app = new ConsoleApplication(StubWriter, generator, StubEventAggregator);
 
-            app.SetArguments(new[] { "--template=dir" });
+            app.SetArguments(new[] { "--templates=dir" });
             app.Run();
 
             generator.AssertWasCalled(x => x.SetTemplatePath("dir"));

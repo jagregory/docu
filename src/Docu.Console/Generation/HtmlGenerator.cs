@@ -9,6 +9,7 @@ namespace Docu.Generation
     public class HtmlGenerator : IOutputGenerator
     {
         private readonly SparkViewEngine engine;
+        private string templatePath;
 
         public HtmlGenerator()
         {
@@ -19,7 +20,7 @@ namespace Docu.Generation
             setup.AddNamespace("System.Linq");
 
             engine = new SparkViewEngine(setup);
-            engine.ViewFolder = new FileSystemViewFolder("templates");
+            SetTemplatePath("templates");
             engine.DefaultPageBaseType = typeof(SparkTemplateBase).FullName;
         }
 
@@ -40,8 +41,8 @@ namespace Docu.Generation
         {
             string template = templateName;
 
-            if (template.StartsWith("templates"))
-                template = template.Substring(10);
+            if (template.StartsWith(templatePath))
+                template = template.Substring(templatePath.Length + 1);
 
             SparkViewDescriptor descriptor = new SparkViewDescriptor()
                 .AddTemplate(template);
@@ -62,5 +63,12 @@ namespace Docu.Generation
                 return writer.ToString();
             }
         }
+
+        public void SetTemplatePath(string path)
+        {
+            templatePath = path;
+            engine.ViewFolder = new FileSystemViewFolder(templatePath);
+        }
+
     }
 }

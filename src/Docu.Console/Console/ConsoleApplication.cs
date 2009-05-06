@@ -48,6 +48,11 @@ namespace Docu.Console
                 documentationGenerator.SetOutputPath(arg);
                 return true;
             }));
+            switches.Add(new ParameterSwitch("--templates", arg =>
+            {
+                documentationGenerator.SetTemplatePath(arg);
+                return true;
+            }));
         }
 
         void Warning(string message)
@@ -90,7 +95,6 @@ namespace Docu.Console
 
                 documentationGenerator.SetAssemblies(assemblies);
                 documentationGenerator.SetXmlFiles(xmls);
-                documentationGenerator.SetTemplatePath(Path.Combine(Path.GetDirectoryName(typeof(ConsoleApplication).Assembly.Location), "templates"));
                 documentationGenerator.Generate();
 
                 ShowMessage(Messages.Done);
