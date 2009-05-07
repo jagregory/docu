@@ -116,9 +116,15 @@ namespace Docu.UI
         public string OutputMethodParams(Method method)
         {
             var sb = new StringBuilder();
+            var markExtensionMethodInstance = method.IsExtension;
 
             foreach (MethodParameter parameter in method.Parameters)
             {
+                if (markExtensionMethodInstance)
+                {
+                    sb.Append("this ");
+                    markExtensionMethodInstance = false;
+                }
                 sb.Append(h(parameter.Reference.PrettyName));
                 sb.Append(" ");
                 sb.Append(parameter.Name);

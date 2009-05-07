@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Model;
 
@@ -32,6 +33,16 @@ namespace Docu.Documentation
         public bool IsStatic
         {
             get { return ((MethodIdentifier)identifier).IsStatic; }
+        }
+
+        public bool IsExtension
+        {
+            get
+            {
+                return representedMethod == null 
+                    ? false
+                    : representedMethod.IsStatic && representedMethod.GetCustomAttributes(typeof (ExtensionAttribute), false).Length > 0;
+            }
         }
 
         public DeclaredType Type { get; set; }
