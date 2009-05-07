@@ -32,7 +32,9 @@ namespace Docu.Tests.Generation
             File.WriteAllText(Path.Combine(template_folder, "a_html_page.htm"), "");
             File.WriteAllText(Path.Combine(template_folder, "a_css_file.css"), "");
             File.WriteAllText(Path.Combine(template_folder, "a_spark_file.spark"), "");
-
+            var hiddenFilePath = Path.Combine(template_folder, "hiddenfile.htm");
+            File.WriteAllText(hiddenFilePath, "");
+            File.SetAttributes(hiddenFilePath, File.GetAttributes(hiddenFilePath) | FileAttributes.Hidden);
             var sub_directory = Path.Combine(template_folder, "sub_directory");
 
             Directory.CreateDirectory(sub_directory);
@@ -43,6 +45,12 @@ namespace Docu.Tests.Generation
             var empty_sub_directory = Path.Combine(template_folder, "empty_sub_directory");
 
             Directory.CreateDirectory(empty_sub_directory);
+
+            var hiddenDirectory = Path.Combine(template_folder, "hidden_directory");
+            Directory.CreateDirectory(hiddenDirectory);
+            File.SetAttributes(hiddenDirectory, File.GetAttributes(hiddenDirectory) | FileAttributes.Hidden);
+            File.WriteAllText(Path.Combine(hiddenDirectory, "file_in_hidden_dir.htm"), "");
+
         }
 
         private void destroy_dummy_folder_structure()

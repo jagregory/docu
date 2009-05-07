@@ -83,5 +83,20 @@ namespace Docu.Tests.Generation
 
             directory_should_exist(output_folder, "sub_directory");
         }
+
+        [Test]
+        public void shouldnt_move_hidden_files()
+        {
+            move_files();
+            file_shouldnt_exist(output_folder, "hiddenfile.htm");
+        }
+
+        [Test]
+        public void shouldnt_move_files_under_hidden_folders()
+        {
+            move_files();
+            directory_shouldnt_exist(output_folder, "hidden_directory");
+            file_shouldnt_exist(output_folder, "hidden_directory", "file_in_hidden_dir.htm");
+        }
     }
 }
