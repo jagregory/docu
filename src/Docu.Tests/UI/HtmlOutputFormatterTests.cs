@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Docu.Documentation;
+﻿using Docu.Documentation;
+using Docu.Documentation.Comments;
 using Docu.Parsing.Model;
 using Docu.UI;
 using Example;
@@ -13,6 +10,13 @@ namespace Docu.Tests.UI
     [TestFixture]
     public class HtmlOutputFormatterTests
     {
+        [Test]
+        public void OutputsParameterReferencesUsingTheVarTag()
+        {
+            var formatter = new HtmlOutputFormatter();
+            formatter.Format(new ParameterReference("myParam")).ShouldEqual("<var>myParam</var>");
+        }
+
         [Test]
         public void OutputsTypeReferenceLink()
         {

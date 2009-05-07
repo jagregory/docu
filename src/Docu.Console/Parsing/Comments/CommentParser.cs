@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using Docu.Documentation.Comments;
@@ -16,6 +15,7 @@ namespace Docu.Parsing.Comments
         private readonly MultilineCodeCommentParser MultilineCode = new MultilineCodeCommentParser();
         private readonly SeeCodeCommentParser See = new SeeCodeCommentParser();
         private readonly ParagraphCommentParser Paragraph;
+        private readonly ParameterReferenceParser ParameterReference = new ParameterReferenceParser();
 
         public CommentParser()
         {
@@ -26,6 +26,7 @@ namespace Docu.Parsing.Comments
             parsers.Add(node => node.Name == "code", MultilineCode.Parse);
             parsers.Add(node => node.Name == "see", See.Parse);
             parsers.Add(node => node.Name == "para", Paragraph.Parse);
+            parsers.Add(node => node.Name == "paramref", ParameterReference.Parse);
         }
 
         public IList<IComment> Parse(XmlNodeList nodes)

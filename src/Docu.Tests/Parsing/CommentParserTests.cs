@@ -189,5 +189,16 @@ namespace Docu.Tests.Parsing
             paraText.Text.ShouldEqual("some text ");
             childParaText.Text.ShouldEqual("some more text");
         }
+
+        [Test]
+        public void ShouldParseParamref()
+        {
+            var blocks = parser.Parse("<x>Returns the <paramref name=\"inputString\" /></x>".ToNode());
+            blocks.Count.ShouldEqual(2);
+            blocks[1].ShouldBeOfType<ParameterReference>();
+            var paramRef = (ParameterReference)blocks[1];
+            paramRef.Parameter.ShouldEqual("inputString");
+        }
     }
+
 }
