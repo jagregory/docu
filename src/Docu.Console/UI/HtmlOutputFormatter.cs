@@ -20,6 +20,7 @@ namespace Docu.UI
                 new OutputFormatterPart<InlineText>(FormatInlineText),
                 new OutputFormatterPart<InlineCode>(FormatInlineCode),
                 new OutputFormatterPart<Paragraph>(FormatParagraph),
+                new OutputFormatterPart<ParameterReference>(FormatParameterReference)
             };
 
             NamespaceUrlFormat = "{namespace}.htm";
@@ -67,6 +68,13 @@ namespace Docu.UI
         {
             return comment.Text;
         }
+
+        private string FormatParameterReference(ParameterReference comment)
+        {
+            return "<var>" + comment.Parameter + "</var>";
+        }
+
+        
 
         private string FormatSee(See block)
         {
