@@ -9,6 +9,9 @@ namespace Docu.Generation
             foreach (string file in Directory.GetFiles(templatePath, "*", SearchOption.AllDirectories))
             {
                 if (Path.GetExtension(file) == ".spark") continue;
+                if ( (File.GetAttributes(file) & FileAttributes.Hidden) == FileAttributes.Hidden) continue;
+                var containingDirectory = Path.GetDirectoryName(file);
+                if ( (File.GetAttributes(containingDirectory) & FileAttributes.Hidden) == FileAttributes.Hidden) continue;
 
                 string newPath = file.Replace(templatePath, outputPath);
                 string newDirectory = Path.GetDirectoryName(newPath);
