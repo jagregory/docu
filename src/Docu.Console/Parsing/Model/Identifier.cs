@@ -6,6 +6,8 @@ namespace Docu.Parsing.Model
 {
     public abstract class Identifier : IComparable<Identifier>, IEquatable<Identifier>
     {
+        private const string GENERIC_PARAMATER_PREFIX = "``";
+        private static readonly string GENERIC_TYPE_NAMESPACE = string.Empty;
         private readonly string name;
         private static Dictionary<string, Type> nameToType;
 
@@ -21,8 +23,8 @@ namespace Docu.Parsing.Model
 
         public static TypeIdentifier FromType(Type type)
         {
-            return type.IsGenericParameter 
-                ? new TypeIdentifier(type.GenericParameterPosition.ToString(), string.Empty) 
+            return type.IsGenericParameter
+                ? new TypeIdentifier(GENERIC_PARAMATER_PREFIX + type.GenericParameterPosition, GENERIC_TYPE_NAMESPACE) 
                 : new TypeIdentifier(type.Name, type.Namespace);
         }
 
@@ -32,7 +34,7 @@ namespace Docu.Parsing.Model
             var parameters = new List<TypeIdentifier>();
 
             if (method.IsGenericMethod)
-                name += "``" + method.GetGenericArguments().Length;
+                name += GENERIC_PARAMATER_PREFIX + method.GetGenericArguments().Length;
 
             foreach (ParameterInfo param in method.GetParameters())
             {
@@ -167,10 +169,49 @@ namespace Docu.Parsing.Model
         private static List<TypeIdentifier> GetMethodParameters(string fullName)
         {
             var parameters = new List<TypeIdentifier>();
+            if (!fullName.EndsWith(")")) return parameters;
 
+            buildTypeLookup();
+
+            var firstCharAfterParen = fullName.IndexOf("(") + 1;
+            var paramList = fullName.Substring(firstCharAfterParen, fullName.Length - firstCharAfterParen - 1) ;
+
+            foreach (var paramName in ParseMethodParameterList(paramList))
+            {
+                if (IsGenericArgument(paramName))
+                {
+                    parameters.Add(new TypeIdentifier(paramName, GENERIC_TYPE_NAMESPACE));
+                    continue;
+                }
+                var typeNameToFind = paramName;
+                var genericParamPosition = paramName.IndexOf('{');
+                if (genericParamPosition > 0)
+                {
+                    var openTypeName = paramName.Substring(0, genericParamPosition);
+                    var endOfGenericParams = paramName.IndexOf('}', genericParamPosition);
+                    var lengthOfGenericParamsSection = endOfGenericParams - genericParamPosition - 1;
+                    var genericParamList = paramName.Substring(genericParamPosition + 1, lengthOfGenericParamsSection).Split(',');
+                    typeNameToFind = openTypeName + "`" + genericParamList.Length;
+                }
+                Type paramType;
+                if (nameToType.TryGetValue(typeNameToFind, out paramType))
+                {
+                    parameters.Add(FromType(paramType));
+                }
+            }
+
+            return parameters;
+        }
+
+        private static bool IsGenericArgument(string parameter)
+        {
+            return parameter.StartsWith(GENERIC_PARAMATER_PREFIX);
+        }
+
+        private static void buildTypeLookup()
+        {
             if(nameToType == null)
             {
-                // build type lookup table
                 nameToType = new Dictionary<string, Type>();
                 foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
@@ -180,41 +221,6 @@ namespace Docu.Parsing.Model
                     }
                 }
             }
-
-            if (fullName.EndsWith(")"))
-            {
-                string paramList = fullName.Substring(fullName.IndexOf("(") + 1);
-                paramList = paramList.Substring(0, paramList.Length - 1);
-
-                foreach (string paramName in ParseMethodParameterList(paramList))
-                {
-                    Type paramType;
-                    if (paramName.StartsWith("``"))
-                    {
-                        parameters.Add(new TypeIdentifier(paramName.Substring(2), ""));
-                    }
-                    else
-                    {
-                        var typeNameToFind = paramName;
-                        var genericParamPosition = paramName.IndexOf('{');
-                        if (genericParamPosition > 0)
-                        {
-                            var openTypeName = paramName.Substring(0, genericParamPosition);
-                            var endOfGenericParams = paramName.IndexOf('}', genericParamPosition);
-                            var lengthOfGenericParamsSection = endOfGenericParams - genericParamPosition - 1;
-                            System.Diagnostics.Debug.Assert(genericParamPosition + 1 + lengthOfGenericParamsSection <= paramName.Length, "Failure parsing:" + paramName);
-                            var genericParamList = paramName.Substring(genericParamPosition + 1, lengthOfGenericParamsSection).Split(',');
-                            typeNameToFind = openTypeName + "`" + genericParamList.Length;
-                        }
-                        if (nameToType.TryGetValue(typeNameToFind, out paramType))
-                        {
-                            parameters.Add(FromType(paramType));
-                        }
-                    }
-                }
-            }
-
-            return parameters;
         }
 
         public static IEnumerable<string> ParseMethodParameterList(string methodParameters)
