@@ -82,6 +82,7 @@
     <Compile Include="Generation\PatternTemplateResolverTests\type_template_in_namespace.cs" />
     <Compile Include="Generation\PatternTemplateResolverTests\type_template.cs" />
     <Compile Include="Generation\TemplateTransformerTests.cs" />
+    <Compile Include="Parsing\IdentifierTests.cs" />
     <Compile Include="UI\HtmlOutputFormatterTests.cs" />
     <Compile Include="Utils\TestTemplateAttribute.cs" />
     <Compile Include="Generation\UntransformableResourceManagerTests.cs" />
