@@ -126,6 +126,38 @@ namespace Docu.Tests.Parsing
         }
 
         [Test]
+        public void ShouldAssociateGenericMethodWithGenericParametersSnippetWithCorrectReflectedMethod()
+        {
+            var undocumentedMembers = DocMembers(typeof(HasGenericMethods));
+            var snippets = new[] { @"<member name=""M:Example.HasGenericMethods.Do``1(``0)"" />".ToNode() };
+            var members = matcher.DocumentMembers(undocumentedMembers, snippets);
+            var method = typeof(HasGenericMethods).GetMethod("Do");
+
+            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(HasGenericMethods))) as DocumentedMethod;
+
+            member.ShouldNotBeNull();
+            member.Xml.ShouldEqual(snippets[0]);
+            member.Method.ShouldBeSameAs(method);
+        }
+
+        [Test]
+        public void ShouldAssociateGenericMethodWithParameterWithGenericTypeSnippetWithCorrectReflectedMethod()
+        {
+            var undocumentedMembers = DocMembers(typeof(HasGenericMethods));
+            var snippets = new[] { @"<member name=""M:Example.HasGenericMethods.DoWithLookup``2(System.Collections.Generic.IDictionary{``0,``1},``0)"" />".ToNode() };
+            var members = matcher.DocumentMembers(undocumentedMembers, snippets);
+            var method = typeof(HasGenericMethods).GetMethod("DoWithLookup");
+
+            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(HasGenericMethods))) as DocumentedMethod;
+
+            member.ShouldNotBeNull();
+            member.Xml.ShouldEqual(snippets[0]);
+            member.Method.ShouldBeSameAs(method);
+        }
+
+
+
+        [Test]
         public void ShouldAssociateMethodWithParametersSnippetWithCorrectReflectedMethod()
         {
             var undocumentedMembers = DocMembers(typeof(First), typeof(Second), typeof(Third));

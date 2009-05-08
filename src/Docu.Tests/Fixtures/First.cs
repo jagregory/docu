@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Example
 {
@@ -109,6 +110,19 @@ namespace Example
         }
 
         public void BMethod<C>()
+        {
+            
+        }
+    }
+
+    public class HasGenericMethods
+    {
+        public void Do<T>(T item)
+        {
+            
+        }
+
+        public void DoWithLookup<K,V>(IDictionary<K,V> lookup, K key)
         {
             
         }

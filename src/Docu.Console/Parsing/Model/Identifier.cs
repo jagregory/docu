@@ -21,7 +21,9 @@ namespace Docu.Parsing.Model
 
         public static TypeIdentifier FromType(Type type)
         {
-            return new TypeIdentifier(type.Name, type.Namespace);
+            return type.IsGenericParameter 
+                ? new TypeIdentifier(type.GenericParameterPosition.ToString(), string.Empty) 
+                : new TypeIdentifier(type.Name, type.Namespace);
         }
 
         public static MethodIdentifier FromMethod(MethodInfo method, Type type)
@@ -184,17 +186,66 @@ namespace Docu.Parsing.Model
                 string paramList = fullName.Substring(fullName.IndexOf("(") + 1);
                 paramList = paramList.Substring(0, paramList.Length - 1);
 
-                foreach (string paramName in paramList.Split(','))
+                foreach (string paramName in ParseMethodParameterList(paramList))
                 {
                     Type paramType;
-                    if(nameToType.TryGetValue(paramName, out paramType))
+                    if (paramName.StartsWith("``"))
                     {
-                        parameters.Add(FromType(paramType));
+                        parameters.Add(new TypeIdentifier(paramName.Substring(2), ""));
+                    }
+                    else
+                    {
+                        var typeNameToFind = paramName;
+                        var genericParamPosition = paramName.IndexOf('{');
+                        if (genericParamPosition > 0)
+                        {
+                            var openTypeName = paramName.Substring(0, genericParamPosition);
+                            var endOfGenericParams = paramName.IndexOf('}', genericParamPosition);
+                            var lengthOfGenericParamsSection = endOfGenericParams - genericParamPosition - 1;
+                            System.Diagnostics.Debug.Assert(genericParamPosition + 1 + lengthOfGenericParamsSection <= paramName.Length, "Failure parsing:" + paramName);
+                            var genericParamList = paramName.Substring(genericParamPosition + 1, lengthOfGenericParamsSection).Split(',');
+                            typeNameToFind = openTypeName + "`" + genericParamList.Length;
+                        }
+                        if (nameToType.TryGetValue(typeNameToFind, out paramType))
+                        {
+                            parameters.Add(FromType(paramType));
+                        }
                     }
                 }
             }
 
             return parameters;
+        }
+
+        public static IEnumerable<string> ParseMethodParameterList(string methodParameters)
+        {
+            var startPosition = 0;
+            while (startPosition < methodParameters.Length)
+            {
+                var positionOfInterestingChar = methodParameters.IndexOfAny(new[] {'{', ','}, startPosition);
+                if (positionOfInterestingChar < 0)
+                {
+                    if (startPosition == 0)
+                    {
+                        yield return methodParameters;
+                    }
+                    else
+                    {
+                        yield return methodParameters.Substring(startPosition);
+                    }
+                    startPosition = methodParameters.Length;
+                }
+                else
+                {
+                    if (methodParameters[positionOfInterestingChar] == '{')
+                    {
+                        positionOfInterestingChar = methodParameters.IndexOf('}', positionOfInterestingChar) + 1;
+                    }   
+                    yield return methodParameters.Substring(startPosition, positionOfInterestingChar - startPosition);
+                    startPosition = positionOfInterestingChar + 1;
+                }
+
+            }
         }
 
         public abstract NamespaceIdentifier CloneAsNamespace();
