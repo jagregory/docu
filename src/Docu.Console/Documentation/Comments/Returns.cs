@@ -10,10 +10,7 @@ namespace Docu.Documentation.Comments
 
         public Returns(IEnumerable<IComment> comments)
         {
-            foreach (var comment in comments)
-            {
-                AddChild(comment);
-            }
+            comments.ForEach(AddChild);
         }
     }
 }
