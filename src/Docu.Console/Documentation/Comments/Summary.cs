@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Docu.Parsing.Model;
 
 namespace Docu.Documentation.Comments
 {
@@ -13,10 +10,7 @@ namespace Docu.Documentation.Comments
 
         public Summary(IEnumerable<IComment> comments)
         {
-            foreach (var comment in comments)
-            {
-                AddChild(comment);
-            }
+            comments.ForEach(AddChild);
         }
     }
 }
