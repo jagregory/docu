@@ -71,7 +71,6 @@
     <Compile Include="Documentation\Comments\BaseComment.cs" />
     <Compile Include="Documentation\Comments\ParameterReference.cs" />
     <Compile Include="Documentation\Comments\Remarks.cs" />
-    <Compile Include="Documentation\Comments\Returns.cs" />
     <Compile Include="Documentation\Comments\Summary.cs" />
     <Compile Include="Documentation\Comments\Value.cs" />
     <Compile Include="Documentation\Generators\BaseGenerator.cs" />

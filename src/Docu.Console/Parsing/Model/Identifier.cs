@@ -66,20 +66,20 @@ namespace Docu.Parsing.Model
 
         public static Identifier FromString(string name)
         {
-            var prefix = name.Substring(0, 1);
+            var prefix = name[0];
             var trimmedName = name.Substring(2);
 
-            if (prefix == "T")
+            if (prefix == 'T')
                 return FromTypeString(trimmedName);
-            if (prefix == "N")
+            if (prefix == 'N')
                 return FromNamespace(trimmedName);
-            if (prefix == "M")
+            if (prefix == 'M')
                 return FromMethodName(trimmedName);
-            if (prefix == "P")
+            if (prefix == 'P')
                 return FromPropertyName(trimmedName);
-            if (prefix == "E")
+            if (prefix == 'E')
                 return FromEventName(trimmedName);
-            if (prefix == "F")
+            if (prefix == 'F')
                 return FromFieldName(trimmedName);
 
             throw new UnsupportedDocumentationMemberException(name);
