@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Docu.Documentation.Comments
@@ -11,10 +10,7 @@ namespace Docu.Documentation.Comments
 
         public Remarks(IEnumerable<IComment> comments)
         {
-            foreach (var comment in comments)
-            {
-                AddChild(comment);
-            }
+            comments.ForEach(AddChild);
         }
     }
 }

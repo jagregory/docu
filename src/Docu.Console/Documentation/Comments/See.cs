@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 using Docu.Parsing.Model;
 
 namespace Docu.Documentation.Comments
 {
-    public class See : BaseComment, IReferrer, IResolvable
+    public class See : BaseComment, IReferrer
     {
         public See(IReferencable reference)
         {
