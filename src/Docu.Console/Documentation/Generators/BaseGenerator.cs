@@ -67,7 +67,7 @@ namespace Docu.Documentation.Generators
             var node = member.Xml.SelectSingleNode("returns");
 
             if (node != null)
-                doc.Returns = new Returns(commentParser.Parse(node));
+                doc.Returns = new Summary(commentParser.Parse(node));
         }
 
         protected Namespace FindNamespace(IDocumentationMember association, List<Namespace> namespaces)
