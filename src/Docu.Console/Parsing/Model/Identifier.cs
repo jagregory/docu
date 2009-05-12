@@ -8,9 +8,13 @@ namespace Docu.Parsing.Model
     public abstract class Identifier : IComparable<Identifier>, IEquatable<Identifier>
     {
         private const string GENERIC_PARAMATER_PREFIX = "``";
+        private const string GENERIC_RANK_PREFIX = "`";
+        private const string ARRAY_TYPE_SUFFIX = "[]";
         private static readonly string GENERIC_TYPE_NAMESPACE = string.Empty;
         private readonly string name;
         private static Dictionary<string, Type> nameToType;
+        private static char START_GENERIC_ARGUMENTS = '{';
+        private static char END_GENERIC_ARGUMENTS = '}';
 
         protected Identifier(string name)
         {
@@ -185,19 +189,22 @@ namespace Docu.Parsing.Model
                     continue;
                 }
                 var typeNameToFind = paramName;
-                var startOfGenericArguments = paramName.IndexOf('{');
+                var startOfGenericArguments = paramName.IndexOf(START_GENERIC_ARGUMENTS);
                 if (startOfGenericArguments > 0)
                 {
                     var nonGenericPartOfTypeName = paramName.Substring(0, startOfGenericArguments);
-                    var endOfGenericArguments = paramName.LastIndexOf('}');
+                    var endOfGenericArguments = paramName.LastIndexOf(END_GENERIC_ARGUMENTS);
                     var lengthOfGenericArgumentsSection = endOfGenericArguments - startOfGenericArguments - 1;
                     var genericArgumentsSection = paramName.Substring(startOfGenericArguments + 1, lengthOfGenericArgumentsSection);
                     var countOfGenericParametersForType = countOfGenericArguments(genericArgumentsSection);
-                    typeNameToFind = nonGenericPartOfTypeName + "`" + countOfGenericParametersForType;
+                    typeNameToFind = nonGenericPartOfTypeName + GENERIC_RANK_PREFIX + countOfGenericParametersForType;
                 }
                 Type paramType;
+                var isArray = typeNameToFind.EndsWith(ARRAY_TYPE_SUFFIX);
+                if (isArray) typeNameToFind = typeNameToFind.Substring(0, typeNameToFind.Length - 2);
                 if (nameToType.TryGetValue(typeNameToFind, out paramType))
                 {
+                    if (isArray) paramType = paramType.MakeArrayType();
                     parameters.Add(FromType(paramType));
                 }
             }
@@ -211,12 +218,12 @@ namespace Docu.Parsing.Model
             var startPosition = 0;
             while (startPosition < genericArguments.Length)
             {
-                var positionOfInterestingChar = genericArguments.IndexOfAny(new[] {'{', ','}, startPosition);
+                var positionOfInterestingChar = genericArguments.IndexOfAny(new[] {START_GENERIC_ARGUMENTS, ','}, startPosition);
                 if (positionOfInterestingChar < 0)
                 {
                     return count;
                 }
-                if (genericArguments[positionOfInterestingChar] == '{')
+                if (genericArguments[positionOfInterestingChar] == START_GENERIC_ARGUMENTS)
                 {
                     startPosition = indexAfterGenericArguments(genericArguments, positionOfInterestingChar);
                 }
@@ -252,7 +259,7 @@ namespace Docu.Parsing.Model
             var startPosition = 0;
             while (startPosition < methodParameters.Length)
             {
-                var positionOfInterestingChar = methodParameters.IndexOfAny(new[] {'{', ','}, startPosition);
+                var positionOfInterestingChar = methodParameters.IndexOfAny(new[] {START_GENERIC_ARGUMENTS, ','}, startPosition);
                 if (positionOfInterestingChar < 0)
                 {
                     if (startPosition == 0)
@@ -267,7 +274,7 @@ namespace Docu.Parsing.Model
                 }
                 else
                 {
-                    if (methodParameters[positionOfInterestingChar] == '{')
+                    if (methodParameters[positionOfInterestingChar] == START_GENERIC_ARGUMENTS)
                     {
                         //Generic parameter 
                         positionOfInterestingChar = indexAfterGenericArguments(methodParameters, positionOfInterestingChar);
@@ -286,8 +293,8 @@ namespace Docu.Parsing.Model
             var genericNesting = 1;
             while (genericNesting > 0)
             {
-                startPosition = parameterList.IndexOfAny(new[] { '{', '}' }, startPosition + 1);
-                genericNesting += (parameterList[startPosition] == '{') ? 1 : -1;
+                startPosition = parameterList.IndexOfAny(new[] { START_GENERIC_ARGUMENTS, END_GENERIC_ARGUMENTS }, startPosition + 1);
+                genericNesting += (parameterList[startPosition] == START_GENERIC_ARGUMENTS) ? 1 : -1;
             }
             //position needs to be the index AFTER the complete parameter string
             startPosition = startPosition + 1;

@@ -90,6 +90,22 @@ namespace Docu.Tests.Parsing
         }
 
         [Test]
+        public void should_match_method_with_array_parameter()
+        {
+            var undocumentedMembers = DocMembers(typeof(ClassWithOverload));
+            var snippets = new[] { @"<member name=""M:Example.ClassWithOverload.MethodWithArray(System.String[])"" />".ToNode() };
+            var members = matcher.DocumentMembers(undocumentedMembers, snippets);
+            var method = Method<ClassWithOverload>(x => x.MethodWithArray(null));
+
+            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(ClassWithOverload))) as DocumentedMethod;
+
+            member.ShouldNotBeNull();
+            member.Xml.ShouldEqual(snippets[0]);
+            member.Method.ShouldEqual(method);
+        }
+
+
+        [Test]
         public void should_match_correct_method_overloads()
         {
             var undocumentedMembers = DocMembers(typeof(ClassWithOverload));

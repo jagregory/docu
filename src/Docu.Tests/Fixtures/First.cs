@@ -27,6 +27,11 @@ namespace Example
         {
             return "";
         }
+
+        public void MethodWithArray(string[] strings)
+        {
+            
+        }
     }
 
     public class ClassWithInterfaces : EmptyInterface, IDisposable
