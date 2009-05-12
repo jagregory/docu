@@ -45,5 +45,14 @@ namespace Docu.Tests.Parsing
             parameterList[0].ShouldEqual("Foo{``0,``1}");
             parameterList[1].ShouldEqual("Bar{``1}");
         }
+
+        [Test]
+        public void should_parse_parameter_list_with_generic_of_generic()
+        {
+            var input = "System.Linq.Expressions.Expression{System.Func{``0,System.Object}}";
+            var parameterList = Identifier.ParseMethodParameterList(input).ToArray();
+            parameterList.Length.ShouldEqual(1);
+            parameterList[0].ShouldEqual("System.Linq.Expressions.Expression{System.Func{``0,System.Object}}");
+        }
     }
 }
