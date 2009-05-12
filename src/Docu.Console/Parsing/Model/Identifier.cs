@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Docu.Parsing.Model
@@ -184,14 +185,15 @@ namespace Docu.Parsing.Model
                     continue;
                 }
                 var typeNameToFind = paramName;
-                var genericParamPosition = paramName.IndexOf('{');
-                if (genericParamPosition > 0)
+                var startOfGenericArguments = paramName.IndexOf('{');
+                if (startOfGenericArguments > 0)
                 {
-                    var openTypeName = paramName.Substring(0, genericParamPosition);
-                    var endOfGenericParams = paramName.IndexOf('}', genericParamPosition);
-                    var lengthOfGenericParamsSection = endOfGenericParams - genericParamPosition - 1;
-                    var genericParamList = paramName.Substring(genericParamPosition + 1, lengthOfGenericParamsSection).Split(',');
-                    typeNameToFind = openTypeName + "`" + genericParamList.Length;
+                    var nonGenericPartOfTypeName = paramName.Substring(0, startOfGenericArguments);
+                    var endOfGenericArguments = paramName.LastIndexOf('}');
+                    var lengthOfGenericArgumentsSection = endOfGenericArguments - startOfGenericArguments - 1;
+                    var genericArgumentsSection = paramName.Substring(startOfGenericArguments + 1, lengthOfGenericArgumentsSection);
+                    var countOfGenericParametersForType = countOfGenericArguments(genericArgumentsSection);
+                    typeNameToFind = nonGenericPartOfTypeName + "`" + countOfGenericParametersForType;
                 }
                 Type paramType;
                 if (nameToType.TryGetValue(typeNameToFind, out paramType))
@@ -203,6 +205,30 @@ namespace Docu.Parsing.Model
             return parameters;
         }
 
+        private static int countOfGenericArguments(string genericArguments)
+        {
+            var count = 1;
+            var startPosition = 0;
+            while (startPosition < genericArguments.Length)
+            {
+                var positionOfInterestingChar = genericArguments.IndexOfAny(new[] {'{', ','}, startPosition);
+                if (positionOfInterestingChar < 0)
+                {
+                    return count;
+                }
+                if (genericArguments[positionOfInterestingChar] == '{')
+                {
+                    startPosition = indexAfterGenericArguments(genericArguments, positionOfInterestingChar);
+                }
+                else
+                {
+                    ++count;
+                    startPosition = positionOfInterestingChar + 1;
+                }
+            }
+            return count;
+        }
+
         private static bool IsGenericArgument(string parameter)
         {
             return parameter.StartsWith(GENERIC_PARAMATER_PREFIX);
@@ -210,15 +236,13 @@ namespace Docu.Parsing.Model
 
         private static void buildTypeLookup()
         {
-            if(nameToType == null)
+            if (nameToType != null) return;
+            nameToType = new Dictionary<string, Type>();
+            foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                nameToType = new Dictionary<string, Type>();
-                foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                foreach(var type in assembly.GetTypes())
                 {
-                    foreach(Type type in assembly.GetTypes())
-                    {
-                        nameToType[type.FullName] = type;
-                    }
+                    nameToType[type.FullName] = type;
                 }
             }
         }
@@ -245,13 +269,29 @@ namespace Docu.Parsing.Model
                 {
                     if (methodParameters[positionOfInterestingChar] == '{')
                     {
-                        positionOfInterestingChar = methodParameters.IndexOf('}', positionOfInterestingChar) + 1;
-                    }   
+                        //Generic parameter 
+                        positionOfInterestingChar = indexAfterGenericArguments(methodParameters, positionOfInterestingChar);
+                    }
                     yield return methodParameters.Substring(startPosition, positionOfInterestingChar - startPosition);
                     startPosition = positionOfInterestingChar + 1;
                 }
 
             }
+        }
+
+        private static int indexAfterGenericArguments(string parameterList, int startPosition)
+        {
+            // - may contain ',' for multiple generic arguments for the single parameter type: IDictionary<KEY,VALUE>
+            // - may contain '{' for generics of generics: IEnumerable<Nullable<int>>
+            var genericNesting = 1;
+            while (genericNesting > 0)
+            {
+                startPosition = parameterList.IndexOfAny(new[] { '{', '}' }, startPosition + 1);
+                genericNesting += (parameterList[startPosition] == '{') ? 1 : -1;
+            }
+            //position needs to be the index AFTER the complete parameter string
+            startPosition = startPosition + 1;
+            return startPosition;
         }
 
         public abstract NamespaceIdentifier CloneAsNamespace();
