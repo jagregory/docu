@@ -1,0 +1,22 @@
+Output
+Generated with http://www.websequencediagrams.com
+
+loop *.spark
+  BulkPageWriter->PageWriter: Create pages
+  PageWriter->PatternTemplateResolver: Expand pattern template paths
+  PatternTemplateResolver->PageWriter: Return expanded paths
+
+  loop each expanded path
+    PageWriter->OutputGenerator: Generate Html
+    OutputGenerator->SparkViewEngine: Render template
+    SparkViewEngine->OutputGenerator: Rendered template to memory
+    OutputGenerator->PageWriter: Generated Html
+    PageWriter->OutputWriter: Write content to file
+    OutputWriter->PageWriter: Written file
+  end
+  
+  PageWriter->BulkPageWriter: Created pages
+end
+
+BulkPageWriter->DocumentationGenerator: Completed generation
+DocumentationGenerator->UntransformableResourceManager: Move untransformable resources to output dir

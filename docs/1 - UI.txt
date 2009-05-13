@@ -1,0 +1,7 @@
+UI
+Generated with http://www.websequencediagrams.com
+
+Program->ConsoleApplication: Run
+ConsoleApplication->DocumentationGenerator: Generate and output docs
+DocumentationGenerator->ConsoleApplication: Complete
+ConsoleApplication->Program: Exit
