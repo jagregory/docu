@@ -21,8 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>bin\Debug\docu.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -188,6 +188,7 @@
     <Compile Include="Documentation\DocumentModel.cs" />
     <Compile Include="IO\XmlLoader.cs" />
     <Compile Include="Generation\UntransformableResourceManager.cs" />
+    <Compile Include="UI\TemplateHelperExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="templates\index.htm.spark">

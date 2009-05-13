@@ -123,9 +123,9 @@ namespace Docu.Console
 
         private bool VerifyArguments(IEnumerable<string> assemblies, IEnumerable<string> xmls)
         {
-            foreach (string argument in arguments)
+            foreach (var argument in arguments)
             {
-                if (argument.EndsWith(".dll") || argument.EndsWith(".xml")) continue;
+                if (isAssemblyArgument(argument) || Path.GetExtension(argument).Equals(".xml", StringComparison.OrdinalIgnoreCase)) continue;
 
                 ShowMessage(new InvalidArgumentMessage(argument));
                 return false;
@@ -197,7 +197,7 @@ namespace Docu.Console
                 // none specified, try to find some
                 foreach (string assembly in assemblies)
                 {
-                    var name = assembly.Replace(".dll", ".xml");
+                    var name = getExpectedXmlFileForAssembly(assembly);
 
                     foreach (var file in GetFiles(name))
                     {
@@ -210,17 +210,32 @@ namespace Docu.Console
             return xmls.ToArray();
         }
 
+        private static string getExpectedXmlFileForAssembly(string assembly)
+        {
+            var extension = Path.GetExtension(assembly);
+            return assembly.Substring(0, assembly.Length - extension.Length) + ".xml";
+        }
+
         private string[] GetAssembliesFromArgs(IEnumerable<string> args)
         {
             var assemblies = new List<string>();
 
             foreach (var arg in args)
             {
-                if (arg.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
+                
+                if (isAssemblyArgument(arg))
+                {
                     assemblies.AddRange(GetFiles(arg));
+                }
             }
 
             return assemblies.ToArray();
+        }
+
+        private static bool isAssemblyArgument(string argument)
+        {
+            var fileExtension = Path.GetExtension(argument);
+            return fileExtension.Equals(".dll", StringComparison.InvariantCultureIgnoreCase) || fileExtension.Equals(".exe", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private IEnumerable<string> GetFiles(string path)
