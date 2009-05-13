@@ -59,27 +59,63 @@ namespace Docu.UI
 
         public ViewData ViewData { get; set; }
 
+        /// <summary>
+        /// Configures the pattern that will be used to construct links to methods referenced in the documentation of other symbols
+        /// </summary>
+        /// <remarks>
+        /// The pattern can be constructed using the following placeholders:
+        /// <list type="table">
+        /// <item><term>{type.namespace}</term><description>The namespace of the type that contains the method</description></item>
+        /// <item><term>{type}</term><description>The short name of the type that contains the method</description></item>
+        /// <item><term>{method}</term><description>The name of method</description></item>
+        /// </list>
+        /// <para>The default is {type.namespace}/{type}.htm#{method}</para></remarks>
+        /// <param name="format">The pattern used to construct the link</param>
         public void SetMethodUrlFormat(string format)
         {
             Formatter.MethodUrlFormat = format;
         }
 
+        /// <summary>
+        /// Configures the pattern that will be used to construct links to types referenced in the documentation of other symbols
+        /// </summary>
+        /// <param name="format">The pattern used to construct the link</param>
         public void SetTypeUrlFormat(string format)
         {
             Formatter.TypeUrlFormat = format;
         }
+        
+        /// <summary>
+        /// Configures the pattern that will be used to construct links to properties referenced in the documentation of other symbols
+        /// </summary>
+        /// <param name="format">The pattern used to construct the link</param>
         public void SetPropertyUrlFormat(string format)
         {
             Formatter.PropertyUrlFormat = format;
         }
+
+        /// <summary>
+        /// Configures the pattern that will be used to construct links to events referenced in the documentation of other symbols
+        /// </summary>
+        /// <param name="format">The pattern used to construct the link</param>
         public void SetEventUrlFormat(string format)
         {
             Formatter.EventUrlFormat = format;
         }
+
+        /// <summary>
+        /// Configures the pattern that will be used to construct links to fields referenced in the documentation of other symbols
+        /// </summary>
+        /// <param name="format">The pattern used to construct the link</param>
         public void SetFieldUrlFormat(string format)
         {
             Formatter.FieldUrlFormat = format;
         }
+
+        /// <summary>
+        /// Configures the pattern that will be used to construct links to namespaces referenced in the documentation of other symbols
+        /// </summary>
+        /// <param name="format">The pattern used to construct the link</param>
         public void SetNamespaceUrlFormat(string format)
         {
             Formatter.NamespaceUrlFormat = format;
