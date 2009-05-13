@@ -4,7 +4,7 @@
 <PropertyGroup>
   <Configuration>Debug</Configuration>
 </PropertyGroup>
-<Target Name="Build" DependsOnTargets="Compile;Test;Package" />
+<Target Name="Build" DependsOnTargets="Compile;Test;Document;Package" />
 
 <Target Name="Compile">
   <MSbuild Projects="src\Docu.sln" Properties="Configuration=$(Configuration)" />
@@ -12,6 +12,10 @@
 
 <Target Name="Test">
   <Exec Command="lib\nunit\nunit-console.exe src\Docu.Tests\bin\$(Configuration)\Docu.Tests.dll" />
+</Target>
+
+<Target Name="Document">
+  <Exec Command="src\Docu.Console\bin\$(Configuration)\docu.exe src\Docu.Console\bin\$(Configuration)\docu.exe --output=enduserDocs --templates=src\enduserDocTemplates" />
 </Target>
 
 <Target Name="Package">

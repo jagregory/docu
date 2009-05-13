@@ -11,39 +11,47 @@ using Spark;
 namespace Docu.UI
 {
     /// <summary>
-    /// Base class of all spark views. In this example it's named in the
-    /// web.config spark/pages/@pageBaseType attribute. 
-    /// 
-    /// If you use #latebound syntax in expressions you need to have Eval
-    /// methods in the base class, and with direct usage it's a
-    /// "bring your own Eval" situation.
-    /// 
-    /// For convenience this example will rely on the ViewDataDictionary.
+    /// All public or protected methods and properties on this class are available within documentation templates
     /// </summary>
     public abstract class SparkTemplateBase : AbstractSparkView
     {
         protected readonly IOutputFormatter Formatter = new HtmlOutputFormatter();
 
+        /// <summary>
+        /// All of the assemblies being documented
+        /// </summary>
         public IList<Assembly> Assemblies
         {
             get { return ViewData.Assemblies; }
         }
 
+        /// <summary>
+        ///  All of the namespaces in the assemblies being documented
+        /// </summary>
         public IList<Namespace> Namespaces
         {
             get { return ViewData.Namespaces; }
         }
 
+        /// <summary>
+        /// All of the types in the assemblies being documented
+        /// </summary>
         public IList<DeclaredType> Types
         {
             get { return ViewData.Types; }
         }
 
+        /// <summary>
+        /// The current namespace being documented within the special !namespace template
+        /// </summary>
         public Namespace Namespace
         {
             get { return ViewData.Namespace; }
         }
 
+        /// <summary>
+        /// The current type being documented withing the special !type template
+        /// </summary>
         public DeclaredType Type
         {
             get { return ViewData.Type; }
@@ -51,6 +59,37 @@ namespace Docu.UI
 
         public ViewData ViewData { get; set; }
 
+        public void SetMethodUrlFormat(string format)
+        {
+            Formatter.MethodUrlFormat = format;
+        }
+
+        public void SetTypeUrlFormat(string format)
+        {
+            Formatter.TypeUrlFormat = format;
+        }
+        public void SetPropertyUrlFormat(string format)
+        {
+            Formatter.PropertyUrlFormat = format;
+        }
+        public void SetEventUrlFormat(string format)
+        {
+            Formatter.EventUrlFormat = format;
+        }
+        public void SetFieldUrlFormat(string format)
+        {
+            Formatter.FieldUrlFormat = format;
+        }
+        public void SetNamespaceUrlFormat(string format)
+        {
+            Formatter.NamespaceUrlFormat = format;
+        }
+
+        /// <summary>
+        /// Returns the product name of an assembly
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
         public string WriteProductName(Assembly assembly)
         {
             FileVersionInfo info = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -58,6 +97,11 @@ namespace Docu.UI
             return Formatter.Escape(info.ProductName);
         }
 
+        /// <summary>
+        /// Returns the description of an assembly
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
         public string WriteFileDescription(Assembly assembly)
         {
             FileVersionInfo info = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -65,6 +109,11 @@ namespace Docu.UI
             return Formatter.Escape(info.FileDescription);
         }
 
+        /// <summary>
+        /// Returns the title of an assembly
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
         public string WriteAssemblyTitle(Assembly assembly)
         {
             FileVersionInfo info = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -77,26 +126,52 @@ namespace Docu.UI
             return Formatter.Escape(String.Format("{0} ({1})", fileDescription, productName));
         }
 
+        /// <summary>
+        /// Returns the version number of an assembly
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
         public string WriteVersion(Assembly assembly)
         {
             return assembly.GetName().Version.ToString();
         }
 
+        /// <summary>
+        /// HTML encodes the content
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
         public string h(string content)
         {
             return Formatter.Escape(content);
         }
 
+        /// <summary>
+        /// Returns the comments in a format suitable for display
+        /// </summary>
+        /// <param name="comment"></param>
+        /// <returns></returns>
         public string Format(IComment comment)
         {
             return Formatter.Format(comment);
         }
 
+        /// <summary>
+        /// Returns a hyperlink to another symbol
+        /// </summary>
+        /// <remarks>The format of the URL in the returned hyperlink can be controlled by the methods <see cref="SetNamespaceUrlFormat"/>, <see cref="SetTypeUrlFormat"/>,  <see cref="SetPropertyUrlFormat"/>, <see cref="SetMethodUrlFormat"/>, <see cref="SetFieldUrlFormat"/> and <see cref="SetEventUrlFormat"/></remarks>
+        /// <param name="referencable"></param>
+        /// <returns></returns>
         public string Format(IReferencable referencable)
         {
             return Formatter.FormatReferencable(referencable);
         }
 
+        /// <summary>
+        /// Returns a comma-delimited list of the interfaces impleted by a given type
+        /// </summary>
+        /// <param name="interfaces"></param>
+        /// <returns></returns>
         public string WriteInterfaces(IList<IReferencable> interfaces)
         {
             var sb = new StringBuilder();
@@ -113,6 +188,11 @@ namespace Docu.UI
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Returns a comma-delimited list of the parameters of a given method
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
         public string OutputMethodParams(Method method)
         {
             var sb = new StringBuilder();
@@ -135,26 +215,6 @@ namespace Docu.UI
                 sb.Length -= 2;
 
             return sb.ToString();
-        }
-
-        public object Eval(string expression)
-        {
-            //            return ViewData.Eval(expression);
-            return null;
-        }
-
-        public string Eval(string expression, string format)
-        {
-            //return ViewData.Eval(expression, format);
-            return null;
-        }
-
-        /// <summary>
-        /// Members of this class are also available to the views
-        /// </summary>
-        public bool IsInStock(int productId)
-        {
-            return DateTime.UtcNow.Second % 2 == 1;
         }
     }
 }

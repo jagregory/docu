@@ -1,5 +1,8 @@
 *.suo
 *.user
+*.sln.cache
 bin
 obj
 _ReSharper*
+enduserDocs
+TestResult.xml

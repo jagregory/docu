@@ -15,9 +15,10 @@ namespace Docu.Generation
         {
             var setup = new SparkSettings();
 
-            setup.AddNamespace("Docu");
-            setup.AddNamespace("Docu.Parsing.Model");
-            setup.AddNamespace("System.Linq");
+            setup.AddNamespace(typeof(Program).Namespace);
+            setup.AddNamespace(typeof(TemplateExtensions.TemplateHelperExtensions).Namespace);
+            setup.AddNamespace(typeof(Parsing.Model.TypeIdentifier).Namespace);
+            setup.AddNamespace(typeof(System.Linq.Enumerable).Namespace);
 
             engine = new SparkViewEngine(setup);
             SetTemplatePath("templates");
