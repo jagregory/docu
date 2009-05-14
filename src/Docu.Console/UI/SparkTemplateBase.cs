@@ -64,7 +64,7 @@ namespace Docu.UI
         /// </summary>
         /// <remarks>
         /// The pattern can be constructed using the following placeholders:
-        /// <list type="table">
+        /// <list type="definition">
         /// <item><term>{type.namespace}</term><description>The namespace of the type that contains the method</description></item>
         /// <item><term>{type}</term><description>The short name of the type that contains the method</description></item>
         /// <item><term>{method}</term><description>The name of method</description></item>
@@ -79,6 +79,13 @@ namespace Docu.UI
         /// <summary>
         /// Configures the pattern that will be used to construct links to types referenced in the documentation of other symbols
         /// </summary>
+        /// <remarks>
+        /// The pattern can be constructed using the following placeholders:
+        /// <list type="definition">
+        /// <item><term>{type.namespace}</term><description>The namespace of the type</description></item>
+        /// <item><term>{type}</term><description>The short name of the type</description></item>
+        /// </list>
+        /// <para>The default is {type.namespace}/{type}.htm</para></remarks>
         /// <param name="format">The pattern used to construct the link</param>
         public void SetTypeUrlFormat(string format)
         {
@@ -88,6 +95,14 @@ namespace Docu.UI
         /// <summary>
         /// Configures the pattern that will be used to construct links to properties referenced in the documentation of other symbols
         /// </summary>
+        /// <remarks>
+        /// The pattern can be constructed using the following placeholders:
+        /// <list type="definition">
+        /// <item><term>{type.namespace}</term><description>The namespace of the type that contains the property</description></item>
+        /// <item><term>{type}</term><description>The short name of the type that contains the property</description></item>
+        /// <item><term>{property}</term><description>The name of the property</description></item>
+        /// </list>
+        /// <para>The default is {type.namespace}/{type}.htm#{property}</para></remarks>
         /// <param name="format">The pattern used to construct the link</param>
         public void SetPropertyUrlFormat(string format)
         {
@@ -97,6 +112,14 @@ namespace Docu.UI
         /// <summary>
         /// Configures the pattern that will be used to construct links to events referenced in the documentation of other symbols
         /// </summary>
+        /// <remarks>
+        /// The pattern can be constructed using the following placeholders:
+        /// <list type="definition">
+        /// <item><term>{type.namespace}</term><description>The namespace of the type that contains the event</description></item>
+        /// <item><term>{type}</term><description>The short name of the type that contains the event</description></item>
+        /// <item><term>{event}</term><description>The name of the event</description></item>
+        /// </list>
+        /// <para>The default is {type.namespace}/{type}.htm#{event}</para></remarks>
         /// <param name="format">The pattern used to construct the link</param>
         public void SetEventUrlFormat(string format)
         {
@@ -106,6 +129,14 @@ namespace Docu.UI
         /// <summary>
         /// Configures the pattern that will be used to construct links to fields referenced in the documentation of other symbols
         /// </summary>
+        /// <remarks>
+        /// The pattern can be constructed using the following placeholders:
+        /// <list type="definition">
+        /// <item><term>{type.namespace}</term><description>The namespace of the type that contains the field</description></item>
+        /// <item><term>{type}</term><description>The short name of the type that contains the field</description></item>
+        /// <item><term>{field}</term><description>The name of the field</description></item>
+        /// </list>
+        /// <para>The default is {type.namespace}/{type}.htm#{field}</para></remarks>
         /// <param name="format">The pattern used to construct the link</param>
         public void SetFieldUrlFormat(string format)
         {
@@ -115,6 +146,12 @@ namespace Docu.UI
         /// <summary>
         /// Configures the pattern that will be used to construct links to namespaces referenced in the documentation of other symbols
         /// </summary>
+        /// <remarks>
+        /// The pattern can be constructed using the following placeholders:
+        /// <list type="definition">
+        /// <item><term>{type.namespace}</term><description>The name of the namespace</description></item>
+        /// </list>
+        /// <para>The default is {namespace}.htm</para></remarks>
         /// <param name="format">The pattern used to construct the link</param>
         public void SetNamespaceUrlFormat(string format)
         {

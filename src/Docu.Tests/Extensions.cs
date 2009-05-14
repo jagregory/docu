@@ -20,10 +20,17 @@ namespace Docu.Tests
             Assert.That(actual, Is.False);
         }
 
-        public static object ShouldBeOfType<T>(this object actual)
+        public static object ShouldBeOfType(this object actual, Type expected)
         {
-            Assert.That(actual, Is.TypeOf<T>());
+            Assert.AreEqual(expected, actual.GetType());
             return actual;
+        }
+
+        public static T ShouldBeOfType<T>(this object actual)
+        {
+            actual.ShouldNotBeNull();
+            actual.ShouldBeOfType(typeof(T));
+            return (T)actual;
         }
 
         public static void ShouldNotBeOfType<T>(this object actual)

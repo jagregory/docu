@@ -18,6 +18,61 @@ namespace Docu.Tests.UI
         }
 
         [Test]
+        public void OutputsDefinitionListUsingDLTag()
+        {
+            var formatter = new HtmlOutputFormatter();
+            var list = new DefinitionList();
+            list.Items.Add(listItem("a", "first"));
+            list.Items.Add(listItem("b", "second"));
+            formatter.Format(list).ShouldEqual("<dl><dt>a</dt><dd>first</dd><dt>b</dt><dd>second</dd></dl>");
+        }
+
+        [Test]
+        public void OutputsNumberListUsingOLTag()
+        {
+            var formatter = new HtmlOutputFormatter();
+            var list = new NumberList();
+            list.Items.Add(listItem("a"));
+            list.Items.Add(listItem("b"));
+            formatter.Format(list).ShouldEqual("<ol><li>a</li><li>b</li></ol>");
+        }
+
+        [Test]
+        public void OutputsBulletListUsingULTag()
+        {
+            var formatter = new HtmlOutputFormatter();
+            var list = new BulletList();
+            list.Items.Add(listItem("a"));
+            list.Items.Add(listItem("b"));
+            formatter.Format(list).ShouldEqual("<ul><li>a</li><li>b</li></ul>");
+        }
+
+        [Test]
+        public void OutputsTableListUsingTABLETag()
+        {
+            var formatter = new HtmlOutputFormatter();
+            var list = new TableList();
+            list.Items.Add(listItem("a", "first"));
+            list.Items.Add(listItem("b", "second"));
+            formatter.Format(list).ShouldEqual("<table><tr><td>a</td><td>first</td></tr><tr><td>b</td><td>second</td></tr></table>");
+        }
+
+        private InlineListItem listItem(string definition)
+        {
+            return new InlineListItem(null, paragraph(definition));
+        }
+
+
+        private InlineListItem listItem(string term, string definition)
+        {
+            return new InlineListItem(paragraph(term), paragraph(definition));
+        }
+        private Paragraph paragraph(string text)
+        {
+            return new Paragraph(new[]{new InlineText(text)});
+        }
+
+        [Test]
         public void OutputsTypeReferenceLink()
         {
             var formatter = new HtmlOutputFormatter();
