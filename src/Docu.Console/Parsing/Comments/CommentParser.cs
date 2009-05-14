@@ -16,17 +16,19 @@ namespace Docu.Parsing.Comments
         private readonly SeeCodeCommentParser See = new SeeCodeCommentParser();
         private readonly ParagraphCommentParser Paragraph;
         private readonly ParameterReferenceParser ParameterReference = new ParameterReferenceParser();
+        private readonly InlineListCommentParser InlineList;
 
         public CommentParser()
         {
             Paragraph = new ParagraphCommentParser(this);
-
+            InlineList = new InlineListCommentParser(this);
             parsers.Add(node => node is XmlText, InlineText.Parse);
             parsers.Add(node => node.Name == "c", InlineCode.Parse);
             parsers.Add(node => node.Name == "code", MultilineCode.Parse);
             parsers.Add(node => node.Name == "see", See.Parse);
             parsers.Add(node => node.Name == "para", Paragraph.Parse);
             parsers.Add(node => node.Name == "paramref", ParameterReference.Parse);
+            parsers.Add(node => node.Name == "list", InlineList.Parse);
         }
 
         public IList<IComment> Parse(XmlNodeList nodes)
@@ -38,7 +40,7 @@ namespace Docu.Parsing.Comments
             {
                 XmlNode node = nodes[i];
                 bool first = (i == 0);
-                bool last = (i == count);
+                bool last = (i == (count - 1));
 
                 foreach(var pair in parsers)
                 {

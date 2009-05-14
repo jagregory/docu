@@ -1,6 +1,7 @@
 using Docu.Documentation.Comments;
 using Docu.Parsing.Comments;
 using NUnit.Framework;
+using System.Linq;
 
 namespace Docu.Tests.Parsing
 {
@@ -155,39 +156,28 @@ namespace Docu.Tests.Parsing
         }
 
         [Test]
-        public void ShouldParsePara()
+        public void should_parse_single_para_as_paragraph()
         {
             var blocks = parser.Parse("<x><para>some text</para></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
-            blocks.First().ShouldBeOfType<Paragraph>();
-
-            var para = (Paragraph)blocks.First();
-
-            para.Children.First().ShouldBeOfType<InlineText>();
-
-            var text = (InlineText)para.Children.First();
-
-            text.Text.ShouldEqual("some text");
+            var para = blocks.First().ShouldBeOfType<Paragraph>();
+            para.Children.First().ShouldBeOfType<InlineText>().Text.ShouldEqual("some text");
         }
 
         [Test]
-        public void ShouldParseNestedPara()
+        public void should_parse_nested_para_as_paragraphs()
         {
             var blocks = parser.Parse("<x><para>some text <para>some more text</para></para></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
-            blocks.First().ShouldBeOfType<Paragraph>();
-
-            var para = (Paragraph)blocks.First();
-            var paraText = para.Children.First() as InlineText;
-            var childPara = (Paragraph)para.Children.Second();
-            var childParaText = childPara.Children.First() as InlineText;
-
+            var para = blocks.First().ShouldBeOfType<Paragraph>();
             // (cdrnet, 2009-04-17) the white space in the first test should not be stripped.
             // Maybe a nested <see>, <b> or <a> tag would be a better example here.
-            paraText.Text.ShouldEqual("some text ");
-            childParaText.Text.ShouldEqual("some more text");
+            //para.Text.ShouldEqual("some text ");
+
+            var childPara = para.Children.Second().ShouldBeOfType<Paragraph>();
+            childPara.Children.First().ShouldBeOfType<InlineText>().Text.ShouldEqual("some more text");
         }
 
         [Test]
@@ -199,6 +189,59 @@ namespace Docu.Tests.Parsing
             var paramRef = (ParameterReference)blocks[1];
             paramRef.Parameter.ShouldEqual("inputString");
         }
+
+        [Test]
+        public void should_default_to_definition_list_if_no_type_specified()
+        {
+            var blocks = parser.Parse("<x><list><item><term>IV</term><description>Four</description></item></list></x>".ToNode());
+            blocks.First().ShouldBeOfType<DefinitionList>();
+        }
+
+        [Test]
+        public void should_parse_bulleted_list_type()
+        {
+            var blocks = parser.Parse("<x><list type=\"bullet\"><item><description>Four</description></item></list></x>".ToNode());
+            blocks.First().ShouldBeOfType<BulletList>();
+        }
+
+        [Test]
+        public void should_parse_numbered_list_type()
+        {
+            var blocks = parser.Parse("<x><list type=\"number\"><item><description>Four</description></item></list></x>".ToNode());
+            blocks.First().ShouldBeOfType<NumberList>();
+        }
+
+        [Test]
+        public void should_parse_table_list_type()
+        {
+            var blocks = parser.Parse("<x><list type=\"table\"><item><description>Four</description></item></list></x>".ToNode());
+            blocks.First().ShouldBeOfType<TableList>();
+        }
+
+        [Test]
+        public void should_parse_definition_list_with_multiple_items()
+        {
+            var blocks = parser.Parse("<x>See <list type=\"definition\"><item><term>IV</term><description>Four</description></item><item><term>IX</term><description>Nine</description></item></list></x>".ToNode());
+            blocks.Count.ShouldEqual(2);
+            blocks[1].ShouldBeOfType<DefinitionList>();
+            var list = (InlineList)blocks[1];
+            list.Items.Count.ShouldEqual(2);
+            list.Items[0].Term.Children.First().ShouldBeOfType<InlineText>().Text.ShouldEqual("IV");
+            list.Items[0].Definition.Children.First().ShouldBeOfType<InlineText>().Text.ShouldEqual("Four");
+        }
+
+        [Test]
+        public void should_parse_definition_list_with_nested_comments()
+        {
+            var blocks = parser.Parse("<x>See <list type=\"definition\"><item><term>IV</term><description>Four <see cref=\"N:Example\" /></description></item></list></x>".ToNode());
+            blocks.Count.ShouldEqual(2);
+            blocks[1].ShouldBeOfType<DefinitionList>();
+            var list = (InlineList)blocks[1];
+            list.Items[0].Definition.Children.First().ShouldBeOfType<InlineText>().Text.ShouldEqual("Four ");
+            list.Items[0].Definition.Children.Skip(1).First().ShouldBeOfType<See>().Reference.Name.ShouldEqual("Example");
+        }
+
+    
     }
 
 }
