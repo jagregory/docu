@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
@@ -20,7 +21,11 @@ namespace Docu.UI
                 new OutputFormatterPart<InlineText>(FormatInlineText),
                 new OutputFormatterPart<InlineCode>(FormatInlineCode),
                 new OutputFormatterPart<Paragraph>(FormatParagraph),
-                new OutputFormatterPart<ParameterReference>(FormatParameterReference)
+                new OutputFormatterPart<ParameterReference>(FormatParameterReference),
+                new OutputFormatterPart<DefinitionList>(FormatDefinitionList),
+                new OutputFormatterPart<BulletList>(FormatBulletList),
+                new OutputFormatterPart<NumberList>(FormatNumberList),
+                new OutputFormatterPart<TableList>(FormatTableList),
             };
 
             NamespaceUrlFormat = "{namespace}.htm";
@@ -74,7 +79,41 @@ namespace Docu.UI
             return "<var>" + comment.Parameter + "</var>";
         }
 
-        
+        private string formatInlineList(IEnumerable<InlineListItem> items, string outerTagFormat, string itemFormat, string termFormat, string definitionFormat)
+        {
+            var output = new StringBuilder();
+            foreach (var listItem in items)
+            {
+                string term = null;
+                string definition = null; 
+                if (listItem.Term != null) term = String.Format(termFormat, FormatGeneralContainer(listItem.Term));
+                if (listItem.Definition != null) definition = String.Format(definitionFormat, FormatGeneralContainer(listItem.Definition));
+                output.AppendFormat(itemFormat, term, definition);
+            }
+            return string.Format(outerTagFormat, output);
+        }
+
+        private string FormatDefinitionList(DefinitionList comment)
+        {
+            return formatInlineList(comment.Items, "<dl>{0}</dl>", "{0}{1}", "<dt>{0}</dt>", "<dd>{0}</dd>");
+        }
+
+        private string FormatTableList(TableList comment)
+        {
+            return formatInlineList(comment.Items, "<table>{0}</table>", "<tr>{0}{1}</tr>", "<td>{0}</td>", "<td>{0}</td>");
+        }
+
+        private string FormatNumberList(NumberList comment)
+        {
+            return formatInlineList(comment.Items, "<ol>{0}</ol>", "<li>{0}{1}</li>", "{0}", "{0}");
+        }
+
+        private string FormatBulletList(BulletList comment)
+        {
+            return formatInlineList(comment.Items, "<ul>{0}</ul>", "<li>{0}{1}</li>", "{0}", "{0}");
+        }
+
+
 
         private string FormatSee(See block)
         {

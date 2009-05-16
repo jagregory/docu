@@ -17,7 +17,7 @@ namespace Docu.Documentation
             : base(identifier)
         {
             Type = type;
-            Returns = new Returns();
+            Returns = new Summary();
         }
 
         public IList<MethodParameter> Parameters
@@ -47,7 +47,7 @@ namespace Docu.Documentation
 
         public DeclaredType Type { get; set; }
         public IReferencable ReturnType { get; set; }
-        public Returns Returns { get; set; }
+        public Summary Returns { get; set; }
 
         public string FullName
         {

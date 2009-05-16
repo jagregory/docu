@@ -21,6 +21,18 @@ namespace Docu.Tests
             return method;
         }
 
+        protected MethodInfo Method<T>(Expression<Func<T, object>> methodAction)
+        {
+            var method = ((MethodCallExpression)methodAction.Body).Method;
+
+            if (method.IsGenericMethod)
+                return method.GetGenericMethodDefinition();
+
+            return method;
+        }
+
+
+
         protected PropertyInfo Property<T>(Expression<Func<T, object>> propertyAction)
         {
             return ((MemberExpression)propertyAction.Body).Member as PropertyInfo;

@@ -1,0 +1,13 @@
+Modelling
+Generated with http://www.websequencediagrams.com
+
+AssemblyXmlParser->DocumentModel: Transform parsed to comment model
+
+loop each GenerationStep
+  DocumentModel->GenerationStep: Convert matching to model\nReferences to other entities are marked as unresolved
+  GenerationStep->DocumentModel: Return model
+end
+
+loop each Unresolved Reference
+  DocumentModel->DocumentModel: Resolve references
+end

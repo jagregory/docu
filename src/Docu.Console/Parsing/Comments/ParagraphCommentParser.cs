@@ -1,4 +1,3 @@
-using System;
 using System.Xml;
 using Docu.Documentation.Comments;
 
@@ -15,18 +14,7 @@ namespace Docu.Parsing.Comments
 
         public IComment Parse(XmlNode content, bool first, bool last)
         {
-            // strip paragraph if there's only one
-            if (first && last)
-            {
-                return new InlineText(PrepareText(content.InnerText, true, true));
-            }
-
-            Paragraph paragraph = new Paragraph();
-
-            foreach (var child in parser.Parse(content.ChildNodes))
-                paragraph.AddChild(child);
-
-            return paragraph;
+            return new Paragraph(parser.Parse(content.ChildNodes));
         }
     }
 }

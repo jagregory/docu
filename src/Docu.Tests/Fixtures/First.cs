@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Example
 {
@@ -25,6 +26,11 @@ namespace Example
         public string MethodWithReturn()
         {
             return "";
+        }
+
+        public void MethodWithArray(string[] strings)
+        {
+            
         }
     }
 
@@ -123,6 +129,11 @@ namespace Example
         }
 
         public void DoWithLookup<K,V>(IDictionary<K,V> lookup, K key)
+        {
+            
+        }
+
+        public void Evaluate<MODEL>(IDictionary<string, Expression<Func<MODEL, object>>> expressions, int maxCount)
         {
             
         }

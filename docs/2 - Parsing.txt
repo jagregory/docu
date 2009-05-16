@@ -1,0 +1,10 @@
+Parsing
+Generated with http://www.websequencediagrams.com
+
+DocumentationGenerator->AssemblyXmlParser: Load and parse Xml and Assemblies
+AssemblyXmlParser->DocumentableMembersFinder: Find members of assemblies to document
+DocumentableMembersFinder->AssemblyXmlParser: Return found members
+AssemblyXmlParser->DocumentationXmlMatcher: Match Xml nodes to documentable members
+DocumentationXmlMatcher->AssemblyXmlParser: Return paired members
+AssemblyXmlParser->DocumentModel: Transform pairs to model
+DocumentModel->AssemblyXmlParser: Return model

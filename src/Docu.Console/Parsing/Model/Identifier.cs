@@ -1,13 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Docu.Parsing.Model
 {
     public abstract class Identifier : IComparable<Identifier>, IEquatable<Identifier>
     {
+        private const string GENERIC_PARAMATER_PREFIX = "``";
+        private const string GENERIC_RANK_PREFIX = "`";
+        private const string ARRAY_TYPE_SUFFIX = "[]";
+        private static readonly string GENERIC_TYPE_NAMESPACE = string.Empty;
         private readonly string name;
         private static Dictionary<string, Type> nameToType;
+        private static char START_GENERIC_ARGUMENTS = '{';
+        private static char END_GENERIC_ARGUMENTS = '}';
 
         protected Identifier(string name)
         {
@@ -21,8 +28,8 @@ namespace Docu.Parsing.Model
 
         public static TypeIdentifier FromType(Type type)
         {
-            return type.IsGenericParameter 
-                ? new TypeIdentifier(type.GenericParameterPosition.ToString(), string.Empty) 
+            return type.IsGenericParameter
+                ? new TypeIdentifier(GENERIC_PARAMATER_PREFIX + type.GenericParameterPosition, GENERIC_TYPE_NAMESPACE) 
                 : new TypeIdentifier(type.Name, type.Namespace);
         }
 
@@ -32,7 +39,7 @@ namespace Docu.Parsing.Model
             var parameters = new List<TypeIdentifier>();
 
             if (method.IsGenericMethod)
-                name += "``" + method.GetGenericArguments().Length;
+                name += GENERIC_PARAMATER_PREFIX + method.GetGenericArguments().Length;
 
             foreach (ParameterInfo param in method.GetParameters())
             {
@@ -64,20 +71,20 @@ namespace Docu.Parsing.Model
 
         public static Identifier FromString(string name)
         {
-            var prefix = name.Substring(0, 1);
+            var prefix = name[0];
             var trimmedName = name.Substring(2);
 
-            if (prefix == "T")
+            if (prefix == 'T')
                 return FromTypeString(trimmedName);
-            if (prefix == "N")
+            if (prefix == 'N')
                 return FromNamespace(trimmedName);
-            if (prefix == "M")
+            if (prefix == 'M')
                 return FromMethodName(trimmedName);
-            if (prefix == "P")
+            if (prefix == 'P')
                 return FromPropertyName(trimmedName);
-            if (prefix == "E")
+            if (prefix == 'E')
                 return FromEventName(trimmedName);
-            if (prefix == "F")
+            if (prefix == 'F')
                 return FromFieldName(trimmedName);
 
             throw new UnsupportedDocumentationMemberException(name);
@@ -167,54 +174,84 @@ namespace Docu.Parsing.Model
         private static List<TypeIdentifier> GetMethodParameters(string fullName)
         {
             var parameters = new List<TypeIdentifier>();
+            if (!fullName.EndsWith(")")) return parameters;
 
-            if(nameToType == null)
+            buildTypeLookup();
+
+            var firstCharAfterParen = fullName.IndexOf("(") + 1;
+            var paramList = fullName.Substring(firstCharAfterParen, fullName.Length - firstCharAfterParen - 1) ;
+
+            foreach (var paramName in ParseMethodParameterList(paramList))
             {
-                // build type lookup table
-                nameToType = new Dictionary<string, Type>();
-                foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                if (IsGenericArgument(paramName))
                 {
-                    foreach(Type type in assembly.GetTypes())
-                    {
-                        nameToType[type.FullName] = type;
-                    }
+                    parameters.Add(new TypeIdentifier(paramName, GENERIC_TYPE_NAMESPACE));
+                    continue;
                 }
-            }
-
-            if (fullName.EndsWith(")"))
-            {
-                string paramList = fullName.Substring(fullName.IndexOf("(") + 1);
-                paramList = paramList.Substring(0, paramList.Length - 1);
-
-                foreach (string paramName in ParseMethodParameterList(paramList))
+                var typeNameToFind = paramName;
+                var startOfGenericArguments = paramName.IndexOf(START_GENERIC_ARGUMENTS);
+                if (startOfGenericArguments > 0)
                 {
-                    Type paramType;
-                    if (paramName.StartsWith("``"))
-                    {
-                        parameters.Add(new TypeIdentifier(paramName.Substring(2), ""));
-                    }
-                    else
-                    {
-                        var typeNameToFind = paramName;
-                        var genericParamPosition = paramName.IndexOf('{');
-                        if (genericParamPosition > 0)
-                        {
-                            var openTypeName = paramName.Substring(0, genericParamPosition);
-                            var endOfGenericParams = paramName.IndexOf('}', genericParamPosition);
-                            var lengthOfGenericParamsSection = endOfGenericParams - genericParamPosition - 1;
-                            System.Diagnostics.Debug.Assert(genericParamPosition + 1 + lengthOfGenericParamsSection <= paramName.Length, "Failure parsing:" + paramName);
-                            var genericParamList = paramName.Substring(genericParamPosition + 1, lengthOfGenericParamsSection).Split(',');
-                            typeNameToFind = openTypeName + "`" + genericParamList.Length;
-                        }
-                        if (nameToType.TryGetValue(typeNameToFind, out paramType))
-                        {
-                            parameters.Add(FromType(paramType));
-                        }
-                    }
+                    var nonGenericPartOfTypeName = paramName.Substring(0, startOfGenericArguments);
+                    var endOfGenericArguments = paramName.LastIndexOf(END_GENERIC_ARGUMENTS);
+                    var lengthOfGenericArgumentsSection = endOfGenericArguments - startOfGenericArguments - 1;
+                    var genericArgumentsSection = paramName.Substring(startOfGenericArguments + 1, lengthOfGenericArgumentsSection);
+                    var countOfGenericParametersForType = countOfGenericArguments(genericArgumentsSection);
+                    typeNameToFind = nonGenericPartOfTypeName + GENERIC_RANK_PREFIX + countOfGenericParametersForType;
+                }
+                Type paramType;
+                var isArray = typeNameToFind.EndsWith(ARRAY_TYPE_SUFFIX);
+                if (isArray) typeNameToFind = typeNameToFind.Substring(0, typeNameToFind.Length - 2);
+                if (nameToType.TryGetValue(typeNameToFind, out paramType))
+                {
+                    if (isArray) paramType = paramType.MakeArrayType();
+                    parameters.Add(FromType(paramType));
                 }
             }
 
             return parameters;
+        }
+
+        private static int countOfGenericArguments(string genericArguments)
+        {
+            var count = 1;
+            var startPosition = 0;
+            while (startPosition < genericArguments.Length)
+            {
+                var positionOfInterestingChar = genericArguments.IndexOfAny(new[] {START_GENERIC_ARGUMENTS, ','}, startPosition);
+                if (positionOfInterestingChar < 0)
+                {
+                    return count;
+                }
+                if (genericArguments[positionOfInterestingChar] == START_GENERIC_ARGUMENTS)
+                {
+                    startPosition = indexAfterGenericArguments(genericArguments, positionOfInterestingChar);
+                }
+                else
+                {
+                    ++count;
+                    startPosition = positionOfInterestingChar + 1;
+                }
+            }
+            return count;
+        }
+
+        private static bool IsGenericArgument(string parameter)
+        {
+            return parameter.StartsWith(GENERIC_PARAMATER_PREFIX);
+        }
+
+        private static void buildTypeLookup()
+        {
+            if (nameToType != null) return;
+            nameToType = new Dictionary<string, Type>();
+            foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach(var type in assembly.GetTypes())
+                {
+                    nameToType[type.FullName] = type;
+                }
+            }
         }
 
         public static IEnumerable<string> ParseMethodParameterList(string methodParameters)
@@ -222,7 +259,7 @@ namespace Docu.Parsing.Model
             var startPosition = 0;
             while (startPosition < methodParameters.Length)
             {
-                var positionOfInterestingChar = methodParameters.IndexOfAny(new[] {'{', ','}, startPosition);
+                var positionOfInterestingChar = methodParameters.IndexOfAny(new[] {START_GENERIC_ARGUMENTS, ','}, startPosition);
                 if (positionOfInterestingChar < 0)
                 {
                     if (startPosition == 0)
@@ -237,15 +274,31 @@ namespace Docu.Parsing.Model
                 }
                 else
                 {
-                    if (methodParameters[positionOfInterestingChar] == '{')
+                    if (methodParameters[positionOfInterestingChar] == START_GENERIC_ARGUMENTS)
                     {
-                        positionOfInterestingChar = methodParameters.IndexOf('}', positionOfInterestingChar) + 1;
-                    }   
+                        //Generic parameter 
+                        positionOfInterestingChar = indexAfterGenericArguments(methodParameters, positionOfInterestingChar);
+                    }
                     yield return methodParameters.Substring(startPosition, positionOfInterestingChar - startPosition);
                     startPosition = positionOfInterestingChar + 1;
                 }
 
             }
+        }
+
+        private static int indexAfterGenericArguments(string parameterList, int startPosition)
+        {
+            // - may contain ',' for multiple generic arguments for the single parameter type: IDictionary<KEY,VALUE>
+            // - may contain '{' for generics of generics: IEnumerable<Nullable<int>>
+            var genericNesting = 1;
+            while (genericNesting > 0)
+            {
+                startPosition = parameterList.IndexOfAny(new[] { START_GENERIC_ARGUMENTS, END_GENERIC_ARGUMENTS }, startPosition + 1);
+                genericNesting += (parameterList[startPosition] == START_GENERIC_ARGUMENTS) ? 1 : -1;
+            }
+            //position needs to be the index AFTER the complete parameter string
+            startPosition = startPosition + 1;
+            return startPosition;
         }
 
         public abstract NamespaceIdentifier CloneAsNamespace();

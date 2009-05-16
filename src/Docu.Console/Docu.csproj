@@ -21,8 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>bin\Debug\docu.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -69,9 +69,9 @@
     <Compile Include="Console\ParameterSwitch.cs" />
     <Compile Include="Console\Switch.cs" />
     <Compile Include="Documentation\Comments\BaseComment.cs" />
+    <Compile Include="Documentation\Comments\InlineList.cs" />
     <Compile Include="Documentation\Comments\ParameterReference.cs" />
     <Compile Include="Documentation\Comments\Remarks.cs" />
-    <Compile Include="Documentation\Comments\Returns.cs" />
     <Compile Include="Documentation\Comments\Summary.cs" />
     <Compile Include="Documentation\Comments\Value.cs" />
     <Compile Include="Documentation\Generators\BaseGenerator.cs" />
@@ -123,6 +123,7 @@
     <Compile Include="IO\IXmlLoader.cs" />
     <Compile Include="Parsing\Comments\CommentParserBase.cs" />
     <Compile Include="Parsing\Comments\InlineCodeCommentParser.cs" />
+    <Compile Include="Parsing\Comments\InlineListCommentParser.cs" />
     <Compile Include="Parsing\Comments\InlineTextCommentParser.cs" />
     <Compile Include="Parsing\Comments\MultilineCodeCommentParser.cs" />
     <Compile Include="Parsing\Comments\ParagraphCommentParser.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="Documentation\DocumentModel.cs" />
     <Compile Include="IO\XmlLoader.cs" />
     <Compile Include="Generation\UntransformableResourceManager.cs" />
+    <Compile Include="UI\TemplateHelperExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="templates\index.htm.spark">
