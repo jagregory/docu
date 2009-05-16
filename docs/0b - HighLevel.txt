@@ -1,0 +1,8 @@
+High level
+Generated with http://www.websequencediagrams.com
+
+DocumentationGenerator->AssemblyXmlParser: Parse Xml and Assemblies
+AssemblyXmlParser->DocumentModel: Transform parsed into model
+DocumentModel->AssemblyXmlParser: Return model
+AssemblyXmlParser->DocumentationGenerator: Return model
+DocumentationGenerator->BulkPageWriter: Generate and output docs
