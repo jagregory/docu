@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Comments;
+using Docu.Parsing.Model;
 using Example;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -46,8 +47,9 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldHaveSummaryForMethods()
         {
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
-            var members = new[]
+            var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)""><summary>Second method 2</summary></member>", x => x.SecondMethod2(null, 0))
             };
             var namespaces = model.Create(members);
@@ -77,8 +79,9 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldHaveSummaryForProperties()
         {
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
-            var members = new[]
+            var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty""><summary>Second property</summary></member>", x => x.SecondProperty),
             };
             var namespaces = model.Create(members);
@@ -92,8 +95,9 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldHaveSummaryForEvents()
         {
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
-            var members = new[]
+            var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Event<Second>(@"<member name=""E:Example.Second.AnEvent""><summary>An event</summary></member>", "AnEvent"),
             };
             var namespaces = model.Create(members);
@@ -107,8 +111,9 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldHaveSummaryForFields()
         {
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
-            var members = new[]
+            var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Field<Second>(@"<member name=""F:Example.Second.aField""><summary>A field</summary></member>", x => x.aField),
             };
             var namespaces = model.Create(members);
@@ -122,8 +127,9 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldHaveSummaryForMethodParameter()
         {
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
-            var members = new[]
+            var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Method<Second>(@"
                 <member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"">
                   <param name=""one"">First parameter</param>

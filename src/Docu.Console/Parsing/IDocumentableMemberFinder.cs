@@ -6,6 +6,6 @@ namespace Docu.Parsing
 {
     public interface IDocumentableMemberFinder
     {
-        IList<IDocumentationMember> GetMembersForDocumenting(IEnumerable<Type> types);
+        IEnumerable<IDocumentationMember> GetMembersForDocumenting(IEnumerable<Type> types);
     }
 }

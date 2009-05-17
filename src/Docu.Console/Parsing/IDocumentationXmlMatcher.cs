@@ -6,6 +6,6 @@ namespace Docu.Parsing
 {
     public interface IDocumentationXmlMatcher
     {
-        IList<IDocumentationMember> DocumentMembers(IList<IDocumentationMember> undocumentedMembers, XmlNode[] snippets);
+        IList<IDocumentationMember> DocumentMembers(IEnumerable<IDocumentationMember> undocumentedMembers, IEnumerable<XmlNode> snippets);
     }
 }

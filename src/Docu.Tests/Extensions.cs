@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
+using Rhino.Mocks;
+using Rhino.Mocks.Constraints;
+using Rhino.Mocks.Interfaces;
+using Is=NUnit.Framework.Is;
 
 namespace Docu.Tests
 {
@@ -107,6 +112,85 @@ namespace Docu.Tests
         public static T Second<T>(this IEnumerable<T> list)
         {
             return list.ElementAtOrDefault(1);
+        }
+
+        public static CapturingConstraint CaptureArgumentsFor<MOCK>(this MOCK mock, Expression<Action<MOCK>> methodExpression) 
+            where MOCK : class
+        {
+            return CaptureArgumentsFor(mock, methodExpression, o => { });
+        }
+
+        public static CapturingConstraint CaptureArgumentsFor<MOCK>(this MOCK mock, Expression<Action<MOCK>> methodExpression, Action<IMethodOptions<RhinoMocksExtensions.VoidType>> optionsAction)
+            where MOCK : class
+        {
+            return CaptureArgumentsFor(mock,
+                methodExpression,
+                m => m.Expect(methodExpression.Compile()),
+                optionsAction);
+        }
+
+        public static CapturingConstraint CaptureArgumentsFor<MOCK>(this MOCK mock, Expression<Function<MOCK, object>> methodExpression)
+            where MOCK : class
+        {
+            return CaptureArgumentsFor(mock, methodExpression, o => { });
+        }
+
+        public static CapturingConstraint CaptureArgumentsFor<MOCK, RESULT>(this MOCK mock, Expression<Function<MOCK, RESULT>> methodExpression, Action<IMethodOptions<RESULT>> optionsAction)
+            where MOCK : class
+        {
+            return CaptureArgumentsFor(mock,
+                methodExpression,
+                m => m.Expect(methodExpression.Compile()),
+                optionsAction);
+        }
+
+        public static CapturingConstraint CaptureArgumentsFor<MOCK, DELEGATETYPE, OPTIONTYPE>(MOCK mock,
+                                                            Expression<DELEGATETYPE> methodExpression,
+                                                            Func<MOCK, IMethodOptions<OPTIONTYPE>> expectAction,
+                                                            Action<IMethodOptions<OPTIONTYPE>> optionsAction)
+            where MOCK : class
+        {
+            var method = ReflectionHelper.GetMethod(methodExpression);
+            var constraint = new CapturingConstraint();
+            var constraints = new List<AbstractConstraint>();
+
+            method.GetParameters().ForEach(p => constraints.Add(constraint));
+
+            var expectation = expectAction(mock).Constraints(constraints.ToArray()).Repeat.Any();
+            optionsAction(expectation);
+
+            return constraint;
+        }
+
+        public class CapturingConstraint : AbstractConstraint
+        {
+            private readonly ArrayList argList = new ArrayList();
+
+            public override string Message
+            {
+                get { return ""; }
+            }
+
+            public override bool Eval(object obj)
+            {
+                argList.Add(obj);
+                return true;
+            }
+
+            public T First<T>()
+            {
+                return ArgumentAt<T>(0);
+            }
+
+            public T ArgumentAt<T>(int pos)
+            {
+                return (T)argList[pos];
+            }
+
+            public T Second<T>()
+            {
+                return ArgumentAt<T>(1);
+            }
         }
     }
 }

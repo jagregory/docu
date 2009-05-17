@@ -18,7 +18,7 @@ namespace Docu
         private readonly IEventAggregator eventAggregator;
         private readonly IBulkPageWriter writer;
         private readonly IXmlLoader xmlLoader;
-        private readonly List<string> xmls = new List<string>();
+        private readonly List<string> contentsOfXmlFiles = new List<string>();
         private string outputPath = "output";
         private string templatePath = Path.Combine(Path.GetDirectoryName(typeof(DocumentationGenerator).Assembly.Location), "templates");
 
@@ -63,13 +63,13 @@ namespace Docu
         {
             foreach (string xmlFile in xmlFiles)
             {
-                xmls.Add(xmlLoader.LoadFrom(xmlFile));
+                contentsOfXmlFiles.Add(xmlLoader.LoadFrom(xmlFile));
             }
         }
 
         public void SetXmlContent(IEnumerable<string> xmlContents)
         {
-            xmls.AddRange(xmlContents);
+            contentsOfXmlFiles.AddRange(xmlContents);
         }
 
         public void SetTemplatePath(string templateDirectory)
@@ -84,7 +84,7 @@ namespace Docu
 
         public void Generate()
         {
-            var documentModel = parser.CreateDocumentModel(assemblies, xmls);
+            var documentModel = parser.CreateDocumentModel(assemblies, contentsOfXmlFiles);
 
             writer.SetAssemblies(assemblies);
             

@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Reflection;
+using System.Xml;
 using Docu.Documentation;
 using Docu.Parsing;
 using Docu.Parsing.Model;
@@ -7,6 +9,7 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using CList = Rhino.Mocks.Constraints.List;
 using CIs = Rhino.Mocks.Constraints.Is;
+using System.Linq;
 
 namespace Docu.Tests.Parsing
 {
@@ -50,15 +53,11 @@ namespace Docu.Tests.Parsing
             StubDocMembers.Stub(x => x.GetMembersForDocumenting(null))
                 .IgnoreArguments()
                 .Return(members);
+            var capturedArgsForDocumentMembers = matcher.CaptureArgumentsFor(x => x.DocumentMembers(null, null), onCall => onCall.Return(null));
 
-            parser.CreateDocumentModel(assemblies, new[] {""});
-
-            matcher.AssertWasCalled(
-                x => x.DocumentMembers(null, null),
-                x => x.IgnoreArguments()
-                         .Constraints(
-                         CIs.Equal(members),
-                         CIs.Anything()));
+            parser.CreateDocumentModel(assemblies, new[] { "" });
+            
+            capturedArgsForDocumentMembers.First<IEnumerable<IDocumentationMember>>().ShouldBeSameAs(members);
         }
 
         [Test]
@@ -67,15 +66,11 @@ namespace Docu.Tests.Parsing
             var matcher = MockRepository.GenerateMock<IDocumentationXmlMatcher>();
             var parser = new AssemblyXmlParser(matcher, StubDocModel, StubDocMembers);
             var assemblies = new Assembly[0];
+            var capturedArgsForDocumentMembers = matcher.CaptureArgumentsFor(x => x.DocumentMembers(null, null), onCall => onCall.Return(null));
 
             parser.CreateDocumentModel(assemblies, Xml);
 
-            matcher.AssertWasCalled(
-                x => x.DocumentMembers(null, null),
-                x => x.IgnoreArguments()
-                         .Constraints(
-                         CIs.Anything(),
-                         CList.Count(CIs.GreaterThan(0))));
+            capturedArgsForDocumentMembers.Second<IEnumerable<XmlNode>>().Count().ShouldNotEqual(0);
         }
 
         [Test]

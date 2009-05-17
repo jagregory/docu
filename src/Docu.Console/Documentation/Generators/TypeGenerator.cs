@@ -23,22 +23,10 @@ namespace Docu.Documentation.Generators
             ParseRemarks(association, doc);
             ParseValue(association, doc);
 
-            if (matchedAssociations.ContainsKey(association.Name))
-                return; // weird case when a type has the same method declared twice
+            if (matchedAssociations.ContainsKey(association.Name)) return;
 
             matchedAssociations.Add(association.Name, doc);
             ns.AddType(doc);
-        }
-
-        public void PrePopulate(List<Namespace> namespaces, IDocumentationMember association)
-        {
-            if (association is DocumentedType) return;
-
-            var ns = FindNamespace(association, namespaces);
-            var type = FindType(ns, association);
-
-            if (type == null)
-                Add(namespaces, new DocumentedType(association.Name.CloneAsType(), null, association.TargetType));
         }
     }
 }

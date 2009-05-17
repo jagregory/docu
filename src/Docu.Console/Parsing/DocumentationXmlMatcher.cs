@@ -6,7 +6,7 @@ namespace Docu.Parsing
 {
     public class DocumentationXmlMatcher : IDocumentationXmlMatcher
     {
-        public IList<IDocumentationMember> DocumentMembers(IList<IDocumentationMember> undocumentedMembers, XmlNode[] snippets)
+        public IList<IDocumentationMember> DocumentMembers(IEnumerable<IDocumentationMember> undocumentedMembers, IEnumerable<XmlNode> snippets)
         {
             var members = new List<IDocumentationMember>(undocumentedMembers);
 
@@ -100,16 +100,18 @@ namespace Docu.Parsing
             }
         }
 
-        private void ParseType(IList<IDocumentationMember> members, XmlNode node)
+        private void ParseType(List<IDocumentationMember> members, XmlNode node)
         {
-            Identifier member = Identifier.FromString(node.Attributes["name"].Value);
-
-            for (int i = 0; i < members.Count; i++)
+            var identifier = Identifier.FromString(node.Attributes["name"].Value);
+            var positionOfUndocumentedType = members.FindIndex(m =>
             {
-                var typeMember = members[i] as UndocumentedType;
+                var typeMember = m as UndocumentedType;
+                return typeMember != null && typeMember.Match(identifier);
+            });
 
-                if (typeMember != null && typeMember.Match(member))
-                    members[i] = new DocumentedType(member, node, typeMember.TargetType);
+            if (positionOfUndocumentedType >= 0)
+            {
+                members[positionOfUndocumentedType] = new DocumentedType(identifier, node, members[positionOfUndocumentedType].TargetType);
             }
         }
     }
