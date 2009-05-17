@@ -6,6 +6,7 @@ using Docu.Parsing.Model;
 using Example;
 using Example.Deep;
 using NUnit.Framework;
+using System.Linq;
 
 namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 {
@@ -43,6 +44,18 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 
             namespaces[0].Types[0].ParentType.ShouldNotBeNull();
             namespaces[0].Types[0].ParentType.PrettyName.ShouldEqual("object");
+        }
+
+        [Test]
+        public void should_have_summary_for_documented_types()
+        {
+            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var members = new List<IDocumentationMember>(DocMembers(typeof(First)));
+            var indexOfType = members.FindIndex(m => m is UndocumentedType);
+            members[indexOfType] = Type<First>(@"<member name=""T:Example.First""><summary>The type description</summary></member>");
+            var namespaces = model.Create(members);
+            var onlyTypeInModel = namespaces.Single().Types.Single();
+            onlyTypeInModel.Summary.Children.Count().ShouldNotEqual(0);
         }
 
         [Test]
@@ -142,17 +155,6 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         }
 
         [Test]
-        public void ShouldForceTypeIfOnlyMethodDefined()
-        {
-            var model = new DocumentModel(StubParser, StubEventAggregator);
-            var members = new[] { Method<Second>(@"<member name=""M:Example.Second.SecondMethod"" />", x => x.SecondMethod()) };
-            var namespaces = model.Create(members);
-
-            namespaces[0].Name.ShouldEqual("Example");
-            namespaces[0].Types.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(Second))));
-        }
-
-        [Test]
         public void ShouldHaveMethodsInTypes()
         {
             var model = new DocumentModel(StubParser, StubEventAggregator);
@@ -177,6 +179,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty"" />", x => x.SecondProperty)
             };
             var namespaces = model.Create(members);
@@ -191,6 +194,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty"" />", x => x.SecondProperty)
             };
             var namespaces = model.Create(members);
@@ -206,6 +210,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Field<Second>(@"<member name=""F:Example.Second.aField"" />", x => x.aField)
             };
             var namespaces = model.Create(members);
@@ -221,12 +226,12 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
-                Type<First>(@"<member name=""T:Example.First"" />"),
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod2(System.String,Example.First)"" />", x => x.SecondMethod3(null, null))
             };
             var namespaces = model.Create(members);
 
-            var method = namespaces[0].Types[1].Methods[0];
+            var method = namespaces[0].Types[0].Methods[0];
 
             method.Parameters.Count.ShouldEqual(2);
             method.Parameters[0].Name.ShouldEqual("one");
@@ -241,6 +246,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var model = new DocumentModel(StubParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Method<Second>(@"<member name=""M:Example.Second.ReturnType"" />", x => x.ReturnType())
             };
             var namespaces = model.Create(members);

@@ -23,16 +23,5 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             namespaces[0].Types[0].Fields
                 .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromField(field, typeof(Second))));
         }
-
-        [Test]
-        public void ShouldForceTypeIfOnlyEventDefined()
-        {
-            var model = new DocumentModel(StubParser, StubEventAggregator);
-            var members = new[] { Field<Second>(@"<member name=""F:Example.Second.aField"" />", x => x.aField) };
-            var namespaces = model.Create(members);
-
-            namespaces[0].Name.ShouldEqual("Example");
-            namespaces[0].Types.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(Second))));
-        }
     }
 }

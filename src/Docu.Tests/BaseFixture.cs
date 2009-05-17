@@ -74,7 +74,7 @@ namespace Docu.Tests
             return type;
         }
 
-        protected IList<IDocumentationMember> DocMembers(params Type[] types)
+        protected IEnumerable<IDocumentationMember> DocMembers(params Type[] types)
         {
             var documentableMembers = new DocumentableMemberFinder();
 

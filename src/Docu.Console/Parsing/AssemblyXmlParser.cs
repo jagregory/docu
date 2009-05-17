@@ -20,42 +20,38 @@ namespace Docu.Parsing
             this.documentableMembers = documentableMembers;
         }
 
-        public IList<Namespace> CreateDocumentModel(IEnumerable<Assembly> assemblies, IEnumerable<string> xml)
+        public IList<Namespace> CreateDocumentModel(IEnumerable<Assembly> assemblies, IEnumerable<string> xmlDocumentContents)
         {
-            IEnumerable<IDocumentationMember> members = GetAssociations(assemblies, xml);
+            var members = GetAssociations(assemblies, xmlDocumentContents);
 
             return documentModel.Create(members);
         }
 
-        private IEnumerable<IDocumentationMember> GetAssociations(IEnumerable<Assembly> assemblies, IEnumerable<string> xml)
+        private IEnumerable<IDocumentationMember> GetAssociations(IEnumerable<Assembly> assemblies, IEnumerable<string> xmlDocumentContents)
         {
-            IList<IDocumentationMember> undocumentedMembers = GetUndocumentedMembers(assemblies);
-            XmlNode[] members = GetMembersXml(xml);
+            var undocumentedMembers = GetUndocumentedMembers(assemblies);
+            var members = GetMembersXml(xmlDocumentContents);
 
             return xmlMatcher.DocumentMembers(undocumentedMembers, members);
         }
 
-        private XmlNode[] GetMembersXml(IEnumerable<string> xml)
+        private IEnumerable<XmlNode> GetMembersXml(IEnumerable<string> xmlDocumentContents)
         {
-            var nodes = new List<XmlNode>();
-
-            foreach (string chunk in xml)
+            foreach (var xmlDocumentContent in xmlDocumentContents)
             {
-                if (string.IsNullOrEmpty(chunk)) continue;
+                if (string.IsNullOrEmpty(xmlDocumentContent)) continue;
 
                 var doc = new XmlDocument();
-                doc.LoadXml(chunk);
+                doc.LoadXml(xmlDocumentContent);
 
-                foreach (object node in doc.SelectNodes("doc/members/*"))
+                foreach (XmlNode node in doc.SelectNodes("doc/members/*"))
                 {
-                    nodes.Add((XmlNode)node);
+                    yield return node;
                 }
             }
-
-            return nodes.ToArray();
         }
 
-        private IList<IDocumentationMember> GetUndocumentedMembers(IEnumerable<Assembly> assemblies)
+        private IEnumerable<IDocumentationMember> GetUndocumentedMembers(IEnumerable<Assembly> assemblies)
         {
             var types = new List<Type>();
 

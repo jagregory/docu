@@ -35,7 +35,6 @@ namespace Docu.Documentation
             steps = new List<IGenerationStep>
             {
                 new GenerationStep<IDocumentationMember>(Namespaces.Add),
-                new GenerationStep<IDocumentationMember>(Types.PrePopulate),
                 new GenerationStep<DocumentedType>(Types.Add),
                 new GenerationStep<DocumentedMethod>(Methods.Add),
                 new GenerationStep<DocumentedProperty>(Properties.Add),

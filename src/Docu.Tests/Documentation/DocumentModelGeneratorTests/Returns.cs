@@ -3,6 +3,7 @@ using System.Linq;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Comments;
+using Docu.Parsing.Model;
 using Example;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -16,8 +17,9 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldHaveReturnsForMethods()
         {
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
-            var members = new[]
+            var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Method<Second>(@"<member name=""M:Example.Second.ReturnType""><returns>Method with return</returns></member>", x => x.ReturnType()),
             };
             var namespaces = model.Create(members);

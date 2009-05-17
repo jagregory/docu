@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Comments;
+using Docu.Parsing.Model;
 using Example;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -46,8 +47,9 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldHaveRemarksForMethods()
         {
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
-            var members = new[]
+            var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)""><remarks>Second method 2</remarks></member>", x => x.SecondMethod2(null, 0))
             };
             var namespaces = model.Create(members);
@@ -77,8 +79,9 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldHaveRemarksForProperties()
         {
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
-            var members = new[]
+            var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty""><remarks>Second property</remarks></member>", x => x.SecondProperty),
             };
             var namespaces = model.Create(members);
@@ -92,8 +95,9 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldHaveRemarksForEvents()
         {
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
-            var members = new[]
+            var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Event<Second>(@"<member name=""E:Example.Second.AnEvent""><remarks>An event</remarks></member>", "AnEvent"),
             };
             var namespaces = model.Create(members);
@@ -107,8 +111,9 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldHaveRemarksForFields()
         {
             var model = new DocumentModel(new CommentParser(), StubEventAggregator);
-            var members = new[]
+            var members = new IDocumentationMember[]
             {
+                Type<Second>(@"<member name=""T:Example.Second"" />"),
                 Field<Second>(@"<member name=""F:Example.Second.aField""><remarks>A field</remarks></member>", x => x.aField),
             };
             var namespaces = model.Create(members);

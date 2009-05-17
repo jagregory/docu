@@ -9,7 +9,7 @@ namespace Docu.Parsing.Comments
     {
         public IComment Parse(XmlNode content, bool first, bool last)
         {
-            IReferencable reference = null;
+            IReferencable reference = new NullReference();
             if (content.Attributes["cref"] == null) return new See(reference);
             var referenceTarget = Identifier.FromString(content.Attributes["cref"].Value);
 
