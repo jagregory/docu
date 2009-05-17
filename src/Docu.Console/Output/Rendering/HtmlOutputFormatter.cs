@@ -5,7 +5,7 @@ using System.Web;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
 
-namespace Docu.UI
+namespace Docu.Output.Rendering
 {
     public class HtmlOutputFormatter : IOutputFormatter
     {

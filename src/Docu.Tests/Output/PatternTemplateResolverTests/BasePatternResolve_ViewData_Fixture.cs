@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Docu.Documentation;
-using Docu.Generation;
+using Docu.Output;
 using Example;
 using NUnit.Framework;
 
-namespace Docu.Tests.Generation.PatternTemplateResolverTests
+namespace Docu.Tests.Output.PatternTemplateResolverTests
 {
     public class BasePatternResolve_ViewData_Fixture : BaseFixture
     {

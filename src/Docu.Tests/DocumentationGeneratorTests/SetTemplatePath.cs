@@ -1,4 +1,4 @@
-using Docu.Generation;
+using Docu.Output;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;

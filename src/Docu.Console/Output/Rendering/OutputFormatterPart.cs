@@ -1,7 +1,7 @@
 using System;
 using Docu.Documentation.Comments;
 
-namespace Docu.UI
+namespace Docu.Output.Rendering
 {
     public class OutputFormatterPart<T> : IOutputFormatterPart
     {

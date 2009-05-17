@@ -5,10 +5,10 @@ using System.Reflection;
 using System.Text;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
-using Docu.Generation;
+using Docu.Output;
 using Spark;
 
-namespace Docu.UI
+namespace Docu.Output.Rendering
 {
     /// <summary>
     /// All public or protected methods and properties on this class are available within documentation templates

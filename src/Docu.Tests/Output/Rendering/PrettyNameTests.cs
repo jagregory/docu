@@ -2,7 +2,7 @@ using System;
 using Docu.Documentation;
 using NUnit.Framework;
 
-namespace Docu.Tests.UI
+namespace Docu.Tests.Output.Rendering
 {
     [TestFixture]
     public class PrettyNameTests

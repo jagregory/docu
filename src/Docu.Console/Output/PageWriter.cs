@@ -4,7 +4,7 @@ using System.Reflection;
 using Docu.Documentation;
 using Docu.IO;
 
-namespace Docu.Generation
+namespace Docu.Output
 {
     public class PageWriter : IPageWriter
     {

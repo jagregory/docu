@@ -1,11 +1,11 @@
 ﻿using Docu.Documentation;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Model;
-using Docu.UI;
+using Docu.Output.Rendering;
 using Example;
 using NUnit.Framework;
 
-namespace Docu.Tests.UI
+namespace Docu.Tests.Output.Rendering
 {
     [TestFixture]
     public class HtmlOutputFormatterTests

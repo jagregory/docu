@@ -1,6 +1,6 @@
 using Docu.Console;
 using Docu.Events;
-using Docu.Generation;
+using Docu.Output;
 using Docu.IO;
 using StructureMap.Configuration.DSL;
 

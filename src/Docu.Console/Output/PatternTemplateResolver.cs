@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Docu.Documentation;
 
-namespace Docu.Generation
+namespace Docu.Output
 {
     public class PatternTemplateResolver : IPatternTemplateResolver
     {
