@@ -1,8 +1,8 @@
 using System.IO;
-using Docu.Generation;
+using Docu.Output;
 using NUnit.Framework;
 
-namespace Docu.Tests.Generation
+namespace Docu.Tests.Output
 {
     public abstract class UntransformableResourceManagerTestsBase
     {

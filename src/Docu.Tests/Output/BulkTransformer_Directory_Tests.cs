@@ -1,10 +1,10 @@
 using System.IO;
 using Docu.Documentation;
-using Docu.Generation;
+using Docu.Output;
 using NUnit.Framework;
 using Rhino.Mocks;
 
-namespace Docu.Tests.Generation
+namespace Docu.Tests.Output
 {
     [TestFixture]
     public class BulkTransformer_Directory_Tests

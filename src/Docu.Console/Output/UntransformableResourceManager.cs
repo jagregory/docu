@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Docu.Generation
+namespace Docu.Output
 {
     public class UntransformableResourceManager : IUntransformableResourceManager
     {

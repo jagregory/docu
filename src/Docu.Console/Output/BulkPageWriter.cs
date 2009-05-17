@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using Docu.Documentation;
 
-namespace Docu.Generation
+namespace Docu.Output
 {
     public class BulkPageWriter : IBulkPageWriter
     {

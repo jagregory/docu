@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Docu.Documentation;
-using Docu.Generation;
+using Docu.Output;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Is=Rhino.Mocks.Constraints.Is;

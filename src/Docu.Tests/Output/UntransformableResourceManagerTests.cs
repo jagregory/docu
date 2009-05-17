@@ -1,7 +1,7 @@
 using System.IO;
 using NUnit.Framework;
 
-namespace Docu.Tests.Generation
+namespace Docu.Tests.Output
 {
     [TestFixture]
     public class UntransformableResourceManagerTests : UntransformableResourceManagerTestsBase

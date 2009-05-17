@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace Docu.Tests.Generation.PatternTemplateResolverTests
+namespace Docu.Tests.Output.PatternTemplateResolverTests
 {
     [TestFixture]
     public class single_template : BasePatternResolve_ViewData_Fixture

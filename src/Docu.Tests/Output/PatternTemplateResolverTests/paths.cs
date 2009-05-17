@@ -1,10 +1,10 @@
 using Docu.Documentation;
-using Docu.Generation;
+using Docu.Output;
 using Docu.Parsing.Model;
 using Example;
 using NUnit.Framework;
 
-namespace Docu.Tests.Generation.PatternTemplateResolverTests
+namespace Docu.Tests.Output.PatternTemplateResolverTests
 {
     [TestFixture]
     public class paths : BaseFixture

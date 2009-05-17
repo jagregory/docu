@@ -1,4 +1,4 @@
-namespace Docu.Generation
+namespace Docu.Output
 {
     public class TemplateMatch
     {

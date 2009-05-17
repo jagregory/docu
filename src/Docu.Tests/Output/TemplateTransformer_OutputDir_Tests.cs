@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using Docu.Documentation;
-using Docu.Generation;
+using Docu.Output;
 using Docu.IO;
 using Example;
 using Rhino.Mocks;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;
 using Test = NUnit.Framework.TestAttribute;
 
-namespace Docu.Tests.Generation
+namespace Docu.Tests.Output
 {
     [TestFixture]
     public class TemplateTransformer_OutputDir_Tests : BaseFixture

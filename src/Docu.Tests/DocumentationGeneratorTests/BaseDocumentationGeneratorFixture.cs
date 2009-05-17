@@ -1,5 +1,5 @@
 using Docu.Events;
-using Docu.Generation;
+using Docu.Output;
 using Docu.IO;
 using Docu.Parsing;
 using NUnit.Framework;

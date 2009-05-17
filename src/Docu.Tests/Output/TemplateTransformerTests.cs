@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using Docu.Documentation;
-using Docu.Generation;
+using Docu.Output;
 using Docu.IO;
 using Example;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Is=Rhino.Mocks.Constraints.Is;
 
-namespace Docu.Tests.Generation
+namespace Docu.Tests.Output
 {
     [TestFixture]
     public class TemplateTransformerTests : BaseFixture

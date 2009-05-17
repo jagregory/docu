@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
-using Docu.Generation;
+using Docu.Output;
 using Docu.Parsing.Model;
 using Docu.Tests.Utils;
 using Example;
 using NUnit.Framework;
 
-namespace Docu.Tests.Generation
+namespace Docu.Tests.Output
 {
     [TestFixture]
     public class HtmlGenerationTests : BaseFixture

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Docu.Documentation;
 
-namespace Docu.Generation
+namespace Docu.Output
 {
     public interface IPatternTemplateResolver
     {

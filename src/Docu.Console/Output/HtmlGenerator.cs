@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Docu.UI;
+using Docu.Output.Rendering;
 using Spark;
 using Spark.FileSystem;
 
-namespace Docu.Generation
+namespace Docu.Output
 {
     public class HtmlGenerator : IOutputGenerator
     {

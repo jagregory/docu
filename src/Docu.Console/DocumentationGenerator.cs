@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Docu.Events;
-using Docu.Generation;
+using Docu.Output;
 using Docu.IO;
 using Docu.Parsing;
 

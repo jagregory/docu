@@ -2,7 +2,7 @@
 using Docu.Documentation;
 using Docu.Documentation.Comments;
 
-namespace Docu.UI
+namespace Docu.Output.Rendering
 {
     public interface IOutputFormatter
     {
