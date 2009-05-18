@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Docu.Events;
-using StructureMap;
 
 namespace Docu.Console
 {
@@ -259,9 +258,9 @@ namespace Docu.Console
 
         public static void Run(IEnumerable<string> args)
         {
-            ContainerBootstrapper.BootstrapStructureMap();
+            var container = ContainerBootstrapper.BootstrapStructureMap();
 
-            var application = ObjectFactory.GetInstance<ConsoleApplication>();
+            var application = container.GetInstance<ConsoleApplication>();
 
             application.SetArguments(args);
             application.Run();

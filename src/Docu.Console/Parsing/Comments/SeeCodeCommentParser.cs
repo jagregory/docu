@@ -5,13 +5,18 @@ using Docu.Parsing.Model;
 
 namespace Docu.Parsing.Comments
 {
-    internal class SeeCodeCommentParser : CommentParserBase
+    public class SeeCodeCommentParser : ICommentNodeParser
     {
-        public IComment Parse(XmlNode content, bool first, bool last)
+        public bool CanParse(XmlNode node)
+        {
+            return node.Name == "see";
+        }
+
+        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last)
         {
             IReferencable reference = new NullReference();
-            if (content.Attributes["cref"] == null) return new See(reference);
-            var referenceTarget = Identifier.FromString(content.Attributes["cref"].Value);
+            if (node.Attributes["cref"] == null) return new See(reference);
+            var referenceTarget = Identifier.FromString(node.Attributes["cref"].Value);
 
             if (referenceTarget is NamespaceIdentifier)
                 reference = Namespace.Unresolved((NamespaceIdentifier)referenceTarget);

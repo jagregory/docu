@@ -15,7 +15,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveRemarksForType()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var members = new[]
             {
                 Type<First>(@"<member name=""T:Example.First""><remarks>First remark</remarks></member>"),
@@ -34,19 +34,19 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var model = new DocumentModel(contentParser, StubEventAggregator);
             var members = new[] { Type<First>(@"<member name=""T:Example.First""><remarks>First remark</remarks></member>") };
 
-            contentParser.Stub(x => x.Parse(null))
+            contentParser.Stub(x => x.ParseNode(null))
                 .IgnoreArguments()
                 .Return(new List<IComment>());
 
             model.Create(members);
 
-            contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[0]));
+            contentParser.AssertWasCalled(x => x.ParseNode(members[0].Xml.ChildNodes[0]));
         }
 
         [Test]
         public void ShouldHaveRemarksForMethods()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),
@@ -66,19 +66,19 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var model = new DocumentModel(contentParser, StubEventAggregator);
             var members = new[] { Method<Second>(@"<member name=""M:Example.Second.SecondMethod""><remarks>First remark</remarks></member>", x => x.SecondMethod()) };
 
-            contentParser.Stub(x => x.Parse(null))
+            contentParser.Stub(x => x.ParseNode(null))
                 .IgnoreArguments()
                 .Return(new List<IComment>());
 
             model.Create(members);
 
-            contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[0]));
+            contentParser.AssertWasCalled(x => x.ParseNode(members[0].Xml.ChildNodes[0]));
         }
 
         [Test]
         public void ShouldHaveRemarksForProperties()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),
@@ -94,7 +94,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveRemarksForEvents()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),
@@ -110,7 +110,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveRemarksForFields()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),

@@ -3,11 +3,16 @@ using Docu.Documentation.Comments;
 
 namespace Docu.Parsing.Comments
 {
-    internal class ParameterReferenceParser : CommentParserBase
+    public class ParameterReferenceParser : ICommentNodeParser
     {
-        public IComment Parse(XmlNode content, bool first, bool last)
+        public bool CanParse(XmlNode node)
         {
-            var attribute = content.Attributes["name"];
+            return node.Name == "paramref";
+        }
+
+        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last)
+        {
+            var attribute = node.Attributes["name"];
             var parameterName = attribute == null ? string.Empty : attribute.Value;
             return new ParameterReference(parameterName);
         }

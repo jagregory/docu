@@ -121,7 +121,7 @@
     <Compile Include="Output\IUntransformableResourceManager.cs" />
     <Compile Include="IO\IAssemblyLoader.cs" />
     <Compile Include="IO\IXmlLoader.cs" />
-    <Compile Include="Parsing\Comments\CommentParserBase.cs" />
+    <Compile Include="Parsing\Comments\ICommentNodeParser.cs" />
     <Compile Include="Parsing\Comments\InlineCodeCommentParser.cs" />
     <Compile Include="Parsing\Comments\InlineListCommentParser.cs" />
     <Compile Include="Parsing\Comments\InlineTextCommentParser.cs" />

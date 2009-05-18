@@ -6,6 +6,7 @@ namespace Docu.Parsing.Comments
 {
     public interface ICommentParser
     {
-        IList<IComment> Parse(XmlNode content);
+        IList<IComment> Parse(XmlNodeList nodes);
+        IList<IComment> ParseNode(XmlNode node);
     }
 }

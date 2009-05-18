@@ -19,7 +19,7 @@ namespace Docu.Documentation.Generators
         private void ParseSummary(XmlNode node, IDocumentationElement doc)
         {
             if (node != null)
-                doc.Summary = new Summary(commentParser.Parse(node));
+                doc.Summary = new Summary(commentParser.ParseNode(node));
         }
 
         protected void ParseParamSummary(IDocumentationMember member, IDocumentationElement doc)
@@ -38,7 +38,7 @@ namespace Docu.Documentation.Generators
             var node = member.Xml.SelectSingleNode("value");
 
             if (node != null)
-                doc.Value = new Value(commentParser.Parse(node));
+                doc.Value = new Value(commentParser.ParseNode(node));
         }
 
         protected void ParseSummary(IDocumentationMember member, IDocumentationElement doc)
@@ -57,7 +57,7 @@ namespace Docu.Documentation.Generators
             var node = member.Xml.SelectSingleNode("remarks");
 
             if (node != null)
-                doc.Remarks = new Remarks(commentParser.Parse(node));
+                doc.Remarks = new Remarks(commentParser.ParseNode(node));
         }
 
         protected void ParseReturns(IDocumentationMember member, Method doc)
@@ -67,7 +67,7 @@ namespace Docu.Documentation.Generators
             var node = member.Xml.SelectSingleNode("returns");
 
             if (node != null)
-                doc.Returns = new Summary(commentParser.Parse(node));
+                doc.Returns = new Summary(commentParser.ParseNode(node));
         }
 
         protected Namespace FindNamespace(IDocumentationMember association, List<Namespace> namespaces)
