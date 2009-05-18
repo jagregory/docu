@@ -26,7 +26,7 @@ namespace Docu
 
         public static string TrimComment(this string text, bool first, bool last)
         {
-            var regexp = new Regex(@"[\s]{0,}\r\n[\s]{0,}");
+            var regexp = new Regex(@"[\s]{0,}\r?\n[\s]{0,}");
 
             string prepared = regexp.Replace(text, "\r\n");
 
