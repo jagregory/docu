@@ -3,18 +3,16 @@ using Docu.Documentation.Comments;
 
 namespace Docu.Parsing.Comments
 {
-    internal class ParagraphCommentParser : CommentParserBase
+    public class ParagraphCommentParser : ICommentNodeParser
     {
-        private readonly CommentParser parser;
-
-        public ParagraphCommentParser(CommentParser parser)
+        public bool CanParse(XmlNode node)
         {
-            this.parser = parser;
+            return node.Name == "para";
         }
 
-        public IComment Parse(XmlNode content, bool first, bool last)
+        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last)
         {
-            return new Paragraph(parser.Parse(content.ChildNodes));
+            return new Paragraph(parser.Parse(node.ChildNodes));
         }
     }
 }

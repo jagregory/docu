@@ -16,7 +16,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveReturnsForMethods()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var members = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),
@@ -35,13 +35,13 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var model = new DocumentModel(contentParser, StubEventAggregator);
             var members = new[] { Method<Second>(@"<member name=""M:Example.Second.ReturnType""><returns>Method with return</returns></member>", x => x.ReturnType()), };
 
-            contentParser.Stub(x => x.Parse(null))
+            contentParser.Stub(x => x.ParseNode(null))
                 .IgnoreArguments()
                 .Return(new List<IComment>());
 
             model.Create(members);
 
-            contentParser.AssertWasCalled(x => x.Parse(members[0].Xml.ChildNodes[0]));
+            contentParser.AssertWasCalled(x => x.ParseNode(members[0].Xml.ChildNodes[0]));
         }
     }
 }

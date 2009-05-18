@@ -1,73 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml;
 using Docu.Documentation.Comments;
+using System.Linq;
 
 namespace Docu.Parsing.Comments
 {
     public class CommentParser : ICommentParser
     {
-        private readonly IDictionary<Func<XmlNode, bool>, Func<XmlNode, bool, bool, IComment>> parsers =
-            new Dictionary<Func<XmlNode, bool>, Func<XmlNode, bool, bool, IComment>>();
+        private readonly ICommentNodeParser[] _parsers;
 
-        private readonly InlineTextCommentParser InlineText = new InlineTextCommentParser();
-        private readonly InlineCodeCommentParser InlineCode = new InlineCodeCommentParser();
-        private readonly MultilineCodeCommentParser MultilineCode = new MultilineCodeCommentParser();
-        private readonly SeeCodeCommentParser See = new SeeCodeCommentParser();
-        private readonly ParagraphCommentParser Paragraph;
-        private readonly ParameterReferenceParser ParameterReference = new ParameterReferenceParser();
-        private readonly InlineListCommentParser InlineList;
-
-        public CommentParser()
+        public CommentParser(ICommentNodeParser[] parsers)
         {
-            Paragraph = new ParagraphCommentParser(this);
-            InlineList = new InlineListCommentParser(this);
-            parsers.Add(node => node is XmlText, InlineText.Parse);
-            parsers.Add(node => node.Name == "c", InlineCode.Parse);
-            parsers.Add(node => node.Name == "code", MultilineCode.Parse);
-            parsers.Add(node => node.Name == "see", See.Parse);
-            parsers.Add(node => node.Name == "para", Paragraph.Parse);
-            parsers.Add(node => node.Name == "paramref", ParameterReference.Parse);
-            parsers.Add(node => node.Name == "list", InlineList.Parse);
+            _parsers = parsers;
         }
 
         public IList<IComment> Parse(XmlNodeList nodes)
         {
             var blocks = new List<IComment>();
 
-            int count = nodes.Count;
-            for(int i = 0; i < count; i++)
+            var count = nodes.Count;
+            for(var i = 0; i < count; i++)
             {
-                XmlNode node = nodes[i];
-                bool first = (i == 0);
-                bool last = (i == (count - 1));
+                var node = nodes[i];
+                var first = (i == 0);
+                var last = (i == (count - 1));
 
-                foreach(var pair in parsers)
+                var parser = _parsers.FirstOrDefault(p => p.CanParse(node));
+                if (parser == null) continue;
+                
+                var block = parser.Parse(this, node, first, last);
+                if (block != null)
                 {
-                    var isValid = pair.Key;
-                    var parser = pair.Value;
-
-                    if(!isValid(node))
-                        continue;
-
-                    var block = parser(node, first, last);
-
-                    if(block != null)
-                    {
-                        blocks.Add(block);
-                        continue;
-                    }
+                    blocks.Add(block);
                 }
             }
 
             return blocks;
         }
 
-        public IList<IComment> Parse(XmlNode content)
+        public IList<IComment> ParseNode(XmlNode node)
         {
             var blocks = new List<IComment>();
 
-            blocks.AddRange(Parse(content.ChildNodes));
+            blocks.AddRange(Parse(node.ChildNodes));
 
             return blocks.AsReadOnly();
         }

@@ -2,6 +2,7 @@ using Docu.Documentation.Comments;
 using Docu.Parsing.Comments;
 using NUnit.Framework;
 using System.Linq;
+using StructureMap;
 
 namespace Docu.Tests.Parsing
 {
@@ -9,17 +10,24 @@ namespace Docu.Tests.Parsing
     public class CommentParserTests
     {
         private CommentParser parser;
+        private IContainer container;
+
+        [TestFixtureSetUp]
+        public void SetupContainer()
+        {
+            container = ContainerBootstrapper.BootstrapStructureMap();
+        }
 
         [SetUp]
         public void CreateParser()
         {
-            parser = new CommentParser();
+            parser = container.GetInstance<CommentParser>();
         }
 
         [Test]
         public void ShouldParseSimple()
         {
-            var blocks = parser.Parse("<x>Hello world!</x>".ToNode());
+            var blocks = parser.ParseNode("<x>Hello world!</x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             blocks[0].ShouldBeOfType<InlineText>();
@@ -29,7 +37,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseSimpleTrimLeadingWhitespace()
         {
-            var blocks = parser.Parse("<x>  Hello world!</x>".ToNode());
+            var blocks = parser.ParseNode("<x>  Hello world!</x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             blocks[0].ShouldBeOfType<InlineText>();
@@ -39,7 +47,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseSimpleTrimLeadingWhitespaceNewlines()
         {
-            var blocks = parser.Parse(@"
+            var blocks = parser.ParseNode(@"
             <x>
                 Hello world!
             </x>".ToNode());
@@ -52,7 +60,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseCodeInline()
         {
-            var blocks = parser.Parse("<x><c>code</c></x>".ToNode());
+            var blocks = parser.ParseNode("<x><c>code</c></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             blocks[0].ShouldBeOfType<InlineCode>();
@@ -62,7 +70,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseCodeMultiline()
         {
-            var blocks = parser.Parse(@"
+            var blocks = parser.ParseNode(@"
 <x>
     <code>
         Some multiline
@@ -78,7 +86,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseSeeForNamespace()
         {
-            var blocks = parser.Parse("<x><see cref=\"N:Example\" /></x>".ToNode());
+            var blocks = parser.ParseNode("<x><see cref=\"N:Example\" /></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             blocks[0].ShouldBeOfType<See>();
@@ -89,7 +97,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseSeeForType()
         {
-            var blocks = parser.Parse("<x><see cref=\"T:Example.First\" /></x>".ToNode());
+            var blocks = parser.ParseNode("<x><see cref=\"T:Example.First\" /></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             blocks[0].ShouldBeOfType<See>();
@@ -100,7 +108,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseSeeForMethod()
         {
-            var blocks = parser.Parse("<x><see cref=\"M:Example.Second.SecondMethod\" /></x>".ToNode());
+            var blocks = parser.ParseNode("<x><see cref=\"M:Example.Second.SecondMethod\" /></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             blocks[0].ShouldBeOfType<See>();
@@ -111,7 +119,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseSeeForProperty()
         {
-            var blocks = parser.Parse("<x><see cref=\"P:Example.Second.SecondProperty\" /></x>".ToNode());
+            var blocks = parser.ParseNode("<x><see cref=\"P:Example.Second.SecondProperty\" /></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             blocks[0].ShouldBeOfType<See>();
@@ -122,7 +130,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseSeeForEvent()
         {
-            var blocks = parser.Parse("<x><see cref=\"E:Example.Second.AnEvent\" /></x>".ToNode());
+            var blocks = parser.ParseNode("<x><see cref=\"E:Example.Second.AnEvent\" /></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             blocks[0].ShouldBeOfType<See>();
@@ -133,7 +141,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseSeeForField()
         {
-            var blocks = parser.Parse("<x><see cref=\"F:Example.Second.aField\" /></x>".ToNode());
+            var blocks = parser.ParseNode("<x><see cref=\"F:Example.Second.aField\" /></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             blocks[0].ShouldBeOfType<See>();
@@ -144,7 +152,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseSeeNestedInPara()
         {
-            var blocks = parser.Parse("<x><para><see cref=\"N:Example\" /></para></x>".ToNode());
+            var blocks = parser.ParseNode("<x><para><see cref=\"N:Example\" /></para></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
 
@@ -158,7 +166,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void should_parse_single_para_as_paragraph()
         {
-            var blocks = parser.Parse("<x><para>some text</para></x>".ToNode());
+            var blocks = parser.ParseNode("<x><para>some text</para></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             var para = blocks.First().ShouldBeOfType<Paragraph>();
@@ -168,7 +176,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void should_parse_nested_para_as_paragraphs()
         {
-            var blocks = parser.Parse("<x><para>some text <para>some more text</para></para></x>".ToNode());
+            var blocks = parser.ParseNode("<x><para>some text <para>some more text</para></para></x>".ToNode());
 
             blocks.Count.ShouldEqual(1);
             var para = blocks.First().ShouldBeOfType<Paragraph>();
@@ -183,7 +191,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void ShouldParseParamref()
         {
-            var blocks = parser.Parse("<x>Returns the <paramref name=\"inputString\" /></x>".ToNode());
+            var blocks = parser.ParseNode("<x>Returns the <paramref name=\"inputString\" /></x>".ToNode());
             blocks.Count.ShouldEqual(2);
             blocks[1].ShouldBeOfType<ParameterReference>();
             var paramRef = (ParameterReference)blocks[1];
@@ -193,35 +201,35 @@ namespace Docu.Tests.Parsing
         [Test]
         public void should_default_to_definition_list_if_no_type_specified()
         {
-            var blocks = parser.Parse("<x><list><item><term>IV</term><description>Four</description></item></list></x>".ToNode());
+            var blocks = parser.ParseNode("<x><list><item><term>IV</term><description>Four</description></item></list></x>".ToNode());
             blocks.First().ShouldBeOfType<DefinitionList>();
         }
 
         [Test]
         public void should_parse_bulleted_list_type()
         {
-            var blocks = parser.Parse("<x><list type=\"bullet\"><item><description>Four</description></item></list></x>".ToNode());
+            var blocks = parser.ParseNode("<x><list type=\"bullet\"><item><description>Four</description></item></list></x>".ToNode());
             blocks.First().ShouldBeOfType<BulletList>();
         }
 
         [Test]
         public void should_parse_numbered_list_type()
         {
-            var blocks = parser.Parse("<x><list type=\"number\"><item><description>Four</description></item></list></x>".ToNode());
+            var blocks = parser.ParseNode("<x><list type=\"number\"><item><description>Four</description></item></list></x>".ToNode());
             blocks.First().ShouldBeOfType<NumberList>();
         }
 
         [Test]
         public void should_parse_table_list_type()
         {
-            var blocks = parser.Parse("<x><list type=\"table\"><item><description>Four</description></item></list></x>".ToNode());
+            var blocks = parser.ParseNode("<x><list type=\"table\"><item><description>Four</description></item></list></x>".ToNode());
             blocks.First().ShouldBeOfType<TableList>();
         }
 
         [Test]
         public void should_parse_definition_list_with_multiple_items()
         {
-            var blocks = parser.Parse("<x>See <list type=\"definition\"><item><term>IV</term><description>Four</description></item><item><term>IX</term><description>Nine</description></item></list></x>".ToNode());
+            var blocks = parser.ParseNode("<x>See <list type=\"definition\"><item><term>IV</term><description>Four</description></item><item><term>IX</term><description>Nine</description></item></list></x>".ToNode());
             blocks.Count.ShouldEqual(2);
             blocks[1].ShouldBeOfType<DefinitionList>();
             var list = (InlineList)blocks[1];
@@ -233,7 +241,7 @@ namespace Docu.Tests.Parsing
         [Test]
         public void should_parse_definition_list_with_nested_comments()
         {
-            var blocks = parser.Parse("<x>See <list type=\"definition\"><item><term>IV</term><description>Four <see cref=\"N:Example\" /></description></item></list></x>".ToNode());
+            var blocks = parser.ParseNode("<x>See <list type=\"definition\"><item><term>IV</term><description>Four <see cref=\"N:Example\" /></description></item></list></x>".ToNode());
             blocks.Count.ShouldEqual(2);
             blocks[1].ShouldBeOfType<DefinitionList>();
             var list = (InlineList)blocks[1];

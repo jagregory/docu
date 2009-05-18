@@ -2,11 +2,11 @@ using StructureMap;
 
 namespace Docu
 {
-    internal static class ContainerBootstrapper
+    public static class ContainerBootstrapper
     {
-        public static void BootstrapStructureMap()
+        public static IContainer BootstrapStructureMap()
         {
-            ObjectFactory.Initialize(x => { x.AddRegistry(new DefaultRegistry()); });
+            return new Container(x => x.AddRegistry(new DefaultRegistry()));
         }
     }
 }

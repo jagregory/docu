@@ -2,6 +2,7 @@ using Docu.Console;
 using Docu.Events;
 using Docu.Output;
 using Docu.IO;
+using Docu.Parsing.Comments;
 using StructureMap.Configuration.DSL;
 
 namespace Docu
@@ -14,6 +15,7 @@ namespace Docu
             {
                 x.AssemblyContainingType<DocumentationGenerator>();
                 x.WithDefaultConventions();
+                x.AddAllTypesOf<ICommentNodeParser>();
             });
 
             ForRequestedType<IOutputGenerator>()

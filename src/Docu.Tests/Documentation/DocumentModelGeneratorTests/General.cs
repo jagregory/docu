@@ -49,7 +49,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void should_have_summary_for_documented_types()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var members = new List<IDocumentationMember>(DocMembers(typeof(First)));
             var indexOfType = members.FindIndex(m => m is UndocumentedType);
             members[indexOfType] = Type<First>(@"<member name=""T:Example.First""><summary>The type description</summary></member>");
@@ -128,7 +128,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldntHaveAnyUnresolvedReferencesLeftIfAllValid()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var members = new[]
             {
                 Type<First>(@"<member name=""T:Example.First"" />"),  
@@ -144,7 +144,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void UnresolvedReferencesBecomeExternalReferencesIfStillExist()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var members = new[] { Type<Second>(@"<member name=""T:Example.Second""><summary><see cref=""T:Example.First"" /></summary></member>") };
             var namespaces = model.Create(members);
             var comment = new List<IComment>(namespaces[0].Types[0].Summary.Children);

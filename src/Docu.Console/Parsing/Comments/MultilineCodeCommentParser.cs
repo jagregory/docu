@@ -3,11 +3,16 @@ using Docu.Documentation.Comments;
 
 namespace Docu.Parsing.Comments
 {
-    internal class MultilineCodeCommentParser : CommentParserBase
+    public class MultilineCodeCommentParser : ICommentNodeParser
     {
-        public IComment Parse(XmlNode content, bool first, bool last)
+        public bool CanParse(XmlNode node)
         {
-            return new InlineCode(PrepareText(content.InnerText, true, true));
+            return node.Name == "code";
+        }
+
+        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last)
+        {
+            return new InlineCode(node.InnerText.TrimComment(true, true));
         }
     }
 }

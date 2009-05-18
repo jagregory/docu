@@ -14,7 +14,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveValueForProperty()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var properties = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),
@@ -29,7 +29,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveValueForMethod()
         {
-            var model = new DocumentModel(new CommentParser(), StubEventAggregator);
+            var model = new DocumentModel(RealParser, StubEventAggregator);
             var methods = new IDocumentationMember[]
             {
                 Type<ReturnMethodClass>(@"<member name=""T:Example.ReturnMethodClass"" />"),

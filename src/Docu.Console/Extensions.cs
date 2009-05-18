@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Docu
 {
@@ -21,6 +22,25 @@ namespace Docu
                 shortened.RemoveAt(0);
 
             return shortened;
+        }
+
+        public static string TrimComment(this string text, bool first, bool last)
+        {
+            var regexp = new Regex(@"[\s]{0,}\r\n[\s]{0,}");
+
+            string prepared = regexp.Replace(text, "\r\n");
+
+            if(first)
+                prepared = prepared.TrimStart(' ', '\t', '\r', '\n');
+            else
+                prepared = prepared.TrimStart('\t', '\r', '\n');
+
+            if(last)
+                prepared = prepared.TrimEnd(' ', '\t', '\r', '\n');
+            else
+                prepared = prepared.TrimEnd('\t', '\r', '\n');
+
+            return prepared;
         }
     }
 }
