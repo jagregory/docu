@@ -67,7 +67,7 @@ namespace Docu.Tests.Parsing
             ((InlineCode)blocks[0]).Text.ShouldEqual("code");
         }
 
-        [Test]
+        [Test, Category("TeamCityIgnore")]
         public void ShouldParseCodeMultiline()
         {
             var blocks = parser.ParseNode(@"
