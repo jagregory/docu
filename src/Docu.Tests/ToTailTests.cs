@@ -35,4 +35,15 @@ namespace Docu.Tests
             tail.Count.ShouldEqual(0);
         }
     }
+
+    [TestFixture]
+    public class TrimCommentTests
+    {
+        [Test]
+        public void TrimCommentShouldHandleWindowsAndUnixLineEndings()
+        {
+            var input = "\r\nSome multiline\ncode\n";
+            input.TrimComment(true, true).ShouldEqual("Some multiline\r\ncode");
+        }
+    }
 }
