@@ -106,7 +106,7 @@
     <Compile Include="Output\HtmlGenerationTests.cs" />
     <Compile Include="Parsing\AssemblyXmlParserTests.cs" />
     <Compile Include="Output\PatternTemplateResolverTests\paths.cs" />
-    <Compile Include="ToTailTests.cs" />
+    <Compile Include="ExtensionTests.cs" />
     <Compile Include="Output\Rendering\PrettyNameTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\General.cs" />
