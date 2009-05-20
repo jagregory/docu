@@ -2,16 +2,35 @@
 <Project ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 <PropertyGroup>
+  <BuildRevision>0</BuildRevision>
+  <!-- BUILD_NUMBER is exposed as an environment variable in TeamCity -->
+  <BuildRevision Condition="'$(BUILD_NUMBER)' != ''">$(BUILD_NUMBER)</BuildRevision>
+  <!-- Manually update the 3 significant portions of the BuildVersion when appropriate -->
+  <BuildVersion>0.1.0.$(BuildRevision)</BuildVersion>
+
+  <RunningOnBuildServer>false</RunningOnBuildServer>
+  <RunningOnBuildServer Condition="'$(TEAMCITY_PROJECT_NAME)' != ''">true</RunningOnBuildServer>
   <Configuration>Debug</Configuration>
   <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\lib\MSBuildTasks</MSBuildCommunityTasksPath>
-  <TestsToIgnore Condition="'$(TEAMCITY_PROJECT_NAME)' != ''">TeamCityIgnore</TestsToIgnore>
+  <TestsToIgnore Condition="$(RunningOnBuildServer)">TeamCityIgnore</TestsToIgnore>
 </PropertyGroup>
 <Import Project="lib\MSBuildTasks\MSBuild.Community.Tasks.Targets" />
 
 
-<Target Name="Build" DependsOnTargets="Compile;Test;Document;Package" />
+<Target Name="Build" DependsOnTargets="Clean;Compile;Test;Document;Merge;Package" />
 
-<Target Name="Compile">
+<Target Name="GenerateBuildInfo" Condition="$(RunningOnBuildServer)">
+  <AssemblyInfo CodeLanguage="CS" OutputFile="src\docu.console\BuildInfo.cs"
+                AssemblyVersion="$(BuildVersion)"
+                AssemblyFileVersion="$(BuildVersion)" />
+                
+</Target>
+
+<Target Name="Clean">
+  <RemoveDir Directories="artifacts" />
+</Target>
+  
+<Target Name="Compile" DependsOnTargets="GenerateBuildInfo">
   <MSbuild Projects="src\Docu.sln" Properties="Configuration=$(Configuration)" />
 </Target>
 
@@ -24,8 +43,23 @@
   <Exec Command="src\Docu.Console\bin\$(Configuration)\docu.exe src\Docu.Console\bin\$(Configuration)\docu.exe --output=artifacts\enduserDocs --templates=src\enduserDocTemplates" />
 </Target>
 
-<Target Name="Package">
+<Target Name="Merge">
   <Exec Command="lib\ilmerge\ILMerge.exe /Out:artifacts\docu.exe src\Docu.Console\bin\$(Configuration)\docu.exe lib\spark\Spark.dll lib\spark\SparkLanguage.dll lib\spark\Interop.SparkLanguagePackageLib.dll lib\structuremap\structuremap.dll" />
   <Message Text="Created artifacts\docu.exe" />
 </Target>
+
+<Target Name="Package">
+  <ItemGroup>
+    <DefaultTemplates Include="src\docu.console\templates\**" />
+  </ItemGroup>
+  <Copy SourceFiles="LICENSE.txt" DestinationFolder="artifacts" />
+  <Copy SourceFiles="@(DefaultTemplates)" DestinationFolder="artifacts\templates\%(DefaultTemplates.RecursiveDir)" />
+  
+  <ItemGroup>
+    <FilesToZip Include="artifacts\**" />
+    <Zip Files="@(FilesToZip)" ZipFileName="artifacts\published\docu_$(BuildVersion).zip" />
+  </ItemGroup>
+  
+</Target>
+
 </Project>
