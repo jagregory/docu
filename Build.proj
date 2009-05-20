@@ -17,7 +17,7 @@
 <Import Project="lib\MSBuildTasks\MSBuild.Community.Tasks.Targets" />
 
 
-<Target Name="Build" DependsOnTargets="Clean;Compile;Test;Document;Merge;Package" />
+<Target Name="Build" DependsOnTargets="Clean;Compile;Test;Document;Merge;Publish" />
 
 <Target Name="GenerateBuildInfo" Condition="$(RunningOnBuildServer)">
   <AssemblyInfo CodeLanguage="CS" OutputFile="src\docu.console\BuildInfo.cs"
@@ -54,12 +54,15 @@
   </ItemGroup>
   <Copy SourceFiles="LICENSE.txt" DestinationFolder="artifacts" />
   <Copy SourceFiles="@(DefaultTemplates)" DestinationFolder="artifacts\templates\%(DefaultTemplates.RecursiveDir)" />
-  
+</Target>
+
+<Target Name="Publish" DependsOnTargets="Package" Condition="$(RunningOnBuildServer)">
+  <!-- All files in artifacts\published will be available for download from the teamcity.codebetter.com website -->
   <ItemGroup>
     <FilesToZip Include="artifacts\**" />
-    <Zip Files="@(FilesToZip)" ZipFileName="artifacts\published\docu_$(BuildVersion).zip" />
   </ItemGroup>
-  
+  <MakeDir Directories="artifacts\published" />
+  <Zip Files="@(FilesToZip)" WorkingDirectory="artifacts" ZipFileName="artifacts\published\docu_$(BuildVersion).zip" />
 </Target>
 
 </Project>
