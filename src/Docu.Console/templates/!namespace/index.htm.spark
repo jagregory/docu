@@ -12,12 +12,24 @@
 		<p class="class"><strong>Namespace</strong> ${Namespace.Name}</p>
 	</div>
     <div class="sub-header">
-		<h3 class="section">Types</h3>
-		<ul>
-			<for each="var type in Namespace.Types">
-				<li><a href="${type.Name}.htm">${h(type.PrettyName)}</a></li>
-			</for>
-		</ul>
+		<if condition="Namespace.HasClasses">
+			<h3 class="section">Classes</h3>
+			<ul>
+				<for each="var type in Namespace.Classes">
+					<li><a href="${type.Name}.htm">${h(type.PrettyName)}</a></li>
+				</for>
+			</ul>
+		</if>
+		
+		<if condition="Namespace.HasInterfaces">
+			<h3 class="section">Interfaces</h3>
+			<ul>
+				<for each="var type in Namespace.Interfaces">
+					<li><a href="${type.Name}.htm">${h(type.PrettyName)}</a></li>
+				</for>
+			</ul>
+		</if>
+		<p if="!Namespace.HasTypes">This namespace is empty.</p>
 	</div>
 	
 	<use file="../_footer" />

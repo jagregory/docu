@@ -1,5 +1,5 @@
 ﻿<div id="types">
-	<h2 class="fixed">Types</h2>
+	<h2 class="fixed">All Types</h2>
 	<div class="scroll">
 		<ul>
 			<for each="var ns in Namespaces">
