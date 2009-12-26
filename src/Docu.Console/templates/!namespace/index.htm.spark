@@ -16,7 +16,7 @@
 			<h3 class="section">Classes</h3>
 			<ul>
 				<for each="var type in Namespace.Classes">
-					<li><a href="${type.Name}.htm">${h(type.PrettyName)}</a></li>
+					<li>${Format(type)}</li>
 				</for>
 			</ul>
 		</if>
@@ -25,7 +25,7 @@
 			<h3 class="section">Interfaces</h3>
 			<ul>
 				<for each="var type in Namespace.Interfaces">
-					<li><a href="${type.Name}.htm">${h(type.PrettyName)}</a></li>
+					<li>${Format(type)}</li>
 				</for>
 			</ul>
 		</if>

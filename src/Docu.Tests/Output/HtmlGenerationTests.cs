@@ -36,7 +36,7 @@ namespace Docu.Tests.Output
             var callStack = new StackTrace();
             var caller = callStack.GetFrame(1);
 
-            return generator.Convert(caller.GetMethod().Name, data);
+            return generator.Convert(caller.GetMethod().Name, data, "");
         }
 
         [TestTemplate("${Assemblies[0].FullName}")]

@@ -38,7 +38,7 @@ namespace Docu.Output
             engine.ViewFolder = viewFolder;
         }
 
-        public string Convert(string templateName, ViewData data)
+        public string Convert(string templateName, ViewData data, string relativeOutputPath)
         {
             string template = templateName;
 
@@ -53,6 +53,7 @@ namespace Docu.Output
             {
                 try
                 {
+                    view.RelativeOutputPath = relativeOutputPath;
                     view.ViewData = data;
                     view.RenderView(writer);
                 }

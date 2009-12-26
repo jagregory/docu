@@ -28,7 +28,7 @@ namespace Docu.Tests.Output
             transformer.CreatePages("simple.spark", "", namespaces);
 
             generator.AssertWasCalled(
-                x => x.Convert(null, null),
+                x => x.Convert(null, null, null),
                 x => x.Constraints(Is.Equal("simple.spark"), Is.Anything()));
         }
 
@@ -45,7 +45,7 @@ namespace Docu.Tests.Output
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch> { new TemplateMatch("simple.htm", "simple.spark", new ViewData()) });
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -74,7 +74,7 @@ namespace Docu.Tests.Output
             transformer.CreatePages("!namespace.spark", "", namespaces);
 
             generator.AssertWasCalled(
-                x => x.Convert(null, null),
+                x => x.Convert(null, null, null),
                 x => x.Constraints(Is.Equal("!namespace.spark"), Is.Anything())
                          .Repeat.Twice());
         }
@@ -96,7 +96,7 @@ namespace Docu.Tests.Output
                     new TemplateMatch("Two.htm", "!namespace.spark", new ViewData())
                 });
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -129,7 +129,7 @@ namespace Docu.Tests.Output
             transformer.CreatePages("!type.spark", "", namespaces);
 
             generator.AssertWasCalled(
-                x => x.Convert(null, null),
+                x => x.Convert(null, null, null),
                 x => x.Constraints(Is.Equal("!type.spark"), Is.Anything())
                          .Repeat.Twice());
         }
@@ -154,7 +154,7 @@ namespace Docu.Tests.Output
                     new TemplateMatch("Two.Second.htm", "!type.spark", new ViewData())
                 });
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -185,7 +185,7 @@ namespace Docu.Tests.Output
                 .IgnoreArguments()
                 .Return(false);
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -221,7 +221,7 @@ namespace Docu.Tests.Output
                 .IgnoreArguments()
                 .Return(false);
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -249,7 +249,7 @@ namespace Docu.Tests.Output
                     new TemplateMatch("One\\test.htm", "", new ViewData()),
                     new TemplateMatch("Two\\test.htm", "", new ViewData()),
                 });
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -271,7 +271,7 @@ namespace Docu.Tests.Output
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch> { new TemplateMatch("directory\\test.htm", "", new ViewData()) });
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 

@@ -25,7 +25,7 @@ namespace Docu.Tests.Output
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch> { new TemplateMatch("simple.htm", "simple.spark", new ViewData()) });
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -51,7 +51,7 @@ namespace Docu.Tests.Output
                     new TemplateMatch("Two.htm", "!namespace.spark", new ViewData())
                 });
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -81,7 +81,7 @@ namespace Docu.Tests.Output
                     new TemplateMatch("Two.Second.htm", "!type.spark", new ViewData())
                 });
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -112,7 +112,7 @@ namespace Docu.Tests.Output
                 .IgnoreArguments()
                 .Return(false);
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -148,7 +148,7 @@ namespace Docu.Tests.Output
                 .IgnoreArguments()
                 .Return(false);
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -176,7 +176,7 @@ namespace Docu.Tests.Output
                     new TemplateMatch("One\\test.htm", "", new ViewData()),
                     new TemplateMatch("Two\\test.htm", "", new ViewData()),
                 });
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -198,7 +198,7 @@ namespace Docu.Tests.Output
             resolver.Stub(x => x.Resolve(null, null))
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch> { new TemplateMatch("directory\\test.htm", "", new ViewData()) });
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 
@@ -220,7 +220,7 @@ namespace Docu.Tests.Output
                 .IgnoreArguments()
                 .Return(new List<TemplateMatch> { new TemplateMatch("someTemplatePath\\simple.htm", "someTemplatePath\\simple.spark", new ViewData()) });
 
-            generator.Stub(x => x.Convert(null, null))
+            generator.Stub(x => x.Convert(null, null, null))
                 .IgnoreArguments()
                 .Return("content");
 

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{76E3611F-A908-4A1B-8673-A221DD8C5301}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Machine.Specifications, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\mspec\Machine.Specifications.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.5.0.8332, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\nunit\nunit.framework.dll</HintPath>
@@ -38,6 +42,10 @@
     <Reference Include="Rhino.Mocks, Version=3.5.0.1337, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\rhino\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Spark, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7f8549eed921a12c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\spark\Spark.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap, Version=2.5.3.0, Culture=neutral, PublicKeyToken=e60ad81abae3c223, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -85,10 +93,14 @@
     <Compile Include="Output\PatternTemplateResolverTests\single_template.cs" />
     <Compile Include="Output\PatternTemplateResolverTests\type_template_in_namespace.cs" />
     <Compile Include="Output\PatternTemplateResolverTests\type_template.cs" />
+    <Compile Include="Output\Rendering\HtmlOutputFormatter_Referencable_Specs.cs" />
+    <Compile Include="Output\SparkTemplateBaseSpecs.cs" />
     <Compile Include="Output\TemplateTransformerTests.cs" />
     <Compile Include="Parsing\IdentifierTests.cs" />
     <Compile Include="ReflectionHelper.cs" />
-    <Compile Include="Output\Rendering\HtmlOutputFormatterTests.cs" />
+    <Compile Include="Output\Rendering\HtmlOutputFormatterSpecs.cs" />
+    <Compile Include="Utils\Mock.cs" />
+    <Compile Include="Utils\Stub.cs" />
     <Compile Include="Utils\TestTemplateAttribute.cs" />
     <Compile Include="Output\UntransformableResourceManagerTests.cs" />
     <Compile Include="Output\UntransformableResourceManagerTestsBase.cs" />

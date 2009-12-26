@@ -4,9 +4,9 @@
 		<ul>
 				<li each="var type in Namespace.Types">
           <if condition="type == Type">
-            <a href="../${type.Namespace.Name}/${type.Name}.htm" class="current">${h(type.PrettyName)}</a>
-            <else />
-            <a href="../${type.Namespace.Name}/${type.Name}.htm">${h(type.PrettyName)}</a>
+            ${Format(type, class => "current")}
+          <else />
+            ${Format(type)}
           </if>
         </li>
 		</ul>

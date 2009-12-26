@@ -26,7 +26,6 @@ namespace Docu.Output
 
             foreach (var path in paths)
             {
-                var output = generator.Convert(path.TemplatePath, path.Data);
                 var outputDir = Path.GetDirectoryName(path.OutputPath);
                 var outputPath = path.OutputPath;
 
@@ -41,6 +40,9 @@ namespace Docu.Output
 
                     outputPath = Path.Combine(outputDir, outputFilename);
                 }
+
+                var relativePath = outputPath.Replace(destination + "\\", "");
+                var output = generator.Convert(path.TemplatePath, path.Data, relativePath);
 
                 if (outputDir != "" && !writer.Exists(outputDir))
                     writer.CreateDirectory(outputDir);
