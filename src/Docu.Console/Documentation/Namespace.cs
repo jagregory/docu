@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Docu.Parsing.Model;
 
 namespace Docu.Documentation
@@ -15,6 +16,31 @@ namespace Docu.Documentation
         public IList<DeclaredType> Types
         {
             get { return types; }
+        }
+
+        public bool HasTypes
+        {
+            get { return Types.Count > 0; }
+        }
+
+        public IEnumerable<DeclaredType> Classes
+        {
+            get { return Types.Where(x => !x.IsInterface); }
+        }
+
+        public bool HasClasses
+        {
+            get { return Classes.Any(); }
+        }
+
+        public IEnumerable<DeclaredType> Interfaces
+        {
+            get { return Types.Where(x => x.IsInterface); }
+        }
+
+        public bool HasInterfaces
+        {
+            get { return Interfaces.Any(); }
         }
 
         public string FullName

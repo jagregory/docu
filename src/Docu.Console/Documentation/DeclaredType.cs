@@ -33,6 +33,11 @@ namespace Docu.Documentation
             get { return properties; }
         }
 
+        public bool IsInterface
+        {
+            get { return representedType == null ? false : representedType.IsInterface; }
+        }
+
         public IReferencable ParentType { get; set; }
         public IList<IReferencable> Interfaces { get; set; }
 

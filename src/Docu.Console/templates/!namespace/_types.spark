@@ -1,5 +1,5 @@
 ﻿<div id="types">
-	<h2 class="fixed">Types</h2>
+  <h2 class="fixed">Types in ${Namespace.PrettyName}</h2>
 	<div class="scroll">
 		<ul>
 				<li each="var type in Namespace.Types">
