@@ -1,21 +1,42 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
-using Docu.Output;
 using Spark;
 
 namespace Docu.Output.Rendering
 {
+    public interface IDocuTemplate
+    {
+        string SiteResource(string path);
+    }
+
     /// <summary>
     /// All public or protected methods and properties on this class are available within documentation templates
     /// </summary>
-    public abstract class SparkTemplateBase : AbstractSparkView
+    public abstract class SparkTemplateBase : AbstractSparkView, IDocuTemplate
     {
-        protected readonly IOutputFormatter Formatter = new HtmlOutputFormatter();
+        protected readonly IOutputFormatter Formatter;
+
+        public SparkTemplateBase()
+        {
+            Formatter = new HtmlOutputFormatter(this);
+        }
+
+        public string SiteResource(string path)
+        {
+            if (!path.StartsWith("~/")) return path;
+
+            var formattedPath = path.Replace("~/", "");
+            var outputPathDepth = (RelativeOutputPath ?? "").GetDirectoryDepth();
+
+            return outputPathDepth.Times("../") + formattedPath;
+        }
 
         /// <summary>
         /// All of the assemblies being documented
@@ -58,6 +79,11 @@ namespace Docu.Output.Rendering
         }
 
         public ViewData ViewData { get; set; }
+
+        /// <summary>
+        /// The path of the file that this view represents, relative to the output directory.
+        /// </summary>
+        public string RelativeOutputPath { get; set; }
 
         /// <summary>
         /// Configures the pattern that will be used to construct links to methods referenced in the documentation of other symbols
@@ -235,9 +261,19 @@ namespace Docu.Output.Rendering
         /// <remarks>The format of the URL in the returned hyperlink can be controlled by the methods <see cref="SetNamespaceUrlFormat"/>, <see cref="SetTypeUrlFormat"/>,  <see cref="SetPropertyUrlFormat"/>, <see cref="SetMethodUrlFormat"/>, <see cref="SetFieldUrlFormat"/> and <see cref="SetEventUrlFormat"/></remarks>
         /// <param name="referencable"></param>
         /// <returns></returns>
-        public string Format(IReferencable referencable)
+        public string Format(IReferencable referencable, params Expression<Func<object, string>>[] attributes)
         {
-            return Formatter.FormatReferencable(referencable);
+            var attributeDictionary = new Dictionary<string, string>();
+
+            attributes.ForEach(exp =>
+            {
+                var name = exp.Parameters.First().Name;
+                var value = ((ConstantExpression)exp.Body).Value.ToString();
+                
+                attributeDictionary.Add(name, value);
+            });
+
+            return Formatter.FormatReferencable(referencable, attributeDictionary);
         }
 
         /// <summary>
@@ -288,6 +324,29 @@ namespace Docu.Output.Rendering
                 sb.Length -= 2;
 
             return sb.ToString();
+        }
+    }
+
+    public static class StringPathExtensions
+    {
+        public static bool IsRoot(this string path)
+        {
+            return !path.Contains("\\");
+        }
+
+        public static int GetDirectoryDepth(this string path)
+        {
+            return path.Count(x => x == '\\');
+        }
+
+        public static string Times(this int times, string value)
+        {
+            var result = "";
+
+            for (var i = 0; i < times; i++)
+                result += value;
+
+            return result;
         }
     }
 }

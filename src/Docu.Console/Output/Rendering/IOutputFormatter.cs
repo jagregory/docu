@@ -14,6 +14,7 @@ namespace Docu.Output.Rendering
         string EventUrlFormat { get; set; }
         string Format(IComment comment);
         string FormatReferencable(IReferencable referencable);
+        string FormatReferencable(IReferencable referencable, IEnumerable<KeyValuePair<string, string>> attributes);
         string Escape(string value);
     }
 }

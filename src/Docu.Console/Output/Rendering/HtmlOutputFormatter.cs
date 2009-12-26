@@ -10,9 +10,12 @@ namespace Docu.Output.Rendering
     public class HtmlOutputFormatter : IOutputFormatter
     {
         private readonly IList<IOutputFormatterPart> Formatters;
+        private readonly IDocuTemplate view;
 
-        public HtmlOutputFormatter()
+        public HtmlOutputFormatter(IDocuTemplate view)
         {
+            this.view = view;
+
             Formatters = new List<IOutputFormatterPart>
             {
                 new OutputFormatterPart<Summary>(FormatGeneralContainer),
@@ -28,12 +31,12 @@ namespace Docu.Output.Rendering
                 new OutputFormatterPart<TableList>(FormatTableList),
             };
 
-            NamespaceUrlFormat = "{namespace}.htm";
-            TypeUrlFormat = "{type.namespace}/{type}.htm";
-            MethodUrlFormat = "{type.namespace}/{type}.htm#{method}";
-            PropertyUrlFormat = "{type.namespace}/{type}.htm#{property}";
-            FieldUrlFormat = "{type.namespace}/{type}.htm#{field}";
-            EventUrlFormat = "{type.namespace}/{type}.htm#{event}";
+            NamespaceUrlFormat = "~/{namespace}/index.htm";
+            TypeUrlFormat = "~/{type.namespace}/{type}.htm";
+            MethodUrlFormat = "~/{type.namespace}/{type}.htm#{method}";
+            PropertyUrlFormat = "~/{type.namespace}/{type}.htm#{property}";
+            FieldUrlFormat = "~/{type.namespace}/{type}.htm#{field}";
+            EventUrlFormat = "~/{type.namespace}/{type}.htm#{event}";
         }
 
         public string Format(IComment comment)
@@ -113,14 +116,17 @@ namespace Docu.Output.Rendering
             return formatInlineList(comment.Items, "<ul>{0}</ul>", "<li>{0}{1}</li>", "{0}", "{0}");
         }
 
-
-
         private string FormatSee(See block)
         {
             return FormatReferencable(block.Reference);
         }
 
         public string FormatReferencable(IReferencable reference)
+        {
+            return FormatReferencable(reference, new KeyValuePair<string, string>[0]);
+        }
+
+        public string FormatReferencable(IReferencable reference, IEnumerable<KeyValuePair<string, string>> attributes)
         {
             string url = "";
             string name = reference.PrettyName;
@@ -171,7 +177,11 @@ namespace Docu.Output.Rendering
             if (reference.IsExternal)
                 return "<span title=\"" + reference.FullName + "\">" + Escape(reference.PrettyName) + "</span>";
 
-            return "<a href=\"" + url + "\">" + Escape(name) + "</a>";
+            var attributeHtml = "";
+
+            attributes.ForEach(x => attributeHtml += " " + x.Key + "=\"" + x.Value + "\"");
+
+            return "<a href=\"" + view.SiteResource(url) + "\"" + attributeHtml + ">" + Escape(name) + "</a>";
         }
 
         public string Escape(string value)

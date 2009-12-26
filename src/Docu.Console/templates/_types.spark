@@ -3,7 +3,7 @@
 	<div class="scroll">
 		<ul>
 			<for each="var ns in Namespaces">
-				<li each="var type in ns.Types"><a href="${ns.Name}/${type.Name}.htm">${h(type.PrettyName)}</a></li>
+				<li each="var type in ns.Types">${Format(type)}</li>
 			</for>
 		</ul>
 	</div>
