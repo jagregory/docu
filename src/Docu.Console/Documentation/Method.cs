@@ -20,6 +20,11 @@ namespace Docu.Documentation
             Returns = new Summary();
         }
 
+        public override bool HasDocumentation
+        {
+            get { return base.HasDocumentation || !Returns.IsEmpty; }
+        }
+
         public IList<MethodParameter> Parameters
         {
             get { return parameters; }

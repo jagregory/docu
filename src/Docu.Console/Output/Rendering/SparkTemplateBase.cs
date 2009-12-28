@@ -314,7 +314,7 @@ namespace Docu.Output.Rendering
                     sb.Append("this ");
                     markExtensionMethodInstance = false;
                 }
-                sb.Append(h(parameter.Reference.PrettyName));
+                sb.Append(Format(parameter.Reference));
                 sb.Append(" ");
                 sb.Append(parameter.Name);
                 sb.Append(", ");
