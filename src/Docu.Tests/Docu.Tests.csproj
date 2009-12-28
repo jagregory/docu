@@ -96,6 +96,7 @@
     <Compile Include="Output\Rendering\HtmlOutputFormatter_Referencable_Specs.cs" />
     <Compile Include="Output\SparkTemplateBaseSpecs.cs" />
     <Compile Include="Output\TemplateTransformerTests.cs" />
+    <Compile Include="TestExtensions.cs" />
     <Compile Include="Parsing\IdentifierTests.cs" />
     <Compile Include="ReflectionHelper.cs" />
     <Compile Include="Output\Rendering\HtmlOutputFormatterSpecs.cs" />

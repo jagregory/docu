@@ -1,124 +1,156 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Docu.Documentation;
-using Docu.Documentation.Comments;
 using Docu.Output;
-using Docu.Parsing.Model;
-using Docu.Tests.Utils;
 using Example;
-using NUnit.Framework;
+using Machine.Specifications;
 
 namespace Docu.Tests.Output
 {
-    [TestFixture]
-    public class HtmlGenerationTests : BaseFixture
+    public class when_the_HtmlGenerator_is_told_to_convert_a_template_that_uses_the_assemblies_collection_to_html : HtmlGeneratorSpecs
     {
-        private HtmlGenerator generator;
-
-        [SetUp]
-        public void CreateGenerator()
+        Because of = () =>
         {
-            var templates = new Dictionary<string, string>();
+            html_generator = new HtmlGenerator(template_for_content("${Assemblies[0].FullName}"));
+            generated_output = html_generator.Convert(template_name, new ViewData { Assemblies = new[] { typeof(ViewData).Assembly } }, "");
+        };
 
-            // get all TestTemplate attributes and stick their content in the generator
-            foreach (var pair in from method in GetType().GetMethods()
-                                 from attribute in method.GetCustomAttributes(typeof(TestTemplateAttribute), true)
-                                 select new { method.Name, ((TestTemplateAttribute)attribute).Content })
-                templates.Add(pair.Name, pair.Content);
+        It should_output_the_assembly_value = () =>
+            generated_output.ShouldEqual(typeof(ViewData).Assembly.FullName);
+    }
 
-            generator = new HtmlGenerator(templates);
-        }
-
-        private string Convert(ViewData data)
+    public class when_the_HtmlGenerator_is_told_to_convert_a_template_that_uses_the_namespaces_collection_to_html : HtmlGeneratorSpecs
+    {
+        Because of = () =>
         {
-            var callStack = new StackTrace();
-            var caller = callStack.GetFrame(1);
+            html_generator = new HtmlGenerator(template_for_content("${Namespaces[0].Name}"));
+            generated_output = html_generator.Convert(template_name, new ViewData { Namespaces = new [] { "Example" }.to_namespaces() }, "");
+        };
 
-            return generator.Convert(caller.GetMethod().Name, data, "");
-        }
+        It should_output_the_namespace_value = () =>
+            generated_output.ShouldEqual("Example");
+    }
 
-        [TestTemplate("${Assemblies[0].FullName}")]
-        public void ShouldOutputAssemblies()
+    public class when_the_HtmlGenerator_is_told_to_convert_a_template_that_uses_the_namespace_accessor_to_html : HtmlGeneratorSpecs
+    {
+        Because of = () =>
         {
-            Convert(new ViewData { Assemblies = new[] { typeof(ViewData).Assembly } })
-                .ShouldEqual(typeof(ViewData).Assembly.FullName);
-        }
+            html_generator = new HtmlGenerator(template_for_content("${Namespace.Name}"));
+            generated_output = html_generator.Convert(template_name, new ViewData { Namespace = "Example".to_namespace() }, "");
+        };
 
-        [TestTemplate("${Namespaces[0].Name}")]
-        public void ShouldOutputSimpleNamespace()
+        It should_output_the_namespace_value = () =>
+            generated_output.ShouldEqual("Example");
+    }
+
+    public class when_the_HtmlGenerator_is_told_to_convert_a_template_that_uses_the_namespaces_collection_with_linq_to_html : HtmlGeneratorSpecs
+    {
+        Because of = () =>
         {
-            Convert(new ViewData { Namespaces = Namespaces("Example") })
-                .ShouldEqual("Example");
-        }
+            html_generator = new HtmlGenerator(template_for_content("<for each=\"var ns in Namespaces.Where(x => x.Name == 'Test')\">${ns.Name}</for>"));
+            generated_output = html_generator.Convert(template_name, new ViewData { Namespaces = new[] { "Example", "Test" }.to_namespaces() }, "");
+        };
 
-        [TestTemplate("${Namespace.Name}")]
-        public void ShouldOutputShortcutNamespace()
+        It should_output_the_namespace_value = () =>
+            generated_output.ShouldEqual("Test");
+    }
+
+    public class when_the_HtmlGenerator_is_told_to_convert_a_template_that_uses_the_summary_of_the_type_accessor_to_html : HtmlGeneratorSpecs
+    {
+        Establish context = () =>
         {
-            Convert(new ViewData { Namespace = Namespace("Example") })
-                .ShouldEqual("Example");
-        }
+            type = typeof(First).to_type();
+            type.Summary.AddChild(summary_content.to_text());
+        };
 
-        [TestTemplate("<for each=\"var ns in Namespaces.Where(x => x.Name == 'Test')\">${ns.Name}</for>")]
-        public void ShouldOutputNamespaceThatUsesLinq()
+        Because of = () =>
         {
-            Convert(new ViewData { Namespaces = Namespaces("Example", "Test") })
-                .ShouldEqual("Test");
-        }
+            html_generator = new HtmlGenerator(template_for_content("${Format(Type.Summary)}"));
+            generated_output = html_generator.Convert(template_name, new ViewData { Type = type }, "");
+        };
 
-        [TestTemplate("${Formatter.Format(Type.Summary)}")]
-        public void ShouldOutputSimpleSummary()
+        It should_output_the_summary_content = () =>
+            generated_output.ShouldEqual(summary_content);
+
+        static DeclaredType type;
+        const string summary_content = "summary";
+    }
+
+    public class when_the_HtmlGenerator_is_told_to_convert_a_template_that_uses_method_overloads_to_html : HtmlGeneratorSpecs
+    {
+        Establish context = () =>
         {
-            var ns = Namespace("Example");
-            var type = Type<First>(ns);
-            type.Summary.AddChild(new InlineText("Hello world!"));
-            
-            Convert(new ViewData { Type = type })
-                .ShouldEqual("Hello world!");
-        }
+            type = typeof(ClassWithOverload).to_type();
+            type.Methods.Add(new ClassWithOverload().method_for(x => x.Method()));
+            type.Methods.Add(new ClassWithOverload().method_for(x => x.Method(null))
+                                .setup(cfg =>
+                                    cfg.Parameters.Add(typeof(string).to_type().to_method_parameter_called("one"))));
+        };
 
-        [TestTemplate("<for each=\"var method in Type.Methods\">${method.Name}(${OutputMethodParams(method)})</for>")]
-        public void ShouldOutputOverloadedMethods()
+        Because of = () =>
         {
-            var ns = Namespace("Example");
-            var type = Type<ClassWithOverload>(ns);
-            var parameterType = DeclaredType.Unresolved(Identifier.FromType(typeof(string)), typeof(string), Namespace("System"));
+            html_generator = new HtmlGenerator(template_for_content("<for each=\"var method in Type.Methods\">${method.Name}(${OutputMethodParams(method)})</for>"));
+            generated_output = html_generator.Convert(template_name, new ViewData { Type = type }, "");
+        };
 
-            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method()), typeof(ClassWithOverload)), null));
-            type.Methods.Add(new Method(Identifier.FromMethod(Method<ClassWithOverload>(x => x.Method(null)), typeof(ClassWithOverload)), null));
-            type.Methods[1].Parameters.Add(new MethodParameter("one", parameterType));
-            
-            Convert(new ViewData { Type = type })
-                .ShouldEqual("Method()Method(string one)"); // nasty, I know
-        }
+        It should_output_the_summary_content = () =>
+            generated_output.ShouldEqual("Method()Method(String one)");
 
-        [TestTemplate("<for each=\"var method in Type.Methods\">${method.ReturnType.PrettyName}</for>")]
-        public void ShouldOutputMethodReturnType()
+        static DeclaredType type;
+    }
+
+    public class when_the_HtmlGenerator_is_told_to_convert_a_template_that_uses_a_method_return_type_to_html : HtmlGeneratorSpecs
+    {
+        Establish context = () =>
         {
-            var ns = Namespace("Example");
-            var type = Type<ReturnMethodClass>(ns);
-            var returnType = DeclaredType.Unresolved(Identifier.FromType(typeof(string)), typeof(string), Namespace("System"));
+            type = typeof(ClassWithOverload).to_type();
+            type.Methods.Add(new ClassWithOverload().method_for(x => x.Method())
+                                .setup(cfg =>
+                                    cfg.ReturnType = typeof(string).to_type()));
+        };
 
-            type.Methods.Add(new Method(Identifier.FromMethod(Method<ReturnMethodClass>(x => x.Method()), typeof(ReturnMethodClass)), null));
-            type.Methods[0].ReturnType = returnType;
-
-            Convert(new ViewData { Type = type })
-                .ShouldEqual("string");
-        }
-
-        [TestTemplate("<for each=\"var property in Type.Properties\">${property.ReturnType.PrettyName}</for>")]
-        public void ShouldOutputPropertyReturnType()
+        Because of = () =>
         {
-            var ns = Namespace("Example");
-            var type = Type<PropertyType>(ns);
-            var returnType = DeclaredType.Unresolved(Identifier.FromType(typeof(string)), typeof(string), Namespace("System"));
+            html_generator = new HtmlGenerator(template_for_content("<for each=\"var method in Type.Methods\">${method.ReturnType.PrettyName}</for>"));
+            generated_output = html_generator.Convert(template_name, new ViewData { Type = type }, "");
+        };
 
-            type.Properties.Add(new Property(Identifier.FromProperty(Property<PropertyType>(x => x.Property), typeof(PropertyType)), null));
-            type.Properties[0].ReturnType = returnType;
+        It should_output_the_summary_content = () =>
+            generated_output.ShouldEqual("String");
 
-            Convert(new ViewData { Type = type })
-                .ShouldEqual("string");
+        static DeclaredType type;
+    }
+
+    public class when_the_HtmlGenerator_is_told_to_convert_a_template_that_uses_a_property_to_html : HtmlGeneratorSpecs
+    {
+        Establish context = () =>
+        {
+            type = typeof(PropertyType).to_type();
+            type.Properties.Add(new PropertyType().property_for(x => x.Property)
+                                .setup(cfg =>
+                                    cfg.ReturnType = typeof(string).to_type()));
+        };
+
+        Because of = () =>
+        {
+            html_generator = new HtmlGenerator(template_for_content("<for each=\"var property in Type.Properties\">${property.ReturnType.PrettyName}</for>"));
+            generated_output = html_generator.Convert(template_name, new ViewData { Type = type }, "");
+        };
+
+        It should_output_the_summary_content = () =>
+            generated_output.ShouldEqual("String");
+
+        static DeclaredType type;
+    }
+
+    public abstract class HtmlGeneratorSpecs
+    {
+        protected static HtmlGenerator html_generator;
+        protected static string generated_output;
+        protected const string template_name = "example";
+
+        protected static IEnumerable<KeyValuePair<string, string>> template_for_content(string content)
+        {
+            return new[] { new KeyValuePair<string, string>(template_name, content) };
         }
     }
 }

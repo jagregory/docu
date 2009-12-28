@@ -28,8 +28,7 @@ namespace Docu.Tests.Output
             transformer.CreatePages("simple.spark", "", namespaces);
 
             generator.AssertWasCalled(
-                x => x.Convert(null, null, null),
-                x => x.Constraints(Is.Equal("simple.spark"), Is.Anything()));
+                x => x.Convert(Arg.Is("simple.spark"), Arg<ViewData>.Is.Anything, Arg<string>.Is.Anything));
         }
 
         [Test]
@@ -74,9 +73,8 @@ namespace Docu.Tests.Output
             transformer.CreatePages("!namespace.spark", "", namespaces);
 
             generator.AssertWasCalled(
-                x => x.Convert(null, null, null),
-                x => x.Constraints(Is.Equal("!namespace.spark"), Is.Anything())
-                         .Repeat.Twice());
+                x => x.Convert(Arg.Is("!namespace.spark"), Arg<ViewData>.Is.Anything, Arg<string>.Is.Anything),
+                x => x.Repeat.Twice());
         }
 
         [Test]
@@ -129,9 +127,8 @@ namespace Docu.Tests.Output
             transformer.CreatePages("!type.spark", "", namespaces);
 
             generator.AssertWasCalled(
-                x => x.Convert(null, null, null),
-                x => x.Constraints(Is.Equal("!type.spark"), Is.Anything())
-                         .Repeat.Twice());
+                x => x.Convert(Arg.Is("!type.spark"), Arg<ViewData>.Is.Anything, Arg<string>.Is.Anything),
+                x => x.Repeat.Twice());
         }
 
         [Test]

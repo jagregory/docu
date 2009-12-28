@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Docu.Output.Rendering;
 using Machine.Specifications;
 
@@ -26,22 +23,22 @@ namespace Docu.Tests.Output
             resolved_path.ShouldEqual("index.htm");
     }
 
-    public class when_a_sub_level_view_is_asked_to_resolve_a_path_relative_to_the_current_level : ViewPathSpec
+    public class when_a_one_level_deep_view_is_asked_to_resolve_a_path_relative_to_the_current_level : ViewPathSpec
     {
+        Establish context = () =>
+            view.RelativeOutputPath = "sub-directory\\view.htm";
+
         Because of = () =>
-        {
-            view.RelativeOutputPath = "sub-directory/view.htm";
             resolved_path = view.SiteResource("index.htm");
-        };
 
         It should_use_the_relative_path_without_the_prefix = () =>
             resolved_path.ShouldEqual("index.htm");
     }
 
-    public class when_a_sub_level_view_is_asked_to_resolve_a_path_relative_to_the_output_root : ViewPathSpec
+    public class when_a_one_level_deep_view_is_asked_to_resolve_a_path_relative_to_the_output_root : ViewPathSpec
     {
         Establish context = () =>
-            view.RelativeOutputPath = "sub-directory/view.htm";
+            view.RelativeOutputPath = "sub-directory\\view.htm";
 
         Because of = () =>
             resolved_path = view.SiteResource("~/index.htm");
@@ -50,10 +47,10 @@ namespace Docu.Tests.Output
             resolved_path.ShouldEqual("../index.htm");
     }
 
-    public class when_a_sub_sub_level_view_is_asked_to_resolve_a_path_relative_to_the_output_root : ViewPathSpec
+    public class when_a_two_level_deep_view_is_asked_to_resolve_a_path_relative_to_the_output_root : ViewPathSpec
     {
         Establish context = () =>
-            view.RelativeOutputPath = "sub-directory/deeper/view.htm";
+            view.RelativeOutputPath = "sub-directory\\deeper\\view.htm";
 
         Because of = () =>
             resolved_path = view.SiteResource("~/index.htm");
@@ -62,10 +59,10 @@ namespace Docu.Tests.Output
             resolved_path.ShouldEqual("../../index.htm");
     }
 
-    public class when_a_sub_sub_level_view_is_asked_to_resolve_a_two_level_deep_path_relative_to_the_output_root_with_the_same_sub_directory : ViewPathSpec
+    public class when_a_two_level_deep_view_is_asked_to_resolve_a_two_level_deep_path_relative_to_the_output_root_with_the_same_sub_directory : ViewPathSpec
     {
         Establish context = () =>
-            view.RelativeOutputPath = "sub-directory/deeper/view.htm";
+            view.RelativeOutputPath = "sub-directory\\deeper\\view.htm";
 
         Because of = () =>
             resolved_path = view.SiteResource("~/sub-directory/index.htm");
@@ -74,10 +71,10 @@ namespace Docu.Tests.Output
             resolved_path.ShouldEqual("../../sub-directory/index.htm");
     }
 
-    public class when_a_sub_sub_level_view_is_asked_to_resolve_a_two_level_deep_path_relative_to_the_output_root_with_a_different_sub_directory : ViewPathSpec
+    public class when_a_two_level_deep_view_is_asked_to_resolve_a_two_level_deep_path_relative_to_the_output_root_with_a_different_sub_directory : ViewPathSpec
     {
         Establish context = () =>
-            view.RelativeOutputPath = "sub-directory/deeper/view.htm";
+            view.RelativeOutputPath = "sub-directory\\deeper\\view.htm";
 
         Because of = () =>
             resolved_path = view.SiteResource("~/other-sub-directory/index.htm");
