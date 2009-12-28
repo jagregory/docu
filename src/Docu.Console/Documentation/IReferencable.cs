@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Docu.Documentation.Comments;
 using Docu.Parsing.Model;
 
 namespace Docu.Documentation
@@ -16,6 +17,10 @@ namespace Docu.Documentation
         string FullName { get; }
         string PrettyName { get; }
         bool IsExternal { get; }
+        bool HasDocumentation { get; }
+        Summary Summary { get; set; }
+        Remarks Remarks { get; set; }
+        Value Value { get; set; }
         bool IsIdentifiedBy(Identifier otherIdentifier);
         void ConvertToExternalReference();
     }
@@ -49,6 +54,29 @@ namespace Docu.Documentation
         public bool IsExternal
         {
             get { return true; }
+        }
+
+        public bool HasDocumentation
+        {
+            get { return false; }
+        }
+
+        public Summary Summary
+        {
+            get { return new Summary(); }
+            set {}
+        }
+
+        public Remarks Remarks
+        {
+            get { return new Remarks(); }
+            set {}
+        }
+
+        public Value Value
+        {
+            get { return new Value(); }
+            set {}
         }
 
         public bool IsIdentifiedBy(Identifier otherIdentifier)

@@ -18,6 +18,11 @@ namespace Docu.Documentation.Comments
             inner.Add(comment);
         }
 
+        public bool IsEmpty
+        {
+            get { return !Children.Any(); }
+        }
+
         public virtual bool IsResolved { get; private set; }
 
         public virtual void Resolve(IDictionary<Identifier, IReferencable> referencables)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Model;
 
@@ -16,6 +17,11 @@ namespace Docu.Documentation
             Summary = new Summary();
             Remarks = new Remarks();
             Value = new Value();
+        }
+
+        public virtual bool HasDocumentation
+        {
+            get { return !(Summary.IsEmpty && Remarks.IsEmpty && Value.IsEmpty); }
         }
 
         public string Name { get; private set; }
