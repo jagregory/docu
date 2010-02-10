@@ -49,7 +49,7 @@ namespace Docu.Console
             }));
             switches.Add(new ParameterSwitch("--templates", arg =>
             {
-                documentationGenerator.SetTemplatePath(arg);
+                documentationGenerator.SetTemplatePath(arg.TrimEnd('\\'));
                 return true;
             }));
         }
