@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 <PropertyGroup>
@@ -6,7 +6,7 @@
   <!-- BUILD_NUMBER is exposed as an environment variable in TeamCity -->
   <BuildRevision Condition="'$(BUILD_NUMBER)' != ''">$(BUILD_NUMBER)</BuildRevision>
   <!-- Manually update the 3 significant portions of the BuildVersion when appropriate -->
-  <BuildVersion>0.1.0.$(BuildRevision)</BuildVersion>
+  <BuildVersion>$(BuildRevision)</BuildVersion>
 
   <RunningOnBuildServer>false</RunningOnBuildServer>
   <RunningOnBuildServer Condition="'$(TEAMCITY_PROJECT_NAME)' != ''">true</RunningOnBuildServer>
