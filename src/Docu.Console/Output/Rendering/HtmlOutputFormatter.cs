@@ -66,8 +66,10 @@ namespace Docu.Output.Rendering
 
             foreach (var comment in comments)
             {
-                sb.Append(Format(comment));
+                sb.Append(Format(comment) + " ");
             }
+
+            sb.Replace(" .", ".");
 
             return sb.ToString();
         }
