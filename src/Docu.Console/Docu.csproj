@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2FB9E7C3-B602-4343-B510-9C8DBFC7B8FD}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -71,6 +71,7 @@
     <Compile Include="Console\Switch.cs" />
     <Compile Include="Documentation\Comments\BaseComment.cs" />
     <Compile Include="Documentation\Comments\InlineList.cs" />
+    <Compile Include="Documentation\Comments\MultilineCode.cs" />
     <Compile Include="Documentation\Comments\ParameterReference.cs" />
     <Compile Include="Documentation\Comments\Remarks.cs" />
     <Compile Include="Documentation\Comments\Summary.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Parsing\Comments\MultilineCodeCommentParser.cs" />
     <Compile Include="Parsing\Comments\ParagraphCommentParser.cs" />
     <Compile Include="Parsing\Comments\ParameterReferenceParser.cs" />
+    <Compile Include="Parsing\Comments\ParseOptions.cs" />
     <Compile Include="Parsing\Comments\SeeCodeCommentParser.cs" />
     <Compile Include="Parsing\DocumentationXmlMatcher.cs" />
     <Compile Include="Parsing\DocumentableMemberFinder.cs" />
@@ -263,6 +265,14 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="templates\!namespace\_value.spark">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="templates\!namespace\_example.spark">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="templates\js\example.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

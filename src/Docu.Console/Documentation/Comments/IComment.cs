@@ -5,5 +5,6 @@ namespace Docu.Documentation.Comments
     public interface IComment
     {
         IEnumerable<IComment> Children { get; }
+        void AddChild(IComment child);
     }
 }

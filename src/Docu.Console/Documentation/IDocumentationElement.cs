@@ -12,6 +12,7 @@ namespace Docu.Documentation
         Summary Summary { get; set; }
         Remarks Remarks { get; set; }
         Value Value { get; set; }
+        MultilineCode Example { get; set; }
         bool IsIdentifiedBy(Identifier otherIdentifier);
         void ConvertToExternalReference();
     }

@@ -22,6 +22,7 @@ namespace Docu.Documentation.Generators
             ParseSummary(association, doc);
             ParseRemarks(association, doc);
             ParseValue(association, doc);
+            ParseExample(association, doc);
 
             if (matchedAssociations.ContainsKey(association.Name)) return;
 

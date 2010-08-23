@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Docu
@@ -41,6 +42,53 @@ namespace Docu
                 prepared = prepared.TrimEnd('\t', '\r', '\n');
 
             return prepared;
+        }
+
+        public static string[] SplitByNewLine(this string text)
+        {
+            return text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+        }
+
+        public static string JoinIntoString(this IEnumerable<string> items)
+        {
+            return items.JoinIntoString("");
+        }
+
+        public static string JoinIntoString(this IEnumerable<string> items, string separator)
+        {
+            return string.Join(separator, items.ToArray());
+        }
+
+        public static string NormaliseIndent(this string text)
+        {
+            var whitespaceRegexp = new Regex(@"^([\s]+)", RegexOptions.Compiled);
+            var lines = text.SplitByNewLine();
+
+            lines = RemoveBlankOrWhitespaceLinesAtStart(lines);
+            lines = RemoveBlankOrWhitespaceLinesAtEnd(lines);
+
+            var removableWhitespaceCharCount =
+                lines
+                    .Select(x => whitespaceRegexp.Match(x).Groups[0].Length)
+                    .Min();
+
+            return lines
+                .Select(x => x.Substring(removableWhitespaceCharCount))
+                .JoinIntoString("\r\n");
+        }
+
+        static string[] RemoveBlankOrWhitespaceLinesAtEnd(IEnumerable<string> lines)
+        {
+            return RemoveBlankOrWhitespaceLinesAtStart(lines.Reverse())
+                .Reverse()
+                .ToArray();
+        }
+
+        static string[] RemoveBlankOrWhitespaceLinesAtStart(IEnumerable<string> lines)
+        {
+            return lines
+                .SkipWhile(x => x.Trim() == "")
+                .ToArray();
         }
     }
 }

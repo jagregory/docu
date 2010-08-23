@@ -23,6 +23,7 @@ namespace Docu.Output.Rendering
                 new OutputFormatterPart<See>(FormatSee),
                 new OutputFormatterPart<InlineText>(FormatInlineText),
                 new OutputFormatterPart<InlineCode>(FormatInlineCode),
+                new OutputFormatterPart<MultilineCode>(FormatMultilineCode),
                 new OutputFormatterPart<Paragraph>(FormatParagraph),
                 new OutputFormatterPart<ParameterReference>(FormatParameterReference),
                 new OutputFormatterPart<DefinitionList>(FormatDefinitionList),
@@ -194,6 +195,11 @@ namespace Docu.Output.Rendering
         private string FormatInlineCode(InlineCode block)
         {
             return "<code>" + block.Text + "</code>";
+        }
+
+        private string FormatMultilineCode(MultilineCode block)
+        {
+            return FormatGeneralContainer(block);
         }
 
         public string NamespaceUrlFormat { get; set; }

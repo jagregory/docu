@@ -32,6 +32,7 @@ namespace Docu.Documentation
             ParseSummary(association, doc);
             ParseValue(association, doc);
             ParseRemarks(association, doc);
+            ParseExample(association, doc);
 
             if (matchedAssociations.ContainsKey(association.Name))
                 return;

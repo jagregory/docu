@@ -28,6 +28,7 @@ namespace Docu.Documentation.Generators
 
             ParseSummary(association, doc);
             ParseRemarks(association, doc);
+            ParseExample(association, doc);
 
             matchedAssociations.Add(association.Name, doc);
             type.AddField(doc);

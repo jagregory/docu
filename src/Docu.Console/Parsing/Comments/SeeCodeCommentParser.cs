@@ -12,7 +12,7 @@ namespace Docu.Parsing.Comments
             return node.Name == "see";
         }
 
-        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last)
+        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last, ParseOptions options)
         {
             IReferencable reference = new NullReference();
             if (node.Attributes["cref"] == null) return new See(reference);

@@ -17,6 +17,7 @@ namespace Docu.Documentation
             Summary = new Summary();
             Remarks = new Remarks();
             Value = new Value();
+            Example = new MultilineCode();
         }
 
         public virtual bool HasDocumentation
@@ -30,6 +31,7 @@ namespace Docu.Documentation
         public Summary Summary { get; set; }
         public Remarks Remarks { get; set; }
         public Value Value { get; set; }
+        public MultilineCode Example { get; set; }
 
         public bool IsIdentifiedBy(Identifier otherIdentifier)
         {

@@ -169,5 +169,6 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             contentParser.AssertWasCalled(x => x.ParseNode(members[0].Xml.ChildNodes[0]));
             contentParser.AssertWasCalled(x => x.ParseNode(members[0].Xml.ChildNodes[1]));
         }
+
     }
 }

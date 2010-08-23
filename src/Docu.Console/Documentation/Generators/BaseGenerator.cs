@@ -60,6 +60,16 @@ namespace Docu.Documentation.Generators
                 doc.Remarks = new Remarks(commentParser.ParseNode(node));
         }
 
+        protected void ParseExample(IDocumentationMember member, IDocumentationElement doc)
+        {
+            if (member.Xml == null) return;
+
+            var node = member.Xml.SelectSingleNode("example");
+
+            if (node != null)
+                doc.Example = new MultilineCode(commentParser.ParseNode(node, new ParseOptions { PreserveWhitespace = true }));
+        }
+
         protected void ParseReturns(IDocumentationMember member, Method doc)
         {
             if (member.Xml == null) return;
@@ -69,6 +79,7 @@ namespace Docu.Documentation.Generators
             if (node != null)
                 doc.Returns = new Summary(commentParser.ParseNode(node));
         }
+
 
         protected Namespace FindNamespace(IDocumentationMember association, List<Namespace> namespaces)
         {

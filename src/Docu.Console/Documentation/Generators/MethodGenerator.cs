@@ -33,6 +33,7 @@ namespace Docu.Documentation.Generators
             ParseRemarks(association, doc);
             ParseValue(association, doc);
             ParseReturns(association, doc);
+            ParseExample(association, doc);
 
             foreach (var parameter in association.Method.GetParameters())
             {

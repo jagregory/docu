@@ -10,8 +10,11 @@ namespace Docu.Parsing.Comments
             return node is XmlText;
         }
 
-        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last)
+        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last, ParseOptions options)
         {
+            if (options.PreserveWhitespace)
+                return new InlineText(node.InnerText.NormaliseIndent());
+
             return new InlineText(node.InnerText.TrimComment(first, last));
         }
     }

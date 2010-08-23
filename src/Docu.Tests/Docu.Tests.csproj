@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{76E3611F-A908-4A1B-8673-A221DD8C5301}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -75,6 +75,8 @@
     <Compile Include="DocumentationGeneratorTests\SetTemplatePath.cs" />
     <Compile Include="DocumentationGeneratorTests\SetXml.cs" />
     <Compile Include="DocumentationGeneratorTests\SetAssembly.cs" />
+    <Compile Include="Documentation\DocumentModelGeneratorTests\CommentAssertionExtensions.cs" />
+    <Compile Include="Documentation\DocumentModelGeneratorTests\Examples.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Returns.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Fields.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Remarks.cs" />

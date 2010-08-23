@@ -248,8 +248,6 @@ namespace Docu.Tests.Parsing
             list.Items[0].Definition.Children.First().ShouldBeOfType<InlineText>().Text.ShouldEqual("Four ");
             list.Items[0].Definition.Children.Skip(1).First().ShouldBeOfType<See>().Reference.Name.ShouldEqual("Example");
         }
-
-    
     }
 
 }
