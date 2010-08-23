@@ -44,12 +44,12 @@ namespace Docu.Console
             }));
             switches.Add(new ParameterSwitch("--output", arg =>
             {
-                documentationGenerator.SetOutputPath(arg);
+                documentationGenerator.SetOutputPath(arg.TrimEnd('\\'));
                 return true;
             }));
             switches.Add(new ParameterSwitch("--templates", arg =>
             {
-                documentationGenerator.SetTemplatePath(arg);
+                documentationGenerator.SetTemplatePath(arg.TrimEnd('\\'));
                 return true;
             }));
         }

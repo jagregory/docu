@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Docu.Console;
 
 namespace Docu.Parsing.Model
 {
@@ -15,6 +16,7 @@ namespace Docu.Parsing.Model
         private static Dictionary<string, Type> nameToType;
         private static char START_GENERIC_ARGUMENTS = '{';
         private static char END_GENERIC_ARGUMENTS = '}';
+        private static IScreenWriter screenWriter = new ConsoleScreenWriter();
 
         protected Identifier(string name)
         {
@@ -247,9 +249,18 @@ namespace Docu.Parsing.Model
             nameToType = new Dictionary<string, Type>();
             foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                foreach(var type in assembly.GetTypes())
+                try
                 {
-                    nameToType[type.FullName] = type;
+                    foreach (var type in assembly.GetTypes())
+                    {
+                        if (type.FullName != null)
+                            nameToType[type.FullName] = type;
+                    }
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    screenWriter.WriteLine(string.Format("Could not load types of assembly '{0}'.{1}{2}",
+                                                         assembly.FullName, Environment.NewLine, ex.InnerException));
                 }
             }
         }
