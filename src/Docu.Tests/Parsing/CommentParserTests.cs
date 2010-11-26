@@ -128,6 +128,17 @@ namespace Docu.Tests.Parsing
         }
 
         [Test]
+        public void ShouldParseSeeForRelativeProperty()
+        {
+            var blocks = parser.ParseNode("<x><see cref=\"P:OtherProperty\" /></x>".ToNode());
+
+            blocks.Count.ShouldEqual(1);
+            blocks[0].ShouldBeOfType<See>();
+            ((See)blocks[0]).Reference.IsResolved.ShouldBeFalse();
+            ((See)blocks[0]).Reference.Name.ShouldEqual("OtherProperty");
+        }
+
+        [Test]
         public void ShouldParseSeeForEvent()
         {
             var blocks = parser.ParseNode("<x><see cref=\"E:Example.Second.AnEvent\" /></x>".ToNode());
