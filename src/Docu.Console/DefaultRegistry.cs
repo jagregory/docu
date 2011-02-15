@@ -18,16 +18,11 @@ namespace Docu
                 x.AddAllTypesOf<ICommentNodeParser>();
             });
 
-            ForRequestedType<IOutputGenerator>()
-                .TheDefault.IsThis(new HtmlGenerator());
-            ForRequestedType<IOutputWriter>()
-                .TheDefaultIsConcreteType<FileSystemOutputWriter>();
-            ForRequestedType<IScreenWriter>()
-                .TheDefaultIsConcreteType<ConsoleScreenWriter>();
-            ForRequestedType<IScreenMessage>()
-                .AsSingletons();
-            ForRequestedType<IEventAggregator>()
-                .AsSingletons();
+            For<IOutputGenerator>().Use(new HtmlGenerator());
+            For<IOutputWriter>().Use<FileSystemOutputWriter>();
+            For<IScreenWriter>().Use<ConsoleScreenWriter>();
+            For<IScreenMessage>().Singleton();
+            For<IEventAggregator>().Singleton();
         }
     }
 }

@@ -1,1 +1,1 @@
-%systemroot%\Microsoft.NET\Framework\v3.5\MSBuild.exe Build.proj %*
+%systemroot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe Build.proj %*

@@ -93,9 +93,12 @@ namespace Docu.Tests.Output
 
         protected class TestView : SparkTemplateBase
         {
+            public override void Render()
+            {
+            }
+
             public override void RenderView(TextWriter writer)
             {
-
             }
 
             public override Guid GeneratedViewId

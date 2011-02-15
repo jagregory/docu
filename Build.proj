@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 <PropertyGroup>
   <BuildRevision>0</BuildRevision>
@@ -44,7 +44,7 @@
 </Target>
 
 <Target Name="Merge">
-  <Exec Command="lib\ilmerge\ILMerge.exe /Out:artifacts\docu.exe src\Docu.Console\bin\$(Configuration)\docu.exe lib\spark\Spark.dll lib\spark\SparkLanguage.dll lib\spark\Interop.SparkLanguagePackageLib.dll lib\structuremap\structuremap.dll" />
+  <Exec Command="lib\ilmerge\ILMerge.exe /out:artifacts\docu.exe /targetplatform:&quot;v4,C:\Windows\Microsoft.NET\Framework\v4.0.30319&quot; src\Docu.Console\bin\$(Configuration)\docu.exe &quot;src\packages\Spark.1.5\lib\.NetFramework 4.0\Spark.dll&quot; &quot;src\packages\structuremap.2.6.1.0\lib\StructureMap.dll&quot;" />
   <Message Text="Created artifacts\docu.exe" />
 </Target>
 
