@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <title>${Namespace.Name} - ${WriteProductName(Assemblies[0])} Documentation</title>
@@ -9,11 +9,15 @@
     <script type="text/javascript" src="../js/navigation.js"></script>
   </head>
   <body>
+  	<header><h1>${WriteProductName(Assemblies[0])} : API Documentation</h1>
+	</header>
 	<namespaces />
     <types />
-    <div class="header">
+	<article>
+    <header>
 		<p class="class"><strong>Namespace</strong> ${Namespace.Name}</p>
-	</div>
+	</header>
+	<section>
     <div class="sub-header">
 		<if condition="Namespace.HasClasses">
 			<h3 class="section">Classes</h3>
@@ -34,7 +38,8 @@
 		</if>
 		<p if="!Namespace.HasTypes">This namespace is empty.</p>
 	</div>
-	
-	<use file="../_footer" />
+	</section>
+	</article>
+	<use file="../_common_footer" />
   </body>
 </html>
