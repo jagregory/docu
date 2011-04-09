@@ -57,7 +57,9 @@ namespace Docu.Parsing
 
             foreach (Assembly assembly in assemblies)
             {
-                types.AddRange(assembly.GetExportedTypes());
+				foreach (var type in assembly.GetExportedTypes()) {
+					types.Add(type);
+				}
             }
 
             return documentableMembers.GetMembersForDocumenting(types);

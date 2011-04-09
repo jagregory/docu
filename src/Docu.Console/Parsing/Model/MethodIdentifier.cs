@@ -19,7 +19,12 @@ namespace Docu.Parsing.Model
             this.isPublic = isPublic;
         }
 
-        public bool IsStatic
+		public static MethodIdentifier FromException(string name, TypeIdentifier typeId, Exception ex) {
+			return (new MethodIdentifier(name, new TypeIdentifier[] {}, false, false, typeId));
+		}
+
+
+    	public bool IsStatic
         {
             get { return isStatic; }
         }
