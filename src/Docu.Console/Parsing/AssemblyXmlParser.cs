@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Xml;
 using Docu.Documentation;
@@ -57,8 +58,13 @@ namespace Docu.Parsing
 
             foreach (Assembly assembly in assemblies)
             {
-				foreach (var type in assembly.GetExportedTypes()) {
-					types.Add(type);
+				try {
+					foreach (var type in assembly.GetExportedTypes()) {
+						types.Add(type);
+					}
+				} catch (IOException ex) {
+					//TODO: what???
+					System.Console.Error.WriteLine(assembly.FullName + ": " + ex.Message);
 				}
             }
 

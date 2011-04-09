@@ -55,7 +55,7 @@ namespace Docu.Documentation.Generators
 				matchedAssociations.Add(association.Name, doc);
 				if (type == null) return;
 				type.AddMethod(doc);
-			} catch (FileLoadException ex) {
+			} catch (IOException ex) {
 				var doc = Method.Unresolved(
 					Identifier.FromMethod(association.Method, association.TargetType),
 					type, association.Method, new NullReference());

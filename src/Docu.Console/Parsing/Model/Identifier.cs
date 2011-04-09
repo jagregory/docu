@@ -48,7 +48,7 @@ namespace Docu.Parsing.Model
 				foreach (ParameterInfo param in method.GetParameters()) {
 					parameters.Add(FromType(param.ParameterType));
 				}
-			} catch (FileLoadException ex) {
+			} catch (IOException ex) {
 				return (MethodIdentifier.FromException(name, FromType(type), ex));
 			}
 
