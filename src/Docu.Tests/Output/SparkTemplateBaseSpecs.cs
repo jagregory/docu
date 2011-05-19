@@ -102,6 +102,10 @@ namespace Docu.Tests.Output
             {
                 get { return Guid.NewGuid(); }
             }
-        }
+
+			public override void Render() {
+				throw new NotImplementedException();
+			}
+		}
     }
 }

@@ -7,6 +7,6 @@ namespace Docu
         private static void Main(string[] args)
         {
             ConsoleApplication.Run(args);
-        }
+		}
     }
 }
