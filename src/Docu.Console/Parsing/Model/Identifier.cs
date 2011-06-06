@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Docu.Console;
@@ -43,12 +44,15 @@ namespace Docu.Parsing.Model
             if (method.IsGenericMethod)
                 name += GENERIC_PARAMATER_PREFIX + method.GetGenericArguments().Length;
 
-            foreach (ParameterInfo param in method.GetParameters())
-            {
-                parameters.Add(FromType(param.ParameterType));
-            }
+			try {
+				foreach (ParameterInfo param in method.GetParameters()) {
+					parameters.Add(FromType(param.ParameterType));
+				}
+			} catch (IOException ex) {
+				return (MethodIdentifier.FromException(name, FromType(type), ex));
+			}
 
-            return new MethodIdentifier(name, parameters.ToArray(), method.IsStatic, method.IsPublic, FromType(type));
+        	return new MethodIdentifier(name, parameters.ToArray(), method.IsStatic, method.IsPublic, FromType(type));
         }
 
         public static PropertyIdentifier FromProperty(PropertyInfo property, Type type)

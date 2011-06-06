@@ -1,4 +1,4 @@
-﻿<div id="types">
+﻿<nav id="types">
   <h2 class="fixed">Types in ${Namespace.PrettyName}</h2>
 	<div class="scroll">
 		<ul>
@@ -11,4 +11,4 @@
         </li>
 		</ul>
 	</div>
-</div>
+</nav>

@@ -1,225 +1,263 @@
-﻿body {
-	margin: 0;
-	padding: 0;
-	font-family: Verdana,Arial,Helvetica,sans-serif;
-	font-size: 90%;
+/* HTML5 ? Boilerplate */
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 
-.header {
-	background: #048;
-	border-bottom: 3px solid #006;
-	margin: 0;
-	color: #FFF;
-	padding: 10px;
-	clear: left;
-	font-size: 13px;
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
 }
 
-.header p {
-	margin: 0 0 4px 0;
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after,
+q:before, q:after { content: ""; content: none; }
+ins { background-color: #ff9; color: #000; text-decoration: none; }
+mark { background-color: #ff9; color: #000; font-style: italic; font-weight: bold; }
+del { text-decoration: line-through; }
+abbr[title], dfn[title] { border-bottom: 1px dotted; cursor: help; }
+table { border-collapse: collapse; border-spacing: 0; }
+hr { display: block; height: 1px; border: 0; border-top: 1px solid #ccc; margin: 1em 0; padding: 0; }
+input, select { vertical-align: middle; }
+
+body { font:13px/1.231 sans-serif; }
+select, input, textarea, button { font:99% sans-serif; }
+pre, code, kbd, samp { font-family: monospace, sans-serif; }
+
+html { overflow-y: scroll; }
+a:hover, a:active { outline: none; }
+ul, ol { margin-left: 2em; }
+ol { list-style-type: decimal; }
+nav ul, nav li { margin: 0; list-style:none; list-style-image: none; }
+small { font-size: 85%; }
+strong, th { font-weight: bold; }
+td { vertical-align: top; }
+sub, sup { font-size: 75%; line-height: 0; position: relative; }
+sup { top: -0.5em; }
+sub { bottom: -0.25em; }
+
+pre { white-space: pre; white-space: pre-wrap; word-wrap: break-word; padding: 15px; }
+textarea { overflow: auto; } 
+.ie6 legend, .ie7 legend { margin-left: -7px; } 
+input[type="radio"] { vertical-align: text-bottom; }
+input[type="checkbox"] { vertical-align: bottom; }
+.ie7 input[type="checkbox"] { vertical-align: baseline; }
+.ie6 input { vertical-align: text-bottom; }
+label, input[type="button"], input[type="submit"], input[type="image"], button { cursor: pointer; }
+button, input, select, textarea { margin: 0; }
+input:valid, textarea:valid   {  }
+input:invalid, textarea:invalid { -moz-box-shadow: 0px 0px 5px red; -webkit-box-shadow: 0px 0px 5px red;  }
+.no-boxshadow input:invalid, .no-boxshadow textarea:invalid { background-color: #f0dddd; }
+
+
+::-moz-selection{ background: #FF5E99; color:#fff; }
+::selection { background:#FF5E99; color:#fff; }
+a:link { -webkit-tap-highlight-color: #FF5E99; }
+button {  width: auto; overflow: visible; }
+.ie7 img { -ms-interpolation-mode: bicubic; }
+
+h1, h2, h3, h4, h5, h6 { font-weight: bold; }
+a, a:active, a:visited { color: #607890; }
+a:hover { color: #036; }
+
+
+/**
+ * Primary styles
+ *
+ * Author: Dylan Beattie (dylan@dylanbeattie.net)
+ */
+ 
+body > header {
+	position: absolute;
+	left: 8px;
+	right: 8px;
+	top: 8px;
+	height: 16px;
+	padding: 4px;
+	border: 1px solid #333333;
 }
 
-.header .class {
-	font-size: 24px;
-	font-weight: bold;
+body > header > span#project-link {
+	position: absolute;
+	right: 4px;
+	top: 4px;
 }
-
-.header strong {
-	font-size: 13px;
-	width: 100px;
-	float: left;
+	
+body {
+	background-color: #999999;
 }
-
-.header a {
-	background: transparent;
-	color: #FFF;
+nav {
+	padding: 0px;
 }
-
-.header a:hover {
-	background: #FFF;
-	color: #039;
-}
-
-.sub-header {
-	margin: 0 20px;
-}
-
-.sub-header ul {
-	margin: 0 0 0 30px;
-	padding: 0;
-	list-style: none;
-}
-
-.sub-header ul li {
-	float: left;
-	margin: 0 15px 0 0;
-	padding: 0;
-	text-indent: 0;
-}
-
-.section {
-	color: #333;
-	border-bottom: 1px solid #999;
-	margin: 10px 10px 0 10px;
-	padding: 10px 0 0 0;
-	clear: left;
-}
-
-div.method {
-	background: #EFEFEF;
-	border: 1px dotted #CCC;
-	margin: 5px 10px 15px 10px;
-	padding: 0;
-}
-
-div.method h4 {
-	background: #CCC;
-	border-bottom: 1px solid #666;
-	color: #000;
-	padding: 2px 5px;
-	margin: 0 0 10px 0;
-	font-weight: normal;
-}
-
-div.method h4 a {
-	background: transparent;
-}
-
-div.method .content {
-	padding: 0 10px 5px 10px;
-}
-
-div.parameters, div.return {
-	background: #fff;
-	border: 1px solid #ccc;
-	padding: 10px;
-	margin-top: 10px;
-}
-
-div.parameters h5, div.return h5 {
-	color: #666;
-	margin: -10px 0 0 -10px;
-	padding: 3px;
-	font-weight: normal;
-	font-size: 10px;
-	border-bottom: 1px solid #ccc;
-	border-right: 1px solid #ccc;
-	float: left;
-}
-
-div.parameters h6, div.return h6 {
-	clear: left;
-	font-size: 14px;
-	font-weight: normal;
-	margin: 0;
-	padding: 6px 0 3px 0;
-}
-
-div.parameters p, div.return p {
-	border-top: 1px solid #ccc;
-	margin: 0;
-	padding: 3px 3px 0 3px;
-}
-
-#summary {
-	background: #EFEFEF;
-	border: 1px dotted #999999;
-	margin: 5px 10px 15px 10px;
-	padding: 5px 10px;
-}
-
-#namespaces {
-	width: 50%;
-	float: left;
-	background: #FFF;
-}
-
-#types {
-	width: 50%;
-	float: left;
-	background: #FFF;
-	margin-left: -1px;
-}
-
-h2.fixed {
-	background: #CCC;
-	color: #000;
-	border-top: 1px solid #999;
-	border-bottom: 1px solid #999;
-	margin: 0;
-	padding: 2px 10px;
-	font-size: 12px;
-	font-weight: bold;
-}
-
 div.scroll {
-	overflow: scroll;
-	height: 150px;
+	padding: 4px;
+	overflow: auto;
+	position: absolute;
+	top: 24px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	background-color: #fff;
 }
 
-#namespaces ul, #types ul {
-	list-style: none;
-	margin: 0 0 10px 0;
-	padding: 0;
+div.scroll ul li {
+	padding: 2px 0px;
 }
-
-#namespaces ul li, #types ul li {
-	text-indent: 0;
-	padding-left: 10px;
-}
-
-a {
-	background: #eef;
-	color: #039;
+div.scroll ul li a {	
 	text-decoration: none;
 }
-
-a:hover {
-	color: #FFF;
-	background: #039;
+nav#namespaces {
+	position: absolute;
+	top: 42px;
+	left: 8px;
+	bottom: 8px;
+	width: 384px;
+	overflow: hidden;
 }
 
-#namespaces a.current, #types a.current {
-	background: #039;
-	color: #FFF;
-	text-decoration: none;
+nav#types {
+	position: absolute;
+	top: 42px;
+	right: 8px;
+	left: 400px;
+	height: 204px;
+	background-color: #fff;
+	overflow: hidden;
 }
 
-#footer {
-	text-align: center;
-	font-size: 10px;
-	color: #888;
-	clear: left;
-	padding-top: 10px;
+article {
+	position: absolute;
+	left: 400px;
+	top: 256px;
+	bottom: 40px;
+	right: 8px;
+	background-color: #fff;
+}
+footer {
+	position: absolute;
+	left: 400px;
+	bottom: 8px;
+	height: 16px;
+	right: 8px;
+	background-color: #aaaaaa;
+	padding: 4px;
+	font-size: 80%;
 }
 
-blockquote {
-	margin: 10px;
-	padding: 6px;
-	background: #F5F5F5;
-	border-top: 3px solid #CCC;
-	border-bottom: 3px solid #CCC;
+header {
+	background-color: #cccccc;
+}
+header p {
+	padding: 4px;
 }
 
-.value {
-	border-top-width: 1px;
-	border-bottom-width: 1px;
-	font-size: 90%;
+nav h2, header p.class {
+	background-color: #333333;
+	padding: 4px;
+	color: #fff;
 }
 
-.example {
-	margin: 10px 0;
+article section {
+	position: absolute;
+	top: 24px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	overflow:auto;
 }
 
-.example pre {
-	background: #DDD;
-	color: #000;
-	font-size: 14px;
-	font-family: Monaco, Consolas, Courier New, Monospace;
-	padding: 4px 10px;
-	border: 3px solid #AAA;
+section ul li {
+	margin: 4px 0px;
+}
+article section header p { margin: 0px; }
+article section h3, article section p {
+	padding: 4px;
+	margin: 4px 0px;
+}
+article section h3 {
+	font-size: 120%;
+}
+div.method {
+	padding: 4px 4px 4px 16px;	
 }
 
+div#summary {
+	padding: 4px;
+}
+
+div.method div.content {
+	margin: 8px;
+}
+
+footer span#docu-link {
+	position: absolute;
+	right: 4px;
+}
 code {
-	font-family: Monaco, Consolas, Courier New, Monospace;
+	font-family: Consolas, Courier, monospaced;
+	font-weight: normal;
 }
+	
+
+h5 {
+	margin: 8px 0px;
+}
+
+dl dt {	width: 180px; float: left; }
+dl dd { margin-left: 180px;  }
+        
+       	
+
+.ir { display: block; text-indent: -999em; overflow: hidden; background-repeat: no-repeat; text-align: left; direction: ltr; }
+.hidden { display: none; visibility: hidden; }
+.visuallyhidden { border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; }
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus { clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto; }
+.invisible { visibility: hidden; }
+.clearfix:before, .clearfix:after { content: "\0020"; display: block; height: 0; overflow: hidden; }
+.clearfix:after { clear: both; }
+.clearfix { zoom: 1; }
+
+
+@media all and (orientation:portrait) {
+
+}
+
+@media all and (orientation:landscape) {
+
+}
+
+@media screen and (max-device-width: 480px) {
+  
+  /* html { -webkit-text-size-adjust:none; -ms-text-size-adjust:none; } */
+}
+
+
+@media print {
+  * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important;
+  -ms-filter: none !important; } 
+  a, a:visited { color: #444 !important; text-decoration: underline; }
+  a[href]:after { content: " (" attr(href) ")"; }
+  abbr[title]:after { content: " (" attr(title) ")"; }
+  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }  
+  pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+  thead { display: table-header-group; } 
+  tr, img { page-break-inside: avoid; }
+  @page { margin: 0.5cm; }
+  p, h2, h3 { orphans: 3; widows: 3; }
+  h2, h3{ page-break-after: avoid; }
+}
+
