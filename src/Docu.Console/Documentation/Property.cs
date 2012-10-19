@@ -17,6 +17,7 @@ namespace Docu.Documentation
         public DeclaredType Type { get; set; }
         public bool HasGet { get; private set; }
         public bool HasSet { get; private set; }
+        public List<Attribute> Attributes { get; set; }
 
         public IReferencable ReturnType { get; set; }
 
@@ -42,6 +43,7 @@ namespace Docu.Documentation
                     throw new InvalidOperationException("Cannot resolve to '" + referencable.GetType().FullName + "'");
 
                 ReturnType = property.ReturnType;
+                Attributes = property.Attributes;
 
                 if (!ReturnType.IsResolved)
                     ReturnType.Resolve(referencables);
@@ -61,9 +63,9 @@ namespace Docu.Documentation
             return new Property(propertyIdentifier, type) { IsResolved = false };
         }
 
-        public static Property Unresolved(PropertyIdentifier propertyIdentifier, DeclaredType type, IReferencable returnType)
+        public static Property Unresolved(PropertyIdentifier propertyIdentifier, DeclaredType type, IReferencable returnType, List<Attribute> attributes)
         {
-            return new Property(propertyIdentifier, type) { IsResolved = false, ReturnType = returnType };
+            return new Property(propertyIdentifier, type) { IsResolved = false, ReturnType = returnType, Attributes = attributes };
         }
     }
 }
