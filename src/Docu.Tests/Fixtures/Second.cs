@@ -1,4 +1,5 @@
 using System;
+using Docu.Tests.Utils;
 
 namespace Example
 {
@@ -26,6 +27,9 @@ namespace Example
         }
 
         public string SecondProperty { get; set; }
+
+        [Custom]
+        public string SecondProperty2 { get; set; }
 
         public event EventHandler<EventArgs> AnEvent;
     }
