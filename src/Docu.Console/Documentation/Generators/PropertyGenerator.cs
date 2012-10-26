@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Docu.Documentation.Generators;
 using Docu.Parsing.Comments;
 using Docu.Parsing.Model;
@@ -22,12 +24,15 @@ namespace Docu.Documentation
             var ns = FindNamespace(association, namespaces);
             var type = FindType(ns, association);
 
+            var customAttributes = association.Property.GetCustomAttributes(false).ToList();
+            var attributes = customAttributes.Cast<Attribute>().ToList();
+
             var propertyReturnType =
                 DeclaredType.Unresolved(Identifier.FromType(association.Property.PropertyType),
                                         association.Property.PropertyType,
                                         Namespace.Unresolved(
                                             Identifier.FromNamespace(association.Property.PropertyType.Namespace)));
-            var doc = Property.Unresolved(Identifier.FromProperty(association.Property, association.TargetType), type, propertyReturnType);
+            var doc = Property.Unresolved(Identifier.FromProperty(association.Property, association.TargetType), type, propertyReturnType, attributes);
 
             ParseSummary(association, doc);
             ParseValue(association, doc);
