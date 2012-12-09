@@ -44,7 +44,7 @@
 </Target>
 
 <Target Name="Merge">
-  <Exec Command="\src\packages\ilmerge.2.12.0803\ILMerge.exe /out:artifacts\docu.exe /targetplatform:&quot;v4,C:\Windows\Microsoft.NET\Framework\v4.0.30319&quot; src\Docu.Console\bin\$(Configuration)\docu.exe &quot;src\packages\Spark.1.7.5.0\lib\NET40\Spark.dll&quot; &quot;src\packages\structuremap.2.6.4.1\lib\NET40\StructureMap.dll&quot;" />
+  <Exec Command="src\packages\ilmerge.2.12.0803\ILMerge.exe /out:artifacts\docu.exe /targetplatform:&quot;v4,C:\Windows\Microsoft.NET\Framework\v4.0.30319&quot; src\Docu.Console\bin\$(Configuration)\docu.exe &quot;src\packages\Spark.1.7.5.0\lib\NET40\Spark.dll&quot; &quot;src\packages\structuremap.2.6.4.1\lib\NET40\StructureMap.dll&quot;" />
   <Message Text="Created artifacts\docu.exe" />
 </Target>
 
