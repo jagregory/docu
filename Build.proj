@@ -14,7 +14,7 @@
   <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\src\packages\MSBuildTasks.1.4.0.45\tools</MSBuildCommunityTasksPath>
   <TestsToIgnore Condition="$(RunningOnBuildServer)">TeamCityIgnore</TestsToIgnore>
 </PropertyGroup>
-<Import Project="lib\MSBuildTasks\MSBuild.Community.Tasks.Targets" />
+<Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
 
 
 <Target Name="Build" DependsOnTargets="Clean;Compile;Test;Document;Merge;Publish" />
@@ -44,7 +44,7 @@
 </Target>
 
 <Target Name="Merge">
-  <Exec Command="lib\ilmerge\ILMerge.exe /out:artifacts\docu.exe /targetplatform:&quot;v4,C:\Windows\Microsoft.NET\Framework\v4.0.30319&quot; src\Docu.Console\bin\$(Configuration)\docu.exe &quot;src\packages\Spark.1.7.5.0\lib\NET40\Spark.dll&quot; &quot;src\packages\structuremap.2.6.4.1\lib\NET40\StructureMap.dll&quot;" />
+  <Exec Command="\src\packages\ilmerge.2.12.0803\ILMerge.exe /out:artifacts\docu.exe /targetplatform:&quot;v4,C:\Windows\Microsoft.NET\Framework\v4.0.30319&quot; src\Docu.Console\bin\$(Configuration)\docu.exe &quot;src\packages\Spark.1.7.5.0\lib\NET40\Spark.dll&quot; &quot;src\packages\structuremap.2.6.4.1\lib\NET40\StructureMap.dll&quot;" />
   <Message Text="Created artifacts\docu.exe" />
 </Target>
 
