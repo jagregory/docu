@@ -23,7 +23,7 @@ namespace Docu.Output.Rendering
     {
         protected readonly IOutputFormatter Formatter;
 
-        public SparkTemplateBase()
+        protected SparkTemplateBase()
         {
             Formatter = new HtmlOutputFormatter(this);
         }

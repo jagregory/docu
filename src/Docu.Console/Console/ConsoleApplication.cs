@@ -138,7 +138,7 @@ namespace Docu.Console
 
         private bool VerifyAssemblies(IEnumerable<string> assemblies)
         {
-            if (assemblies.Count() == 0)
+            if (!assemblies.Any())
             {
                 ShowMessage(Messages.NoAssembliesSpecified);
                 return false;
@@ -158,7 +158,7 @@ namespace Docu.Console
 
         private bool VerifyXmls(IEnumerable<string> xmls)
         {
-            if (xmls.Count() == 0)
+            if (!xmls.Any())
             {
                 ShowMessage(Messages.NoXmlsFound);
                 return false;

@@ -44,9 +44,10 @@ namespace Docu.Documentation
         {
             get
             {
-                return representedMethod == null 
-                    ? false
-                    : representedMethod.IsStatic && representedMethod.GetCustomAttributes(typeof (ExtensionAttribute), false).Length > 0;
+                return this.representedMethod != null
+                       &&
+                       (this.representedMethod.IsStatic
+                        && this.representedMethod.GetCustomAttributes(typeof(ExtensionAttribute), false).Length > 0);
             }
         }
 

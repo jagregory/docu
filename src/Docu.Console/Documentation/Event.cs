@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Docu.Documentation.Comments;
+
 using Docu.Parsing.Model;
 
 namespace Docu.Documentation

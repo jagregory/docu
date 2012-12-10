@@ -7,7 +7,7 @@ namespace Docu.TemplateExtensions
     {
         public static bool IsDocumented(this IDocumentationElement documentationElement)
         {
-            return documentationElement.Summary.Children.Count() > 0;
+            return documentationElement.Summary.Children.Any();
         }
     }
 }

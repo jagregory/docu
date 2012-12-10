@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Docu.Documentation.Comments;
 using Docu.Parsing.Model;
 
