@@ -4,7 +4,7 @@ namespace Docu.Documentation.Comments
     {
         public InlineCode(string text)
         {
-            Text = text;
+            this.Text = text;
         }
 
         public string Text { get; private set; }

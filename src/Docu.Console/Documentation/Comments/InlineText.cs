@@ -4,14 +4,14 @@ namespace Docu.Documentation.Comments
     {
         public InlineText(string text)
         {
-            Text = text;
+            this.Text = text;
         }
 
         public string Text { get; private set; }
 
         public override string ToString()
         {
-            return Text;
+            return this.Text;
         }
     }
 }

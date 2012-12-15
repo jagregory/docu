@@ -4,14 +4,14 @@ namespace Docu.Documentation.Comments
     {
         public ParameterReference(string parameter)
         {
-            Parameter = parameter;
+            this.Parameter = parameter;
         }
 
         public string Parameter { get; private set; }
 
         public override string ToString()
         {
-            return Parameter;
+            return this.Parameter;
         }
     }
 }

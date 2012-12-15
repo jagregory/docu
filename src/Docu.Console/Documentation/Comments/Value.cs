@@ -6,11 +6,12 @@ namespace Docu.Documentation.Comments
     {
         public Value()
             : this(new IComment[0])
-        { }
+        {
+        }
 
         public Value(IEnumerable<IComment> comments)
         {
-            comments.ForEach(AddChild);
+            comments.ForEach(this.AddChild);
         }
     }
 }

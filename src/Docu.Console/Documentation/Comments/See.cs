@@ -1,25 +1,26 @@
-using System.Collections.Generic;
-using Docu.Parsing.Model;
-
 namespace Docu.Documentation.Comments
 {
+    using System.Collections.Generic;
+
+    using Docu.Parsing.Model;
+
     public class See : BaseComment, IReferrer
     {
         public See(IReferencable reference)
         {
-            Reference = reference;
+            this.Reference = reference;
         }
 
         public IReferencable Reference { get; set; }
         
         public override bool IsResolved
         {
-            get { return Reference.IsResolved; }
+            get { return this.Reference.IsResolved; }
         }
 
         public override void Resolve(IDictionary<Identifier, IReferencable> referencables)
         {
-            Reference.Resolve(referencables);
+            this.Reference.Resolve(referencables);
         }
     }
 }

@@ -1,12 +1,12 @@
-using System.Collections.Generic;
-
 namespace Docu.Documentation.Comments
 {
+    using System.Collections.Generic;
+
     public abstract class InlineList : BaseComment
     {
         protected InlineList()
         {
-            Items = new List<InlineListItem>();
+            this.Items = new List<InlineListItem>();
         }
 
         public IList<InlineListItem> Items { get; set; }
@@ -21,8 +21,8 @@ namespace Docu.Documentation.Comments
     {
         public InlineListItem(Paragraph term, Paragraph definition)
         {
-            Term = term;
-            Definition = definition;
+            this.Term = term;
+            this.Definition = definition;
         }
 
         public Paragraph Term { get; set; }
