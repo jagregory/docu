@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-
 namespace Docu.Console
 {
+    using System.Collections.Generic;
+
     public class SplashMessage : IScreenMessage
     {
         public IEnumerable<string> GetBody()
@@ -9,7 +9,7 @@ namespace Docu.Console
             yield return "-------------------------------";
             yield return " docu: simple docs done simply ";
             yield return "-------------------------------";
-            yield return "";
+            yield return string.Empty;
         }
     }
 }

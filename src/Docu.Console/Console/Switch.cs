@@ -1,7 +1,7 @@
-using System;
-
 namespace Docu.Console
 {
+    using System;
+
     public class Switch : ISwitch
     {
         private readonly string argValue;

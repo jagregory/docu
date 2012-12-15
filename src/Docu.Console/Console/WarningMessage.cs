@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-
 namespace Docu.Console
 {
+    using System.Collections.Generic;
+
     public class WarningMessage : IScreenMessage
     {
         private readonly string message;

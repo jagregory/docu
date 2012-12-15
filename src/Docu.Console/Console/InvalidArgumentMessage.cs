@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-
 namespace Docu.Console
 {
+    using System.Collections.Generic;
+
     public class InvalidArgumentMessage : IScreenMessage
     {
         private readonly string argument;

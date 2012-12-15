@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Docu.Console
+﻿namespace Docu.Console
 {
+    using System.Collections.Generic;
+
     public class BadFileMessage : IScreenMessage
     {
         private readonly string path;

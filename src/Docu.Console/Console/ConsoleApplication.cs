@@ -1,137 +1,272 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Docu.Events;
-
 namespace Docu.Console
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+
+    using Docu.Events;
+
+    using StructureMap;
+
     public class ConsoleApplication
     {
         private readonly List<string> arguments = new List<string>();
+
         private readonly IDocumentationGenerator documentationGenerator;
+
         private readonly IEventAggregator eventAggregator;
+
         private readonly IScreenWriter screenWriter;
-        private bool canRun;
+
         private readonly IList<ISwitch> switches = new List<ISwitch>();
 
-        public ConsoleApplication(IScreenWriter screenWriter, IDocumentationGenerator documentationGenerator, IEventAggregator eventAggregator)
+        private bool canRun;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConsoleApplication"/> class.
+        /// </summary>
+        /// <param name="screenWriter">
+        /// The screen writer.
+        /// </param>
+        /// <param name="documentationGenerator">
+        /// The documentation generator.
+        /// </param>
+        /// <param name="eventAggregator">
+        /// The event aggregator.
+        /// </param>
+        public ConsoleApplication(
+            IScreenWriter screenWriter, IDocumentationGenerator documentationGenerator, IEventAggregator eventAggregator)
         {
             this.screenWriter = screenWriter;
             this.documentationGenerator = documentationGenerator;
             this.eventAggregator = eventAggregator;
 
-            WireUpListeners();
-            DefineSwitches();
+            this.WireUpListeners();
+            this.DefineSwitches();
         }
 
-        private void WireUpListeners()
+        public static void Run(IEnumerable<string> args)
         {
-            eventAggregator
-                .GetEvent<WarningEvent>()
-                .Subscribe(Warning);
-            eventAggregator
-                .GetEvent<BadFileEvent>()
-                .Subscribe(BadFile);
-        }
+            IContainer container = ContainerBootstrapper.BootstrapStructureMap();
 
-        private void DefineSwitches()
-        {
-            switches.Add(new Switch("--help", () =>
-            {
-                ShowMessage(new HelpMessage());
-                return false;
-            }));
-            switches.Add(new ParameterSwitch("--output", arg =>
-            {
-                documentationGenerator.SetOutputPath(arg.TrimEnd('\\'));
-                return true;
-            }));
-            switches.Add(new ParameterSwitch("--templates", arg =>
-            {
-                documentationGenerator.SetTemplatePath(arg.TrimEnd('\\'));
-                return true;
-            }));
-        }
+            var application = container.GetInstance<ConsoleApplication>();
 
-        void Warning(string message)
-        {
-            ShowMessage(new WarningMessage(message));
-        }
-
-        void BadFile(string path)
-        {
-            ShowMessage(new BadFileMessage(path));
-        }
-
-        public void SetArguments(IEnumerable<string> args)
-        {
-            arguments.AddRange(args);
-
-            if (arguments.Count > 0)
-                canRun = true;
+            application.SetArguments(args);
+            application.Run();
         }
 
         public void Run()
         {
-            if (!canRun)
+            if (!this.canRun)
             {
-                ShowMessage(Messages.Help);
+                this.ShowMessage(Messages.Help);
                 return;
             }
 
-            if (ProcessSwitches() == false)
-                return;
-
-            ShowMessage(Messages.Splash);
-
-            string[] assemblies = GetAssembliesFromArgs(arguments);
-            string[] xmls = GetXmlsFromArgs(arguments, assemblies);
-
-            if (VerifyArguments(assemblies, xmls))
+            if (this.ProcessSwitches() == false)
             {
-                ShowMessage(Messages.Start);
-
-                documentationGenerator.SetAssemblies(assemblies);
-                documentationGenerator.SetXmlFiles(xmls);
-                documentationGenerator.Generate();
-
-                ShowMessage(Messages.Done);
+                return;
             }
+
+            this.ShowMessage(Messages.Splash);
+
+            string[] assemblies = this.GetAssembliesFromArgs(this.arguments);
+            string[] xmls = this.GetXmlsFromArgs(this.arguments, assemblies);
+
+            if (this.VerifyArguments(assemblies, xmls))
+            {
+                this.ShowMessage(Messages.Start);
+
+                this.documentationGenerator.SetAssemblies(assemblies);
+                this.documentationGenerator.SetXmlFiles(xmls);
+                this.documentationGenerator.Generate();
+
+                this.ShowMessage(Messages.Done);
+            }
+        }
+
+        public void SetArguments(IEnumerable<string> args)
+        {
+            this.arguments.AddRange(args);
+
+            if (this.arguments.Count > 0)
+            {
+                this.canRun = true;
+            }
+        }
+
+        private static string getExpectedXmlFileForAssembly(string assembly)
+        {
+            string extension = Path.GetExtension(assembly);
+            return assembly.Substring(0, assembly.Length - extension.Length) + ".xml";
+        }
+
+        private static bool isAssemblyArgument(string argument)
+        {
+            string fileExtension = Path.GetExtension(argument);
+            return fileExtension.Equals(".dll", StringComparison.InvariantCultureIgnoreCase)
+                   || fileExtension.Equals(".exe", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        private void BadFile(string path)
+        {
+            this.ShowMessage(new BadFileMessage(path));
+        }
+
+        private void DefineSwitches()
+        {
+            this.switches.Add(
+                new Switch(
+                    "--help", 
+                    () =>
+                        {
+                            this.ShowMessage(new HelpMessage());
+                            return false;
+                        }));
+
+            this.switches.Add(
+                new ParameterSwitch(
+                    "--output", 
+                    arg =>
+                        {
+                            this.documentationGenerator.SetOutputPath(arg.TrimEnd('\\'));
+                            return true;
+                        }));
+
+            this.switches.Add(
+                new ParameterSwitch(
+                    "--templates", 
+                    arg =>
+                        {
+                            this.documentationGenerator.SetTemplatePath(arg.TrimEnd('\\'));
+                            return true;
+                        }));
+        }
+
+        private string[] GetAssembliesFromArgs(IEnumerable<string> args)
+        {
+            var assemblies = new List<string>();
+
+            foreach (string arg in args)
+            {
+                if (isAssemblyArgument(arg))
+                {
+                    assemblies.AddRange(this.GetFiles(arg));
+                }
+            }
+
+            return assemblies.ToArray();
+        }
+
+        private IEnumerable<string> GetFiles(string path)
+        {
+            if (path.Contains("*") || path.Contains("?"))
+            {
+                string dir = Environment.CurrentDirectory;
+                string filename = Path.GetFileName(path);
+
+                if (path.Contains("\\"))
+                {
+                    dir = Path.GetDirectoryName(path);
+                }
+
+                foreach (string file in Directory.GetFiles(dir, filename))
+                {
+                    yield return file.Replace(Environment.CurrentDirectory + "\\", string.Empty);
+                }
+            }
+            else
+            {
+                yield return path;
+            }
+        }
+
+        private string[] GetXmlsFromArgs(IEnumerable<string> args, IEnumerable<string> assemblies)
+        {
+            var xmls = new List<string>();
+
+            foreach (string arg in args)
+            {
+                if (arg.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    xmls.AddRange(this.GetFiles(arg));
+                }
+            }
+
+            if (xmls.Count == 0)
+            {
+                // none specified, try to find some
+                foreach (string assembly in assemblies)
+                {
+                    string name = getExpectedXmlFileForAssembly(assembly);
+
+                    foreach (string file in this.GetFiles(name))
+                    {
+                        if (File.Exists(file))
+                        {
+                            xmls.Add(file);
+                        }
+                    }
+                }
+            }
+
+            return xmls.ToArray();
         }
 
         private bool ProcessSwitches()
         {
-            foreach (var svvitch in switches)
+            foreach (ISwitch svvitch in this.switches)
             {
-                for (var i = arguments.Count - 1; i >= 0; i--)
+                for (int i = this.arguments.Count - 1; i >= 0; i--)
                 {
-                    var argument = arguments[i];
+                    string argument = this.arguments[i];
 
-                    if (!svvitch.IsMatch(argument)) continue;
+                    if (!svvitch.IsMatch(argument))
+                    {
+                        continue;
+                    }
 
-                    arguments.RemoveAt(i);
+                    this.arguments.RemoveAt(i);
 
                     if (svvitch.Handle(argument) == false)
+                    {
                         return false;
+                    }
                 }
             }
 
             return true;
         }
 
+        private void ShowMessage(IScreenMessage message)
+        {
+            this.screenWriter.WriteMessage(message);
+        }
+
         private bool VerifyArguments(IEnumerable<string> assemblies, IEnumerable<string> xmls)
         {
-            foreach (var argument in arguments)
+            foreach (string argument in this.arguments)
             {
-                if (isAssemblyArgument(argument) || Path.GetExtension(argument).Equals(".xml", StringComparison.OrdinalIgnoreCase)) continue;
+                if (isAssemblyArgument(argument)
+                    || Path.GetExtension(argument).Equals(".xml", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
 
-                ShowMessage(new InvalidArgumentMessage(argument));
+                this.ShowMessage(new InvalidArgumentMessage(argument));
                 return false;
             }
 
-            if (!VerifyAssemblies(assemblies)) return false;
-            if (!VerifyXmls(xmls)) return false;
+            if (!this.VerifyAssemblies(assemblies))
+            {
+                return false;
+            }
+
+            if (!this.VerifyXmls(xmls))
+            {
+                return false;
+            }
 
             return true;
         }
@@ -140,7 +275,7 @@ namespace Docu.Console
         {
             if (!assemblies.Any())
             {
-                ShowMessage(Messages.NoAssembliesSpecified);
+                this.ShowMessage(Messages.NoAssembliesSpecified);
                 return false;
             }
 
@@ -148,7 +283,7 @@ namespace Docu.Console
             {
                 if (!File.Exists(assembly))
                 {
-                    ShowMessage(new AssemblyNotFoundMessage(assembly));
+                    this.ShowMessage(new AssemblyNotFoundMessage(assembly));
                     return false;
                 }
             }
@@ -160,7 +295,7 @@ namespace Docu.Console
         {
             if (!xmls.Any())
             {
-                ShowMessage(Messages.NoXmlsFound);
+                this.ShowMessage(Messages.NoXmlsFound);
                 return false;
             }
 
@@ -168,7 +303,7 @@ namespace Docu.Console
             {
                 if (!File.Exists(xml))
                 {
-                    ShowMessage(new XmlNotFoundMessage(xml));
+                    this.ShowMessage(new XmlNotFoundMessage(xml));
                     return false;
                 }
             }
@@ -176,94 +311,15 @@ namespace Docu.Console
             return true;
         }
 
-        private void ShowMessage(IScreenMessage message)
+        private void Warning(string message)
         {
-            screenWriter.WriteMessage(message);
+            this.ShowMessage(new WarningMessage(message));
         }
 
-        private string[] GetXmlsFromArgs(IEnumerable<string> args, IEnumerable<string> assemblies)
+        private void WireUpListeners()
         {
-            var xmls = new List<string>();
-
-            foreach (var arg in args)
-            {
-                if (arg.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
-                    xmls.AddRange(GetFiles(arg));
-            }
-
-            if (xmls.Count == 0)
-            {
-                // none specified, try to find some
-                foreach (string assembly in assemblies)
-                {
-                    var name = getExpectedXmlFileForAssembly(assembly);
-
-                    foreach (var file in GetFiles(name))
-                    {
-                        if (File.Exists(file))
-                            xmls.Add(file);
-                    }
-                }
-            }
-
-            return xmls.ToArray();
-        }
-
-        private static string getExpectedXmlFileForAssembly(string assembly)
-        {
-            var extension = Path.GetExtension(assembly);
-            return assembly.Substring(0, assembly.Length - extension.Length) + ".xml";
-        }
-
-        private string[] GetAssembliesFromArgs(IEnumerable<string> args)
-        {
-            var assemblies = new List<string>();
-
-            foreach (var arg in args)
-            {
-                
-                if (isAssemblyArgument(arg))
-                {
-                    assemblies.AddRange(GetFiles(arg));
-                }
-            }
-
-            return assemblies.ToArray();
-        }
-
-        private static bool isAssemblyArgument(string argument)
-        {
-            var fileExtension = Path.GetExtension(argument);
-            return fileExtension.Equals(".dll", StringComparison.InvariantCultureIgnoreCase) || fileExtension.Equals(".exe", StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        private IEnumerable<string> GetFiles(string path)
-        {
-            if (path.Contains("*") || path.Contains("?"))
-            {
-                var dir = Environment.CurrentDirectory;
-                var filename = Path.GetFileName(path);
-
-                if (path.Contains("\\"))
-                    dir = Path.GetDirectoryName(path);
-
-                foreach (var file in Directory.GetFiles(dir, filename))
-                {
-                    yield return file.Replace(Environment.CurrentDirectory + "\\", "");
-                }
-            }
-            else
-                yield return path;
-        }
-
-        public static void Run(IEnumerable<string> args)
-        {
-            var container = ContainerBootstrapper.BootstrapStructureMap();
-
-            var application = container.GetInstance<ConsoleApplication>();
-
-            application.SetArguments(args);
-            application.Run();
+            this.eventAggregator.GetEvent<WarningEvent>().Subscribe(this.Warning);
+            this.eventAggregator.GetEvent<BadFileEvent>().Subscribe(this.BadFile);
         }
     }
 }
