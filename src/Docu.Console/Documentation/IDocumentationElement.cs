@@ -1,8 +1,8 @@
-using Docu.Documentation.Comments;
-using Docu.Parsing.Model;
-
 namespace Docu.Documentation
 {
+    using Docu.Documentation.Comments;
+    using Docu.Parsing.Model;
+
     public interface IDocumentationElement
     {
         string Name { get; }

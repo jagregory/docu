@@ -1,44 +1,59 @@
-using Docu.Documentation.Comments;
-using Docu.Parsing.Model;
-
 namespace Docu.Documentation
 {
+    using Docu.Documentation.Comments;
+    using Docu.Parsing.Model;
+
     public abstract class BaseDocumentationElement : IDocumentationElement
     {
         protected readonly Identifier identifier;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseDocumentationElement"/> class.
+        /// </summary>
+        /// <param name="identifier">
+        /// The identifier.
+        /// </param>
         protected BaseDocumentationElement(Identifier identifier)
         {
-            Name = identifier.ToString();
+            this.Name = identifier.ToString();
             this.identifier = identifier;
-            IsResolved = true;
-            Summary = new Summary();
-            Remarks = new Remarks();
-            Value = new Value();
-            Example = new MultilineCode();
+            this.IsResolved = true;
+            this.Summary = new Summary();
+            this.Remarks = new Remarks();
+            this.Value = new Value();
+            this.Example = new MultilineCode();
         }
+
+        public MultilineCode Example { get; set; }
 
         public virtual bool HasDocumentation
         {
-            get { return !(Summary.IsEmpty && Remarks.IsEmpty && Value.IsEmpty); }
+            get
+            {
+                return !(this.Summary.IsEmpty && this.Remarks.IsEmpty && this.Value.IsEmpty);
+            }
         }
+
+        public bool IsExternal { get; private set; }
+
+        public bool IsResolved { get; protected set; }
 
         public string Name { get; private set; }
-        public bool IsExternal { get; private set; }
-        public bool IsResolved { get; protected set; }
-        public Summary Summary { get; set; }
-        public Remarks Remarks { get; set; }
-        public Value Value { get; set; }
-        public MultilineCode Example { get; set; }
 
-        public bool IsIdentifiedBy(Identifier otherIdentifier)
-        {
-            return identifier.Equals(otherIdentifier);
-        }
+        public Remarks Remarks { get; set; }
+
+        public Summary Summary { get; set; }
+
+        public Value Value { get; set; }
 
         public virtual void ConvertToExternalReference()
         {
-            IsExternal = true;
+            this.IsExternal = true;
+        }
+
+        public bool IsIdentifiedBy(Identifier otherIdentifier)
+        {
+            return this.identifier.Equals(otherIdentifier);
         }
     }
 }

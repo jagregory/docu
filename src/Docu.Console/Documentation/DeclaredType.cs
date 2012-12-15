@@ -1,152 +1,98 @@
-using System;
-using System.Collections.Generic;
-using Docu.Parsing.Model;
-
 namespace Docu.Documentation
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Docu.Parsing.Model;
+
     public class DeclaredType : BaseDocumentationElement, IReferencable
     {
-        private readonly List<Method> methods = new List<Method>();
-        private readonly List<Property> properties = new List<Property>();
         private readonly List<Event> events = new List<Event>();
+
         private readonly List<Field> fields = new List<Field>();
+
+        private readonly List<Method> methods = new List<Method>();
+
+        private readonly List<Property> properties = new List<Property>();
+
         private Type representedType;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeclaredType"/> class.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <param name="ns">
+        /// The ns.
+        /// </param>
         public DeclaredType(TypeIdentifier name, Namespace ns)
             : base(name)
         {
-            Namespace = ns;
-            Interfaces = new List<IReferencable>();
-        }
-
-        public Namespace Namespace { get; private set; }
-
-        public IList<Method> Methods
-        {
-            get { return methods; }
-        }
-
-        public IList<Property> Properties
-        {
-            get { return properties; }
-        }
-
-        public bool IsInterface
-        {
-            get { return this.representedType != null && this.representedType.IsInterface; }
-        }
-
-        public IReferencable ParentType { get; set; }
-        public IList<IReferencable> Interfaces { get; set; }
-
-        public string PrettyName
-        {
-            get { return representedType == null ? Name : representedType.GetPrettyName(); }
-        }
-
-        public string FullName
-        {
-            get { return (Namespace == null ? "" : Namespace.FullName + ".") + PrettyName; }
+            this.Namespace = ns;
+            this.Interfaces = new List<IReferencable>();
         }
 
         public IList<Event> Events
         {
-            get { return events; }
+            get
+            {
+                return this.events;
+            }
         }
 
         public IList<Field> Fields
         {
-            get { return fields; }
-        }
-
-        public void Resolve(IDictionary<Identifier, IReferencable> referencables)
-        {
-            if (referencables.ContainsKey(identifier))
+            get
             {
-                IsResolved = true;
-
-                IReferencable referencable = referencables[identifier];
-                var type = referencable as DeclaredType;
-
-                if (type == null)
-                    throw new InvalidOperationException("Cannot resolve to '" + referencable.GetType().FullName + "'");
-
-                Namespace = type.Namespace;
-                representedType = type.representedType;
-                ParentType = type.ParentType;
-                Interfaces = type.Interfaces;
-
-                if (!Namespace.IsResolved)
-                    Namespace.Resolve(referencables);
-                if (ParentType != null && !ParentType.IsResolved)
-                    ParentType.Resolve(referencables);
-
-                foreach (IReferencable face in Interfaces)
-                {
-                    if (!face.IsResolved)
-                        face.Resolve(referencables);
-                }
-
-                if (!Summary.IsResolved)
-                    Summary.Resolve(referencables);
-
-                foreach (var method in Methods)
-                {
-                    if (!method.IsResolved)
-                        method.Resolve(referencables);
-                }
-
-                foreach (var property in Properties)
-                {
-                    if (!property.IsResolved)
-                        property.Resolve(referencables);
-                }
-
-                foreach (var ev in Events)
-                {
-                    if (!ev.IsResolved)
-                        ev.Resolve(referencables);
-                }
-
-                foreach (var field in Fields)
-                {
-                    if (!field.IsResolved)
-                        field.Resolve(referencables);
-                }
+                return this.fields;
             }
-            else
-                ConvertToExternalReference();
         }
 
-        internal void AddMethod(Method method)
+        public string FullName
         {
-            methods.Add(method);
+            get
+            {
+                return (this.Namespace == null ? string.Empty : this.Namespace.FullName + ".") + this.PrettyName;
+            }
         }
 
-        internal void AddProperty(Property property)
+        public IList<IReferencable> Interfaces { get; set; }
+
+        public bool IsInterface
         {
-            properties.Add(property);
+            get
+            {
+                return this.representedType != null && this.representedType.IsInterface;
+            }
         }
 
-        public void AddEvent(Event ev)
+        public IList<Method> Methods
         {
-            events.Add(ev);
+            get
+            {
+                return this.methods;
+            }
         }
 
-        public void AddField(Field field)
+        public Namespace Namespace { get; private set; }
+
+        public IReferencable ParentType { get; set; }
+
+        public string PrettyName
         {
-            fields.Add(field);
+            get
+            {
+                return this.representedType == null ? this.Name : this.representedType.GetPrettyName();
+            }
         }
 
-        public void Sort()
+        public IList<Property> Properties
         {
-            methods.Sort((x, y) => x.Name.CompareTo(y.Name));
-            properties.Sort((x, y) => x.Name.CompareTo(y.Name));
-        }
-
-        public override string ToString()
-        {
-            return base.ToString() + " { Name = '" + Name + "'}";
+            get
+            {
+                return this.properties;
+            }
         }
 
         public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Type type, Namespace ns)
@@ -154,10 +100,12 @@ namespace Docu.Documentation
             var declaredType = new DeclaredType(typeIdentifier, ns) { IsResolved = false, representedType = type };
 
             if (type.BaseType != null)
+            {
                 declaredType.ParentType = Unresolved(
-                    Identifier.FromType(type.BaseType),
-                    type.BaseType,
+                    Identifier.FromType(type.BaseType), 
+                    type.BaseType, 
                     Namespace.Unresolved(Identifier.FromNamespace(type.BaseType.Namespace)));
+            }
 
             IEnumerable<Type> interfaces = GetInterfaces(type);
 
@@ -165,27 +113,126 @@ namespace Docu.Documentation
             {
                 declaredType.Interfaces.Add(
                     Unresolved(
-                        Identifier.FromType(face),
-                        face,
-                        Namespace.Unresolved(Identifier.FromNamespace(face.Namespace))));
+                        Identifier.FromType(face), face, Namespace.Unresolved(Identifier.FromNamespace(face.Namespace))));
             }
 
             return declaredType;
         }
 
-        private static IEnumerable<Type> GetInterfaces(Type type)
+        public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Namespace ns)
         {
-            var interfaces = new List<Type>(type.GetInterfaces());
+            return new DeclaredType(typeIdentifier, ns) { IsResolved = false };
+        }
 
-            foreach (Type face in type.GetInterfaces())
+        public void AddEvent(Event ev)
+        {
+            this.events.Add(ev);
+        }
+
+        public void AddField(Field field)
+        {
+            this.fields.Add(field);
+        }
+
+        public void Resolve(IDictionary<Identifier, IReferencable> referencables)
+        {
+            if (referencables.ContainsKey(this.identifier))
             {
-                FilterInterfaces(interfaces, face);
+                this.IsResolved = true;
+
+                IReferencable referencable = referencables[this.identifier];
+                var type = referencable as DeclaredType;
+
+                if (type == null)
+                {
+                    throw new InvalidOperationException("Cannot resolve to '" + referencable.GetType().FullName + "'");
+                }
+
+                this.Namespace = type.Namespace;
+                this.representedType = type.representedType;
+                this.ParentType = type.ParentType;
+                this.Interfaces = type.Interfaces;
+
+                if (!this.Namespace.IsResolved)
+                {
+                    this.Namespace.Resolve(referencables);
+                }
+
+                if (this.ParentType != null && !this.ParentType.IsResolved)
+                {
+                    this.ParentType.Resolve(referencables);
+                }
+
+                foreach (IReferencable face in this.Interfaces)
+                {
+                    if (!face.IsResolved)
+                    {
+                        face.Resolve(referencables);
+                    }
+                }
+
+                if (!this.Summary.IsResolved)
+                {
+                    this.Summary.Resolve(referencables);
+                }
+
+                foreach (Method method in this.Methods)
+                {
+                    if (!method.IsResolved)
+                    {
+                        method.Resolve(referencables);
+                    }
+                }
+
+                foreach (Property property in this.Properties)
+                {
+                    if (!property.IsResolved)
+                    {
+                        property.Resolve(referencables);
+                    }
+                }
+
+                foreach (Event ev in this.Events)
+                {
+                    if (!ev.IsResolved)
+                    {
+                        ev.Resolve(referencables);
+                    }
+                }
+
+                foreach (Field field in this.Fields)
+                {
+                    if (!field.IsResolved)
+                    {
+                        field.Resolve(referencables);
+                    }
+                }
             }
+            else
+            {
+                this.ConvertToExternalReference();
+            }
+        }
 
-            if (type.BaseType != null)
-                FilterInterfaces(interfaces, type.BaseType);
+        public void Sort()
+        {
+            this.methods.Sort((x, y) => x.Name.CompareTo(y.Name));
+            this.properties.Sort((x, y) => x.Name.CompareTo(y.Name));
+        }
 
-            return interfaces;
+        public override string ToString()
+        {
+            return base.ToString() + " { Name = '" + this.Name + "'}";
+        }
+
+        internal void AddMethod(Method method)
+        {
+            this.methods.Add(method);
+        }
+
+        internal void AddProperty(Property property)
+        {
+            this.properties.Add(property);
         }
 
         private static void FilterInterfaces(IList<Type> topLevelInterfaces, Type type)
@@ -202,12 +249,26 @@ namespace Docu.Documentation
             }
 
             if (type.BaseType != null)
+            {
                 FilterInterfaces(topLevelInterfaces, type.BaseType);
+            }
         }
 
-        public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Namespace ns)
+        private static IEnumerable<Type> GetInterfaces(Type type)
         {
-            return new DeclaredType(typeIdentifier, ns) { IsResolved = false };
+            var interfaces = new List<Type>(type.GetInterfaces());
+
+            foreach (Type face in type.GetInterfaces())
+            {
+                FilterInterfaces(interfaces, face);
+            }
+
+            if (type.BaseType != null)
+            {
+                FilterInterfaces(interfaces, type.BaseType);
+            }
+
+            return interfaces;
         }
     }
 }

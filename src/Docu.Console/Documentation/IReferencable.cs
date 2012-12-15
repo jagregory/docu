@@ -1,10 +1,11 @@
-using System;
-using System.Collections.Generic;
-using Docu.Documentation.Comments;
-using Docu.Parsing.Model;
-
 namespace Docu.Documentation
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Docu.Documentation.Comments;
+    using Docu.Parsing.Model;
+
     public interface IResolvable
     {
         bool IsResolved { get; }
