@@ -1,44 +1,60 @@
-using System;
-using System.Collections.Generic;
-
 namespace Docu.Events
 {
+    using System;
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// The event aggregator.
+    /// </summary>
     public class EventAggregator : IEventAggregator
     {
-        private readonly IDictionary<Func<Type, bool>, Action<object>> handlers = new Dictionary<Func<Type, bool>, Action<object>>();
+        private readonly IDictionary<Func<Type, bool>, Action<object>> handlers =
+            new Dictionary<Func<Type, bool>, Action<object>>();
+
+        public TEvent GetEvent<TEvent>() where TEvent : IEvent, new()
+        {
+            var ev = new TEvent();
+
+            ev.PublishedHandler(this.Publish<TEvent>);
+            ev.SubscribedHandler(this.Subscribe<TEvent>);
+
+            return ev;
+        }
+
+        private bool CanHandle<TEvent>(Type arg)
+        {
+            if (arg == typeof(TEvent))
+            {
+                return true;
+            }
+
+            if (arg.IsSubclassOf(typeof(TEvent)))
+            {
+                return true;
+            }
+
+            if (typeof(TEvent).IsAssignableFrom(arg))
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         private void Publish<TEvent>(object payload)
         {
-            foreach (var handler in handlers)
+            foreach (var handler in this.handlers)
             {
                 if (handler.Key(typeof(TEvent)))
+                {
                     handler.Value(payload);
+                }
             }
         }
 
         private void Subscribe<TEvent>(Action<object> handler)
         {
-            handlers.Add(CanHandle<TEvent>, handler);
-        }
-
-        private bool CanHandle<TEvent>(Type arg)
-        {
-            if (arg == typeof(TEvent)) return true;
-            if (arg.IsSubclassOf(typeof(TEvent))) return true;
-            if (typeof(TEvent).IsAssignableFrom(arg)) return true;
-
-            return false;
-        }
-
-        public TEvent GetEvent<TEvent>()
-            where TEvent : IEvent, new()
-        {
-            var ev = new TEvent();
-
-            ev.PublishedHandler(Publish<TEvent>);
-            ev.SubscribedHandler(Subscribe<TEvent>);
-
-            return ev;
+            this.handlers.Add(this.CanHandle<TEvent>, handler);
         }
     }
 }
