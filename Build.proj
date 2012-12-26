@@ -11,7 +11,7 @@
   <RunningOnBuildServer>false</RunningOnBuildServer>
   <RunningOnBuildServer Condition="'$(TEAMCITY_PROJECT_NAME)' != ''">true</RunningOnBuildServer>
   <Configuration>Debug</Configuration>
-  <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\src\packages\MSBuildTasks.1.4.0.45\tools</MSBuildCommunityTasksPath>
+  <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\src\Build\</MSBuildCommunityTasksPath>
   <TestsToIgnore Condition="$(RunningOnBuildServer)">TeamCityIgnore</TestsToIgnore>
 </PropertyGroup>
 
