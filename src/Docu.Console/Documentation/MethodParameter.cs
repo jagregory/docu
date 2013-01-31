@@ -1,8 +1,7 @@
 namespace Docu.Documentation
 {
-    using System;
-
     using Docu.Parsing.Model;
+    using System;
 
     public class MethodParameter : BaseDocumentationElement, IReferrer
     {

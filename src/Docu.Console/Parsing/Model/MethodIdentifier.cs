@@ -6,10 +6,11 @@ namespace Docu.Parsing.Model
     {
         private readonly bool isPublic;
         private readonly bool isStatic;
+        private readonly bool isConstructor;
         private readonly TypeIdentifier[] parameters;
         private readonly TypeIdentifier typeId;
 
-        public MethodIdentifier(string name, TypeIdentifier[] parameters, bool isStatic, bool isPublic,
+        public MethodIdentifier(string name, TypeIdentifier[] parameters, bool isStatic, bool isPublic, bool isConstructor,
                                 TypeIdentifier typeId)
             : base(name)
         {
@@ -17,6 +18,7 @@ namespace Docu.Parsing.Model
             this.parameters = parameters;
             this.isStatic = isStatic;
             this.isPublic = isPublic;
+            this.isConstructor = isConstructor;
         }
 
         public bool IsStatic
@@ -27,6 +29,11 @@ namespace Docu.Parsing.Model
         public bool IsPublic
         {
             get { return isPublic; }
+        }
+
+        public bool IsConstructor
+        {
+            get { return isConstructor; }
         }
 
         public override NamespaceIdentifier CloneAsNamespace()
@@ -50,15 +57,15 @@ namespace Docu.Parsing.Model
             // no need for expensive GetType calls since the class is sealed.
 
             // verify identifier-type, name and number of parameters
-            if((((object)other) == null) || (Name != other.Name) || (parameters.Length != other.parameters.Length))
+            if ((((object)other) == null) || (Name != other.Name) || (parameters.Length != other.parameters.Length))
             {
                 return false;
             }
 
             // verify parameter types
-            for(int i = 0; i < parameters.Length; i++)
+            for (int i = 0; i < parameters.Length; i++)
             {
-                if(!parameters[i].Equals(other.parameters[i]))
+                if (!parameters[i].Equals(other.parameters[i]))
                 {
                     return false;
                 }
@@ -69,7 +76,7 @@ namespace Docu.Parsing.Model
 
         public override int CompareTo(Identifier other)
         {
-            if(other is TypeIdentifier || other is NamespaceIdentifier)
+            if (other is TypeIdentifier || other is NamespaceIdentifier)
             {
                 return 1;
             }
@@ -79,33 +86,33 @@ namespace Docu.Parsing.Model
 
         public int CompareTo(MethodIdentifier other)
         {
-            if(((object)other) == null)
+            if (((object)other) == null)
             {
                 return -1;
             }
 
             int comparison = Name.CompareTo(other.Name);
-            if(comparison != 0)
+            if (comparison != 0)
             {
                 return comparison;
             }
 
             comparison = typeId.CompareTo(other.typeId);
-            if(comparison != 0)
+            if (comparison != 0)
             {
                 return comparison;
             }
 
             comparison = parameters.Length.CompareTo(other.parameters.Length);
-            if(comparison != 0)
+            if (comparison != 0)
             {
                 return comparison;
             }
 
-            for(int i = 0; i < parameters.Length; i++)
+            for (int i = 0; i < parameters.Length; i++)
             {
                 comparison = parameters[i].CompareTo(other.parameters[i]);
-                if(comparison != 0)
+                if (comparison != 0)
                 {
                     return comparison;
                 }

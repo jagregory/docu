@@ -42,8 +42,13 @@ namespace Docu.Documentation
             return type.Name;
         }
 
-        public static string GetPrettyName(this MethodInfo method)
+        public static string GetPrettyName(this MethodBase method)
         {
+            if (method.IsConstructor)
+            {
+                return method.DeclaringType.GetPrettyName();
+            }
+
             if (method.IsGenericMethod)
             {
                 var sb = new StringBuilder();

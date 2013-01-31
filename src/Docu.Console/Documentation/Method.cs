@@ -12,7 +12,7 @@ namespace Docu.Documentation
     {
         private readonly IList<MethodParameter> parameters = new List<MethodParameter>();
 
-        private MethodInfo representedMethod;
+        private MethodBase representedMethod;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Method"/> class.
@@ -73,6 +73,14 @@ namespace Docu.Documentation
             }
         }
 
+        public bool IsConstructor
+        {
+            get
+            {
+                return ((MethodIdentifier)this.identifier).IsConstructor;
+            }
+        }
+
         public IList<MethodParameter> Parameters
         {
             get
@@ -101,7 +109,7 @@ namespace Docu.Documentation
         }
 
         public static Method Unresolved(
-            MethodIdentifier methodIdentifier, DeclaredType type, MethodInfo representedMethod, IReferencable returnType)
+            MethodIdentifier methodIdentifier, DeclaredType type, MethodBase representedMethod, IReferencable returnType)
         {
             return new Method(methodIdentifier, type)
                 {
@@ -124,7 +132,7 @@ namespace Docu.Documentation
 
                 this.ReturnType = method.ReturnType;
 
-                if (!this.ReturnType.IsResolved)
+                if (this.ReturnType != null && !this.ReturnType.IsResolved)
                 {
                     this.ReturnType.Resolve(referencables);
                 }

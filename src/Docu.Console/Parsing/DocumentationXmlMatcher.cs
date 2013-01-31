@@ -1,6 +1,6 @@
+using Docu.Parsing.Model;
 using System.Collections.Generic;
 using System.Xml;
-using Docu.Parsing.Model;
 
 namespace Docu.Parsing
 {
@@ -85,11 +85,9 @@ namespace Docu.Parsing
         {
             string name = node.Attributes["name"].Value.Substring(2);
             Identifier member = Identifier.FromString(node.Attributes["name"].Value);
-            string methodName = GetMethodName(name);
-            int index = members.FindIndex(x => member.Equals(x.Name));
 
-            if (index == -1) return; // TODO: Privates
-            if (methodName == "#ctor") return; // TODO: Fix constructors
+            int index = members.FindIndex(x => member.Equals(x.Name));
+            if (index == -1) return; // TODO: Privates         
 
             for (int i = 0; i < members.Count; i++)
             {

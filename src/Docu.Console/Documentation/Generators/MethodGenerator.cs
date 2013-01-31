@@ -1,10 +1,9 @@
 namespace Docu.Documentation.Generators
 {
-    using System.Collections.Generic;
-    using System.Reflection;
-
     using Docu.Parsing.Comments;
     using Docu.Parsing.Model;
+    using System.Collections.Generic;
+    using System.Reflection;
 
     internal class MethodGenerator : BaseGenerator
     {
@@ -35,14 +34,19 @@ namespace Docu.Documentation.Generators
             Namespace ns = this.FindNamespace(association, namespaces);
             DeclaredType type = this.FindType(ns, association);
 
-            DeclaredType methodReturnType = DeclaredType.Unresolved(
-                Identifier.FromType(association.Method.ReturnType), 
-                association.Method.ReturnType, 
-                Namespace.Unresolved(Identifier.FromNamespace(association.Method.ReturnType.Namespace)));
+            DeclaredType methodReturnType = null;
+            if (association.Method.MemberType == MemberTypes.Method)
+            {
+                methodReturnType = DeclaredType.Unresolved(
+                     Identifier.FromType(((MethodInfo)association.Method).ReturnType),
+                     ((MethodInfo)association.Method).ReturnType,
+                     Namespace.Unresolved(Identifier.FromNamespace(((MethodInfo)association.Method).ReturnType.Namespace)));
+            }
+
             Method doc = Method.Unresolved(
-                Identifier.FromMethod(association.Method, association.TargetType), 
-                type, 
-                association.Method, 
+                Identifier.FromMethod(association.Method, association.TargetType),
+                type,
+                association.Method,
                 methodReturnType);
 
             this.ParseSummary(association, doc);
@@ -54,8 +58,8 @@ namespace Docu.Documentation.Generators
             foreach (ParameterInfo parameter in association.Method.GetParameters())
             {
                 DeclaredType reference = DeclaredType.Unresolved(
-                    Identifier.FromType(parameter.ParameterType), 
-                    parameter.ParameterType, 
+                    Identifier.FromType(parameter.ParameterType),
+                    parameter.ParameterType,
                     Namespace.Unresolved(Identifier.FromNamespace(parameter.ParameterType.Namespace)));
                 var docParam = new MethodParameter(parameter.Name, reference);
 

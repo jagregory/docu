@@ -34,10 +34,17 @@
 			</ul>
 		</if>
 		
-		<if condition="Type.Methods.Count > 0">
+		<if condition="Type.Methods.Where(x => x.IsConstructor).Count() > 0">
+			<h3 class="section">Constructors</h3>
+			<ul>
+				<li each="var method in Type.Methods.Where(x => x.IsConstructor)">${Format(method)}</li>
+			</ul>
+		</if>
+
+		<if condition="Type.Methods.Where(x => !x.IsConstructor).Count() > 0">
 			<h3 class="section">Methods</h3>
 			<ul>
-				<li each="var method in Type.Methods">${Format(method)}</li>
+				<li each="var method in Type.Methods.Where(x => !x.IsConstructor)">${Format(method)}</li>
 			</ul>
 		</if>
 		
@@ -58,7 +65,10 @@
 	
 	<events events="Type.Events" title="'Events'" />
 	
-	<var publicInstanceMethods="Type.Methods.Where(x => x.IsPublic && !x.IsStatic)" />
+	<var publicConstructors="Type.Methods.Where(x => x.IsPublic && x.IsConstructor)" />
+	<methods methods="publicConstructors" title="'Public constructors'" />
+	
+	<var publicInstanceMethods="Type.Methods.Where(x => x.IsPublic && !x.IsStatic && !x.IsConstructor)" />
 	<methods methods="publicInstanceMethods" title="'Public instance methods'" />
 	
 	<var publicStaticMethods="Type.Methods.Where(x => x.IsPublic && x.IsStatic)" />

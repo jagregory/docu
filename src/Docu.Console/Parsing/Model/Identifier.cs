@@ -1,8 +1,7 @@
+using Docu.Console;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using Docu.Console;
 
 namespace Docu.Parsing.Model
 {
@@ -31,11 +30,11 @@ namespace Docu.Parsing.Model
         public static TypeIdentifier FromType(Type type)
         {
             return type.IsGenericParameter
-                ? new TypeIdentifier(GENERIC_PARAMATER_PREFIX + type.GenericParameterPosition, GENERIC_TYPE_NAMESPACE) 
+                ? new TypeIdentifier(GENERIC_PARAMATER_PREFIX + type.GenericParameterPosition, GENERIC_TYPE_NAMESPACE)
                 : new TypeIdentifier(type.Name, type.Namespace);
         }
 
-        public static MethodIdentifier FromMethod(MethodInfo method, Type type)
+        public static MethodIdentifier FromMethod(MethodBase method, Type type)
         {
             string name = method.Name;
             var parameters = new List<TypeIdentifier>();
@@ -48,7 +47,7 @@ namespace Docu.Parsing.Model
                 parameters.Add(FromType(param.ParameterType));
             }
 
-            return new MethodIdentifier(name, parameters.ToArray(), method.IsStatic, method.IsPublic, FromType(type));
+            return new MethodIdentifier(name, parameters.ToArray(), method.IsStatic, method.IsPublic, method.IsConstructor, FromType(type));
         }
 
         public static PropertyIdentifier FromProperty(PropertyInfo property, Type type)
@@ -120,9 +119,15 @@ namespace Docu.Parsing.Model
         {
             string typeName = GetTypeName(name);
             string methodName = GetMethodName(name);
+            // Constructors in XML has name #ctor but in assembly .ctor
+            if (methodName == "#ctor")
+            {
+                methodName = ".ctor";
+            }
+
             List<TypeIdentifier> parameters = GetMethodParameters(name);
 
-            return new MethodIdentifier(methodName, parameters.ToArray(), false, false, FromTypeString(typeName));
+            return new MethodIdentifier(methodName, parameters.ToArray(), false, false, methodName == ".ctor", FromTypeString(typeName));
         }
 
         private static TypeIdentifier FromTypeString(string name)
@@ -142,7 +147,7 @@ namespace Docu.Parsing.Model
                 ns = "Unknown";
                 type = name;
             }
-            
+
 
             return new TypeIdentifier(type, ns);
         }
@@ -181,7 +186,7 @@ namespace Docu.Parsing.Model
             buildTypeLookup();
 
             var firstCharAfterParen = fullName.IndexOf("(") + 1;
-            var paramList = fullName.Substring(firstCharAfterParen, fullName.Length - firstCharAfterParen - 1) ;
+            var paramList = fullName.Substring(firstCharAfterParen, fullName.Length - firstCharAfterParen - 1);
 
             foreach (var paramName in ParseMethodParameterList(paramList))
             {
@@ -220,7 +225,7 @@ namespace Docu.Parsing.Model
             var startPosition = 0;
             while (startPosition < genericArguments.Length)
             {
-                var positionOfInterestingChar = genericArguments.IndexOfAny(new[] {START_GENERIC_ARGUMENTS, ','}, startPosition);
+                var positionOfInterestingChar = genericArguments.IndexOfAny(new[] { START_GENERIC_ARGUMENTS, ',' }, startPosition);
                 if (positionOfInterestingChar < 0)
                 {
                     return count;
@@ -247,7 +252,7 @@ namespace Docu.Parsing.Model
         {
             if (nameToType != null) return;
             nameToType = new Dictionary<string, Type>();
-            foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
@@ -270,7 +275,7 @@ namespace Docu.Parsing.Model
             var startPosition = 0;
             while (startPosition < methodParameters.Length)
             {
-                var positionOfInterestingChar = methodParameters.IndexOfAny(new[] {START_GENERIC_ARGUMENTS, ','}, startPosition);
+                var positionOfInterestingChar = methodParameters.IndexOfAny(new[] { START_GENERIC_ARGUMENTS, ',' }, startPosition);
                 if (positionOfInterestingChar < 0)
                 {
                     if (startPosition == 0)

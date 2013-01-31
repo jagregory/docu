@@ -1,9 +1,9 @@
+using Docu.Documentation;
+using Docu.Documentation.Comments;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
-using Docu.Documentation;
-using Docu.Documentation.Comments;
 
 namespace Docu.Output.Rendering
 {
@@ -91,7 +91,7 @@ namespace Docu.Output.Rendering
             foreach (var listItem in items)
             {
                 string term = null;
-                string definition = null; 
+                string definition = null;
                 if (listItem.Term != null) term = String.Format(termFormat, FormatGeneralContainer(listItem.Term));
                 if (listItem.Definition != null) definition = String.Format(definitionFormat, FormatGeneralContainer(listItem.Definition));
                 output.AppendFormat(itemFormat, term, definition);
@@ -131,6 +131,11 @@ namespace Docu.Output.Rendering
 
         public string FormatReferencable(IReferencable reference, IEnumerable<KeyValuePair<string, string>> attributes)
         {
+            if (reference == null)
+            {
+                return string.Empty;
+            }
+
             string url = "";
             string name = reference.PrettyName;
 

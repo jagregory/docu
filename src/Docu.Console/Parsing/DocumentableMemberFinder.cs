@@ -22,6 +22,11 @@ namespace Docu.Parsing
                     yield return new UndocumentedMethod(Identifier.FromMethod(method, type), method, type);
                 }
 
+                foreach (var constructor in type.GetConstructors())
+                {
+                    yield return new UndocumentedMethod(Identifier.FromMethod(constructor, type), constructor, type);    
+                }
+
                 foreach (var property in type.GetProperties())
                 {
                     yield return new UndocumentedProperty(Identifier.FromProperty(property, type), property, type);

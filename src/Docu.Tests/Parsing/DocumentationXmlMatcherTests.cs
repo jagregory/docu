@@ -3,6 +3,7 @@ using Docu.Parsing;
 using Docu.Parsing.Model;
 using Example;
 using NUnit.Framework;
+using System.Reflection;
 
 namespace Docu.Tests.Parsing
 {
@@ -71,7 +72,7 @@ namespace Docu.Tests.Parsing
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
-            member.Method.ShouldEqual<Second>(x => x.SecondMethod());
+            ((MethodInfo)member.Method).ShouldEqual<Second>(x => x.SecondMethod());
         }
 
         [Test]
@@ -86,7 +87,7 @@ namespace Docu.Tests.Parsing
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
-            member.Method.ShouldEqual<Second>(x => x.SecondMethod2("", 0));
+            ((MethodInfo)member.Method).ShouldEqual<Second>(x => x.SecondMethod2("", 0));
         }
 
         [Test]

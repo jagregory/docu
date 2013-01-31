@@ -7,7 +7,7 @@
       <comment content="method.Summary" />
       <remarks content="method.Remarks" />
 
-      <var hasReturn="method.ReturnType.PrettyName != 'void'" />
+      <var hasReturn="method.ReturnType != null && method.ReturnType.PrettyName != 'void'" />
       <var hasParams="method.Parameters.Any(x => x.HasDocumentation)" />
 
       <div class="parameters" if="hasParams">
