@@ -51,7 +51,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         {
             var model = new DocumentModel(RealParser, StubEventAggregator);
             var members = new List<IDocumentationMember>(DocMembers(typeof(First)));
-            var indexOfType = members.FindIndex(m => m is UndocumentedType);
+            var indexOfType = members.FindIndex(m => m is ReflectedType);
             members[indexOfType] = Type<First>(@"<member name=""T:Example.First""><summary>The type description</summary></member>");
             var namespaces = model.Create(members);
             var onlyTypeInModel = namespaces.Single().Types.Single();

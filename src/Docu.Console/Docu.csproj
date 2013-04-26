@@ -155,11 +155,11 @@
     <Compile Include="Parsing\Model\NamespaceIdentifier.cs" />
     <Compile Include="Parsing\Model\PropertyIdentifier.cs" />
     <Compile Include="Parsing\Model\TypeIdentifier.cs" />
-    <Compile Include="Parsing\Model\UndocumentedEvent.cs" />
-    <Compile Include="Parsing\Model\UndocumentedField.cs" />
-    <Compile Include="Parsing\Model\UndocumentedMethod.cs" />
-    <Compile Include="Parsing\Model\UndocumentedProperty.cs" />
-    <Compile Include="Parsing\Model\UndocumentedType.cs" />
+    <Compile Include="Parsing\Model\ReflectedEvent.cs" />
+    <Compile Include="Parsing\Model\ReflectedField.cs" />
+    <Compile Include="Parsing\Model\ReflectedMethod.cs" />
+    <Compile Include="Parsing\Model\ReflectedProperty.cs" />
+    <Compile Include="Parsing\Model\ReflectedType.cs" />
     <Compile Include="Documentation\Comments\InlineCode.cs" />
     <Compile Include="Documentation\Method.cs" />
     <Compile Include="Documentation\Namespace.cs" />

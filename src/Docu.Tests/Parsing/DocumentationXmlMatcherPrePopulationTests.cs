@@ -29,7 +29,7 @@ namespace Docu.Tests.Parsing
             document_member<EmptyType>();
 
             var member = find_member<EmptyType>();
-            member.ShouldBeOfType<UndocumentedType>();
+            member.ShouldBeOfType<ReflectedType>();
             member.Name.ToString().ShouldEqual("EmptyType");
         }
 
@@ -39,7 +39,7 @@ namespace Docu.Tests.Parsing
             document_member<SingleMethodType>();
 
             var member = find_member<SingleMethodType>(x => x.Method());
-            member.ShouldBeOfType<UndocumentedMethod>();
+            member.ShouldBeOfType<ReflectedMethod>();
             member.Name.ToString().ShouldEqual("Method");
         }
 
@@ -49,11 +49,11 @@ namespace Docu.Tests.Parsing
             document_member<ClassWithOverload>();
 
             var member = find_member<ClassWithOverload>(x => x.Method());
-            member.ShouldBeOfType<UndocumentedMethod>();
+            member.ShouldBeOfType<ReflectedMethod>();
             member.Name.ToString().ShouldEqual("Method");
 
             var member2 = find_member<ClassWithOverload>(x => x.Method(null));
-            member2.ShouldBeOfType<UndocumentedMethod>();
+            member2.ShouldBeOfType<ReflectedMethod>();
             member2.Name.ToString().ShouldEqual("Method");
             member2.ShouldNotEqual(member);
         }
@@ -72,7 +72,7 @@ namespace Docu.Tests.Parsing
             document_member<ClassWithExplicitMethodImplementation>();
             var member = find_member<ClassWithExplicitMethodImplementation>("Method");
 
-            member.ShouldBeOfType<UndocumentedMethod>();
+            member.ShouldBeOfType<ReflectedMethod>();
             member.Name.ToString().ShouldEqual("Method");
         }
 
@@ -82,7 +82,7 @@ namespace Docu.Tests.Parsing
             document_member<EmptyInterface>();
             var member = find_member<EmptyInterface>();
 
-            member.ShouldBeOfType<UndocumentedType>();
+            member.ShouldBeOfType<ReflectedType>();
             member.Name.ToString().ShouldEqual("EmptyInterface");
         }
 
@@ -92,7 +92,7 @@ namespace Docu.Tests.Parsing
             document_member<SingleMethodInterface>();
             var member = find_member<SingleMethodInterface>(x => x.Method());
 
-            member.ShouldBeOfType<UndocumentedMethod>();
+            member.ShouldBeOfType<ReflectedMethod>();
             member.Name.ToString().ShouldEqual("Method");
         }
 
@@ -102,7 +102,7 @@ namespace Docu.Tests.Parsing
             document_member<StaticMethodClass>();
             var member = find_member<StaticMethodClass>(() => StaticMethodClass.Method());
 
-            member.ShouldBeOfType<UndocumentedMethod>();
+            member.ShouldBeOfType<ReflectedMethod>();
             member.Name.ToString().ShouldEqual("Method");
         }
 
@@ -112,7 +112,7 @@ namespace Docu.Tests.Parsing
             document_member<EventType>();
 
             var member = find_event<EventType>("AnEvent");
-            member.ShouldBeOfType<UndocumentedEvent>();
+            member.ShouldBeOfType<ReflectedEvent>();
             member.Name.ToString().ShouldEqual("AnEvent");
         }
 
@@ -122,7 +122,7 @@ namespace Docu.Tests.Parsing
             document_member<FieldType>();
 
             var member = find_member<FieldType>(x => x.aField);
-            member.ShouldBeOfType<UndocumentedField>();
+            member.ShouldBeOfType<ReflectedField>();
             member.Name.ToString().ShouldEqual("aField");
         }
 

@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace Docu.Parsing.Model
 {
-    public class UndocumentedProperty : DocumentedProperty
+    public class ReflectedProperty : DocumentedProperty
     {
-        public UndocumentedProperty(Identifier name, PropertyInfo property, Type targetType)
+        public ReflectedProperty(Identifier name, PropertyInfo property, Type targetType)
             : base(name, null, property, targetType)
         {
         }

@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace Docu.Parsing.Model
 {
-    public class UndocumentedEvent : DocumentedEvent
+    public class ReflectedEvent : DocumentedEvent
     {
-        public UndocumentedEvent(EventIdentifier name, EventInfo ev, Type targetType)
+        public ReflectedEvent(EventIdentifier name, EventInfo ev, Type targetType)
             : base(name, null, ev, targetType)
         {}
     }

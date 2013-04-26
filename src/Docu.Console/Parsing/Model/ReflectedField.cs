@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace Docu.Parsing.Model
 {
-    public class UndocumentedField : DocumentedField
+    public class ReflectedField : DocumentedField
     {
-        public UndocumentedField(Identifier name, FieldInfo field, Type targetType)
+        public ReflectedField(Identifier name, FieldInfo field, Type targetType)
             : base(name, null, field, targetType)
         {}
     }
