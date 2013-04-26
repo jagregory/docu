@@ -57,7 +57,7 @@ namespace Docu.Parsing.Model
             // no need for expensive GetType calls since the class is sealed.
 
             // verify identifier-type, name and number of parameters
-            if ((((object)other) == null) || (Name != other.Name) || (parameters.Length != other.parameters.Length))
+            if (((object)other) == null || Name != other.Name || !typeId.Equals(other.typeId) || parameters.Length != other.parameters.Length)
             {
                 return false;
             }
