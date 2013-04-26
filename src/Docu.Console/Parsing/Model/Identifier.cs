@@ -15,6 +15,7 @@ namespace Docu.Parsing.Model
         private static Dictionary<string, Type> nameToType;
         private static char START_GENERIC_ARGUMENTS = '{';
         private static char END_GENERIC_ARGUMENTS = '}';
+        private static char REFOUT_PARAMETER_SUFFIX = '@';
         private static IScreenWriter screenWriter = new ConsoleScreenWriter();
 
         protected Identifier(string name)
@@ -188,7 +189,7 @@ namespace Docu.Parsing.Model
             var firstCharAfterParen = fullName.IndexOf("(") + 1;
             var paramList = fullName.Substring(firstCharAfterParen, fullName.Length - firstCharAfterParen - 1);
 
-            foreach (var paramName in ParseMethodParameterList(paramList))
+            foreach (var paramName in ExtractMethodArgumentTypes(paramList))
             {
                 if (IsGenericArgument(paramName))
                 {
@@ -232,7 +233,7 @@ namespace Docu.Parsing.Model
                 }
                 if (genericArguments[positionOfInterestingChar] == START_GENERIC_ARGUMENTS)
                 {
-                    startPosition = indexAfterGenericArguments(genericArguments, positionOfInterestingChar);
+                    startPosition = IndexAfterGenericArguments(genericArguments, positionOfInterestingChar);
                 }
                 else
                 {
@@ -270,7 +271,7 @@ namespace Docu.Parsing.Model
             }
         }
 
-        public static IEnumerable<string> ParseMethodParameterList(string methodParameters)
+        public static IEnumerable<string> ExtractMethodArgumentTypes(string methodParameters)
         {
             var startPosition = 0;
             while (startPosition < methodParameters.Length)
@@ -280,11 +281,11 @@ namespace Docu.Parsing.Model
                 {
                     if (startPosition == 0)
                     {
-                        yield return methodParameters;
+                        yield return methodParameters.TrimEnd(REFOUT_PARAMETER_SUFFIX);
                     }
                     else
                     {
-                        yield return methodParameters.Substring(startPosition);
+                        yield return methodParameters.Substring(startPosition).TrimEnd(REFOUT_PARAMETER_SUFFIX);
                     }
                     startPosition = methodParameters.Length;
                 }
@@ -293,16 +294,16 @@ namespace Docu.Parsing.Model
                     if (methodParameters[positionOfInterestingChar] == START_GENERIC_ARGUMENTS)
                     {
                         //Generic parameter 
-                        positionOfInterestingChar = indexAfterGenericArguments(methodParameters, positionOfInterestingChar);
+                        positionOfInterestingChar = IndexAfterGenericArguments(methodParameters, positionOfInterestingChar);
                     }
-                    yield return methodParameters.Substring(startPosition, positionOfInterestingChar - startPosition);
+                    yield return methodParameters.Substring(startPosition, positionOfInterestingChar - startPosition).TrimEnd(REFOUT_PARAMETER_SUFFIX);
                     startPosition = positionOfInterestingChar + 1;
                 }
 
             }
         }
 
-        private static int indexAfterGenericArguments(string parameterList, int startPosition)
+        private static int IndexAfterGenericArguments(string parameterList, int startPosition)
         {
             // - may contain ',' for multiple generic arguments for the single parameter type: IDictionary<KEY,VALUE>
             // - may contain '{' for generics of generics: IEnumerable<Nullable<int>>
