@@ -87,7 +87,6 @@
     <Compile Include="Documentation\Generators\PropertyGenerator.cs" />
     <Compile Include="Documentation\Generators\TypeGenerator.cs" />
     <Compile Include="Events\BadFileEvent.cs" />
-    <Compile Include="ConsoleApplication.cs" />
     <Compile Include="Events\WarningEvent.cs" />
     <Compile Include="Documentation\BaseDocumentationElement.cs" />
     <Compile Include="Documentation\Event.cs" />
