@@ -1,26 +1,26 @@
+using Docu.Events;
+using Docu.IO;
+using Docu.Output;
+using Docu.Parsing;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Docu.Events;
-using Docu.Output;
-using Docu.IO;
-using Docu.Parsing;
 
 namespace Docu
 {
     public class DocumentationGenerator
     {
-        private readonly List<Assembly> assemblies = new List<Assembly>();
-        private readonly IAssemblyLoader assemblyLoader;
-        private readonly AssemblyXmlParser parser;
-        private readonly IUntransformableResourceManager resourceManager;
-        private readonly IEventAggregator eventAggregator;
-        private readonly IBulkPageWriter writer;
-        private readonly IXmlLoader xmlLoader;
-        private readonly List<string> contentsOfXmlFiles = new List<string>();
-        private string outputPath = "output";
-        private string templatePath = Path.Combine(Path.GetDirectoryName(typeof(DocumentationGenerator).Assembly.Location), "templates");
+        readonly List<Assembly> assemblies = new List<Assembly>();
+        readonly IAssemblyLoader assemblyLoader;
+        readonly AssemblyXmlParser parser;
+        readonly IUntransformableResourceManager resourceManager;
+        readonly IEventAggregator eventAggregator;
+        readonly IBulkPageWriter writer;
+        readonly IXmlLoader xmlLoader;
+        readonly List<string> contentsOfXmlFiles = new List<string>();
+        string outputPath = "output";
+        string templatePath = Path.Combine(Path.GetDirectoryName(typeof (DocumentationGenerator).Assembly.Location), "templates");
 
         public DocumentationGenerator(IAssemblyLoader assemblyLoader, IXmlLoader xmlLoader, AssemblyXmlParser parser, IBulkPageWriter writer, IUntransformableResourceManager resourceManager, IEventAggregator eventAggregator)
         {
@@ -40,14 +40,14 @@ namespace Docu
                 {
                     assemblies.Add(assemblyLoader.LoadFrom(assemblyPath));
                 }
-                catch(BadImageFormatException)
+                catch (BadImageFormatException)
                 {
                     RaiseBadFileEvent(assemblyPath);
                 }
             }
         }
 
-        private void RaiseBadFileEvent(string path)
+        void RaiseBadFileEvent(string path)
         {
             eventAggregator
                 .GetEvent<BadFileEvent>()
@@ -77,9 +77,9 @@ namespace Docu
             var documentModel = parser.CreateDocumentModel(assemblies, contentsOfXmlFiles);
 
             writer.SetAssemblies(assemblies);
-            
+
             if (assemblies.Count <= 0) return;
-            
+
             writer.CreatePagesFromDirectory(templatePath, outputPath, documentModel);
             resourceManager.MoveResources(templatePath, outputPath);
         }

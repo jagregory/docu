@@ -1,20 +1,24 @@
+using Docu.Documentation;
+using Docu.Events;
+using Docu.IO;
+using Docu.Output;
+using Docu.Parsing;
+using Docu.Parsing.Comments;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
 namespace Docu.Console
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using Events;
-    using StructureMap;
-
     public class ConsoleApplication
     {
-        private readonly List<string> arguments = new List<string>();
-        private readonly DocumentationGenerator documentationGenerator;
-        private readonly IEventAggregator eventAggregator;
-        private readonly IScreenWriter screenWriter;
-        private readonly IList<ISwitch> switches = new List<ISwitch>();
-        private bool canRun;
+        readonly List<string> arguments = new List<string>();
+        readonly DocumentationGenerator documentationGenerator;
+        readonly IEventAggregator eventAggregator;
+        readonly IScreenWriter screenWriter;
+        readonly IList<ISwitch> switches = new List<ISwitch>();
+        bool canRun;
 
         public ConsoleApplication(IScreenWriter screenWriter, DocumentationGenerator documentationGenerator, IEventAggregator eventAggregator)
         {
@@ -28,9 +32,23 @@ namespace Docu.Console
 
         public static void Run(IEnumerable<string> args)
         {
-            IContainer container = ContainerBootstrapper.BootstrapStructureMap();
+            var eventAggregator = new EventAggregator();
 
-            var application = container.GetInstance<ConsoleApplication>();
+            var commentParser = new CommentParser(new ICommentNodeParser[]
+                {
+                    new InlineCodeCommentParser(),
+                    new InlineListCommentParser(),
+                    new InlineTextCommentParser(),
+                    new MultilineCodeCommentParser(),
+                    new ParagraphCommentParser(),
+                    new ParameterReferenceParser(),
+                    new SeeCodeCommentParser(),
+                });
+
+            var documentModel = new DocumentModel(commentParser, eventAggregator);
+            var pageWriter = new BulkPageWriter(new PageWriter(new HtmlGenerator(), new FileSystemOutputWriter(), new PatternTemplateResolver()));
+            var generator = new DocumentationGenerator(new AssemblyLoader(), new XmlLoader(), new AssemblyXmlParser(documentModel), pageWriter, new UntransformableResourceManager(), eventAggregator);
+            var application = new ConsoleApplication(new ConsoleScreenWriter(), generator, eventAggregator);
 
             application.SetArguments(args);
             application.Run();
@@ -66,7 +84,7 @@ namespace Docu.Console
             }
         }
 
-        private void SetArguments(IEnumerable<string> args)
+        void SetArguments(IEnumerable<string> args)
         {
             arguments.AddRange(args);
 
@@ -76,25 +94,25 @@ namespace Docu.Console
             }
         }
 
-        private static string GetExpectedXmlFileForAssembly(string assembly)
+        static string GetExpectedXmlFileForAssembly(string assembly)
         {
             string extension = Path.GetExtension(assembly);
             return assembly.Substring(0, assembly.Length - extension.Length) + ".xml";
         }
 
-        private static bool IsAssemblyArgument(string argument)
+        static bool IsAssemblyArgument(string argument)
         {
             string fileExtension = Path.GetExtension(argument);
             return fileExtension.Equals(".dll", StringComparison.InvariantCultureIgnoreCase)
-                   || fileExtension.Equals(".exe", StringComparison.InvariantCultureIgnoreCase);
+                || fileExtension.Equals(".exe", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private void BadFile(string path)
+        void BadFile(string path)
         {
             ShowMessage(new BadFileMessage(path));
         }
 
-        private void DefineSwitches()
+        void DefineSwitches()
         {
             switches.Add(
                 new Switch(
@@ -124,7 +142,7 @@ namespace Docu.Console
                         }));
         }
 
-        private string[] GetAssembliesFromArgs(IEnumerable<string> args)
+        string[] GetAssembliesFromArgs(IEnumerable<string> args)
         {
             var assemblies = new List<string>();
 
@@ -139,7 +157,7 @@ namespace Docu.Console
             return assemblies.ToArray();
         }
 
-        private IEnumerable<string> GetFiles(string path)
+        IEnumerable<string> GetFiles(string path)
         {
             if (path.Contains("*") || path.Contains("?"))
             {
@@ -162,7 +180,7 @@ namespace Docu.Console
             }
         }
 
-        private string[] GetXmlsFromArgs(IEnumerable<string> args, IEnumerable<string> assemblies)
+        string[] GetXmlsFromArgs(IEnumerable<string> args, IEnumerable<string> assemblies)
         {
             var xmls = new List<string>();
 
@@ -194,7 +212,7 @@ namespace Docu.Console
             return xmls.ToArray();
         }
 
-        private bool ProcessSwitches()
+        bool ProcessSwitches()
         {
             foreach (ISwitch svvitch in switches)
             {
@@ -219,12 +237,12 @@ namespace Docu.Console
             return true;
         }
 
-        private void ShowMessage(IScreenMessage message)
+        void ShowMessage(IScreenMessage message)
         {
             screenWriter.WriteMessage(message);
         }
 
-        private bool VerifyArguments(IEnumerable<string> assemblies, IEnumerable<string> xmls)
+        bool VerifyArguments(IEnumerable<string> assemblies, IEnumerable<string> xmls)
         {
             foreach (string argument in arguments)
             {
@@ -251,7 +269,7 @@ namespace Docu.Console
             return true;
         }
 
-        private bool VerifyAssemblies(IEnumerable<string> assemblies)
+        bool VerifyAssemblies(IEnumerable<string> assemblies)
         {
             if (!assemblies.Any())
             {
@@ -271,7 +289,7 @@ namespace Docu.Console
             return true;
         }
 
-        private bool VerifyXmls(IEnumerable<string> xmls)
+        bool VerifyXmls(IEnumerable<string> xmls)
         {
             if (!xmls.Any())
             {
@@ -291,12 +309,12 @@ namespace Docu.Console
             return true;
         }
 
-        private void Warning(string message)
+        void Warning(string message)
         {
             ShowMessage(new WarningMessage(message));
         }
 
-        private void WireUpListeners()
+        void WireUpListeners()
         {
             eventAggregator.GetEvent<WarningEvent>().Subscribe(Warning);
             eventAggregator.GetEvent<BadFileEvent>().Subscribe(BadFile);

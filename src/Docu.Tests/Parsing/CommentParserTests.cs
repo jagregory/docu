@@ -2,7 +2,6 @@ using Docu.Documentation.Comments;
 using Docu.Parsing.Comments;
 using NUnit.Framework;
 using System.Linq;
-using StructureMap;
 
 namespace Docu.Tests.Parsing
 {
@@ -10,18 +9,20 @@ namespace Docu.Tests.Parsing
     public class CommentParserTests
     {
         private CommentParser parser;
-        private IContainer container;
-
-        [TestFixtureSetUp]
-        public void SetupContainer()
-        {
-            container = ContainerBootstrapper.BootstrapStructureMap();
-        }
 
         [SetUp]
         public void CreateParser()
         {
-            parser = container.GetInstance<CommentParser>();
+            parser = new CommentParser(new ICommentNodeParser[]
+                {
+                    new InlineCodeCommentParser(),
+                    new InlineListCommentParser(),
+                    new InlineTextCommentParser(),
+                    new MultilineCodeCommentParser(),
+                    new ParagraphCommentParser(),
+                    new ParameterReferenceParser(),
+                    new SeeCodeCommentParser(),
+                });
         }
 
         [Test]

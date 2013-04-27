@@ -8,7 +8,6 @@ using Docu.Parsing.Comments;
 using Docu.Parsing.Model;
 using NUnit.Framework;
 using Rhino.Mocks;
-using StructureMap;
 
 namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 {
@@ -16,12 +15,20 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
     {
         protected ICommentParser StubParser;
         public IEventAggregator StubEventAggregator;
-        private IContainer container;
 
         [TestFixtureSetUp]
         public void FixtureSetup()
         {
-            container = ContainerBootstrapper.BootstrapStructureMap();
+            RealParser = new CommentParser(new ICommentNodeParser[]
+                {
+                    new InlineCodeCommentParser(),
+                    new InlineListCommentParser(),
+                    new InlineTextCommentParser(),
+                    new MultilineCodeCommentParser(),
+                    new ParagraphCommentParser(),
+                    new ParameterReferenceParser(),
+                    new SeeCodeCommentParser(),
+                });
         }
 
         [SetUp]
@@ -34,7 +41,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
                 .Return(new List<IComment>());
         }
 
-        public ICommentParser RealParser { get { return container.GetInstance<ICommentParser>(); } }
+        public ICommentParser RealParser { get; private set; }
 
         protected DocumentedType Type<T>(string xml)
         {
