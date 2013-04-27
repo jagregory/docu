@@ -55,6 +55,11 @@ namespace Docu.Documentation
             get { return declaration != null && declaration.IsInterface; }
         }
 
+        public bool IsStatic
+        {
+            get { return declaration != null && declaration.IsSealed && declaration.IsAbstract; }
+        }
+
         public IList<Method> Methods
         {
             get { return methods; }

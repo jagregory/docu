@@ -23,6 +23,11 @@ namespace Docu.Documentation
             get { return !(Summary.IsEmpty && Remarks.IsEmpty && Value.IsEmpty); }
         }
 
+        public bool IsObsolete
+        {
+            get { return !string.IsNullOrEmpty(ObsoleteReason); }
+        }
+
         public MultilineCode Example { get; set; }
 
         public bool IsExternal { get; private set; }

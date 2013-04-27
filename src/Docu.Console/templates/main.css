@@ -141,6 +141,14 @@ div.parameters p, div.return p {
 	margin-left: -1px;
 }
 
+#warning {
+    color: red ;
+    background: rgb(255, 218, 0);
+	border: 1px solid red;
+	margin: 20px 10px 20px 10px;
+	padding: 5px 10px;
+}
+
 h2.fixed {
 	background: #CCC;
 	color: #000;

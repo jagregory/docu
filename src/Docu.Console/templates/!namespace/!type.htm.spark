@@ -26,6 +26,11 @@
 				<example content="Type.Example" />
 			</div>
 		</if>
+		<if condition="Type.IsObsolete">
+			<div id="warning">
+				<b>Obsolete:</b> ${Type.ObsoleteReason}
+			</div>
+		</if>
 		
 		<if condition="Type.Events.Count > 0">
 			<h3 class="section">Events</h3>
@@ -41,10 +46,16 @@
 			</ul>
 		</if>
 
-		<if condition="Type.Methods.Where(x => !x.IsConstructor).Count() > 0">
+		<if condition="Type.Methods.Where(x => !x.IsConstructor && x.IsStatic).Count() > 0">
+			<h3 class="section">Static Functions</h3>
+			<ul>
+				<li each="var method in Type.Methods.Where(x => !x.IsConstructor && x.IsStatic)">${Format(method)}</li>
+			</ul>
+		</if>
+		<if condition="!Type.IsStatic && Type.Methods.Where(x => !x.IsConstructor && !x.IsStatic).Count() > 0">
 			<h3 class="section">Methods</h3>
 			<ul>
-				<li each="var method in Type.Methods.Where(x => !x.IsConstructor)">${Format(method)}</li>
+				<li each="var method in Type.Methods.Where(x => !x.IsConstructor && !x.IsStatic)">${Format(method)}</li>
 			</ul>
 		</if>
 		
@@ -68,9 +79,11 @@
 	<var publicConstructors="Type.Methods.Where(x => x.IsPublic && x.IsConstructor)" />
 	<methods methods="publicConstructors" title="'Public constructors'" />
 	
-	<var publicInstanceMethods="Type.Methods.Where(x => x.IsPublic && !x.IsStatic && !x.IsConstructor)" />
-	<methods methods="publicInstanceMethods" title="'Public instance methods'" />
-	
+	<if condition="!Type.IsStatic">
+		<var publicInstanceMethods="Type.Methods.Where(x => x.IsPublic && !x.IsStatic && !x.IsConstructor)" />
+		<methods methods="publicInstanceMethods" title="'Public instance methods'" />
+	</if>
+
 	<var publicStaticMethods="Type.Methods.Where(x => x.IsPublic && x.IsStatic)" />
 	<methods methods="publicStaticMethods" title="'Public static methods'" />
 	
