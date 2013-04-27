@@ -7,12 +7,12 @@ namespace Docu.Documentation.Generators
 {
     internal class MethodGenerator : BaseGenerator, IGenerator<DocumentedMethod>
     {
-        readonly IDictionary<Identifier, IReferencable> matchedAssociations;
+        readonly IDictionary<Identifier, IReferencable> _matchedAssociations;
 
         public MethodGenerator(IDictionary<Identifier, IReferencable> matchedAssociations, ICommentParser commentParser)
             : base(commentParser)
         {
-            this.matchedAssociations = matchedAssociations;
+            _matchedAssociations = matchedAssociations;
         }
 
         public void Add(List<Namespace> namespaces, DocumentedMethod association)
@@ -22,8 +22,7 @@ namespace Docu.Documentation.Generators
                 return;
             }
 
-            Namespace ns = FindNamespace(association, namespaces);
-            DeclaredType type = FindType(ns, association);
+            DeclaredType type = FindType(association, namespaces);
 
             DeclaredType methodReturnType = null;
             if (association.Method.MemberType == MemberTypes.Method)
@@ -59,12 +58,12 @@ namespace Docu.Documentation.Generators
                 doc.AddParameter(docParam);
             }
 
-            if (matchedAssociations.ContainsKey(association.Name))
+            if (_matchedAssociations.ContainsKey(association.Name))
             {
                 return; // weird case when a type has the same method declared twice
             }
 
-            matchedAssociations.Add(association.Name, doc);
+            _matchedAssociations.Add(association.Name, doc);
 
             if (type == null)
             {

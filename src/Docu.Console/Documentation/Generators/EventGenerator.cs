@@ -6,12 +6,12 @@ namespace Docu.Documentation.Generators
 {
     internal class EventGenerator : BaseGenerator, IGenerator<DocumentedEvent>
     {
-        readonly IDictionary<Identifier, IReferencable> matchedAssociations;
+        readonly IDictionary<Identifier, IReferencable> _matchedAssociations;
 
         public EventGenerator(IDictionary<Identifier, IReferencable> matchedAssociations, ICommentParser commentParser)
             : base(commentParser)
         {
-            this.matchedAssociations = matchedAssociations;
+            _matchedAssociations = matchedAssociations;
         }
 
         public void Add(List<Namespace> namespaces, DocumentedEvent association)
@@ -21,8 +21,7 @@ namespace Docu.Documentation.Generators
                 return;
             }
 
-            Namespace ns = FindNamespace(association, namespaces);
-            DeclaredType type = FindType(ns, association);
+            DeclaredType type = FindType(association, namespaces);
 
             Event doc = Event.Unresolved(Identifier.FromEvent(association.Event, association.TargetType), type);
 
@@ -30,7 +29,7 @@ namespace Docu.Documentation.Generators
             ParseRemarks(association, doc);
             ParseExample(association, doc);
 
-            matchedAssociations.Add(association.Name, doc);
+            _matchedAssociations.Add(association.Name, doc);
             type.AddEvent(doc);
         }
     }

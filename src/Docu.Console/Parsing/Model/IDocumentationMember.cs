@@ -5,9 +5,8 @@ namespace Docu.Parsing.Model
 {
     public interface IDocumentationMember
     {
-        XmlNode Xml { get; set; }
+        XmlNode Xml { get; }
         Identifier Name { get; }
-        Type TargetType { get; set; }
-        bool Match(Identifier name);
+        Type TargetType { get; }
     }
 }

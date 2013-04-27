@@ -12,9 +12,9 @@ namespace Docu.Parsing.Model
             Name = name;
         }
 
-        public XmlNode Xml { get; set; }
-        public Identifier Name { get; set; }
-        public Type TargetType { get; set; }
+        public Identifier Name { get; private set; }
+        public Type TargetType { get; private set; }
+        public XmlNode Xml { get; private set; }
 
         public bool Match(Identifier name)
         {

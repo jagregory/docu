@@ -6,12 +6,12 @@ namespace Docu.Documentation.Generators
 {
     internal class FieldGenerator : BaseGenerator, IGenerator<DocumentedField>
     {
-        readonly IDictionary<Identifier, IReferencable> matchedAssociations;
+        readonly IDictionary<Identifier, IReferencable> _matchedAssociations;
 
         public FieldGenerator(IDictionary<Identifier, IReferencable> matchedAssociations, ICommentParser commentParser)
             : base(commentParser)
         {
-            this.matchedAssociations = matchedAssociations;
+            _matchedAssociations = matchedAssociations;
         }
 
         public void Add(List<Namespace> namespaces, DocumentedField association)
@@ -21,8 +21,7 @@ namespace Docu.Documentation.Generators
                 return;
             }
 
-            Namespace ns = FindNamespace(association, namespaces);
-            DeclaredType type = FindType(ns, association);
+            DeclaredType type = FindType(association, namespaces);
 
             DeclaredType returnType = DeclaredType.Unresolved(
                 Identifier.FromType(association.Field.FieldType),
@@ -35,7 +34,7 @@ namespace Docu.Documentation.Generators
             ParseRemarks(association, doc);
             ParseExample(association, doc);
 
-            matchedAssociations.Add(association.Name, doc);
+            _matchedAssociations.Add(association.Name, doc);
             type.AddField(doc);
         }
     }

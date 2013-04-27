@@ -6,13 +6,13 @@ namespace Docu.Documentation.Generators
 {
     internal class PropertyGenerator : BaseGenerator, IGenerator<DocumentedProperty>
     {
-        readonly IDictionary<Identifier, IReferencable> matchedAssociations;
+        readonly IDictionary<Identifier, IReferencable> _matchedAssociations;
 
         public PropertyGenerator(
             IDictionary<Identifier, IReferencable> matchedAssociations, ICommentParser commentParser)
             : base(commentParser)
         {
-            this.matchedAssociations = matchedAssociations;
+            _matchedAssociations = matchedAssociations;
         }
 
         public void Add(List<Namespace> namespaces, DocumentedProperty association)
@@ -22,8 +22,7 @@ namespace Docu.Documentation.Generators
                 return;
             }
 
-            Namespace ns = FindNamespace(association, namespaces);
-            DeclaredType type = FindType(ns, association);
+            DeclaredType type = FindType(association, namespaces);
 
             DeclaredType propertyReturnType =
                 DeclaredType.Unresolved(
@@ -38,12 +37,12 @@ namespace Docu.Documentation.Generators
             ParseRemarks(association, doc);
             ParseExample(association, doc);
 
-            if (matchedAssociations.ContainsKey(association.Name))
+            if (_matchedAssociations.ContainsKey(association.Name))
             {
                 return;
             }
 
-            matchedAssociations.Add(association.Name, doc);
+            _matchedAssociations.Add(association.Name, doc);
             if (type == null)
             {
                 return;

@@ -6,11 +6,11 @@ namespace Docu.Documentation.Generators
 {
     internal class NamespaceGenerator : IGenerator<IDocumentationMember>
     {
-        readonly IDictionary<Identifier, IReferencable> matchedAssociations;
+        readonly IDictionary<Identifier, IReferencable> _matchedAssociations;
 
         public NamespaceGenerator(IDictionary<Identifier, IReferencable> matchedAssociations)
         {
-            this.matchedAssociations = matchedAssociations;
+            _matchedAssociations = matchedAssociations;
         }
 
         public void Add(List<Namespace> namespaces, IDocumentationMember association)
@@ -26,7 +26,7 @@ namespace Docu.Documentation.Generators
             if (!namespaces.Exists(x => x.IsIdentifiedBy(ns)))
             {
                 Namespace doc = Namespace.Unresolved(ns);
-                matchedAssociations.Add(association.Name.CloneAsNamespace(), doc);
+                _matchedAssociations.Add(association.Name.CloneAsNamespace(), doc);
                 namespaces.Add(doc);
             }
         }

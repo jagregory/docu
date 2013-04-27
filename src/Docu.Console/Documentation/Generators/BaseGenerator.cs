@@ -9,116 +9,78 @@ namespace Docu.Documentation.Generators
 {
     internal abstract class BaseGenerator
     {
-        readonly ICommentParser commentParser;
+        readonly ICommentParser _commentParser;
 
         protected BaseGenerator(ICommentParser commentParser)
         {
-            this.commentParser = commentParser;
+            _commentParser = commentParser;
         }
 
-        protected Namespace FindNamespace(IDocumentationMember association, List<Namespace> namespaces)
+        protected static Namespace FindNamespace(IDocumentationMember association, List<Namespace> namespaces)
         {
             NamespaceIdentifier identifier = Identifier.FromNamespace(association.TargetType.Namespace);
             return namespaces.Find(x => x.IsIdentifiedBy(identifier));
         }
 
-        protected DeclaredType FindType(Namespace ns, IDocumentationMember association)
+        protected static DeclaredType FindType(IDocumentationMember association, List<Namespace> namespaces)
         {
-            TypeIdentifier typeName = Identifier.FromType(association.TargetType);
-            return ns.Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
+            var typeName = Identifier.FromType(association.TargetType);
+            var identifier = Identifier.FromNamespace(association.TargetType.Namespace);
+            return namespaces.Find(x => x.IsIdentifiedBy(identifier)).Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
         }
 
         protected void ParseExample(IDocumentationMember member, IDocumentationElement doc)
         {
-            if (member.Xml == null)
-            {
-                return;
-            }
-
+            if (member.Xml == null) return;
             XmlNode node = member.Xml.SelectSingleNode("example");
+            if (node == null) return;
 
-            if (node != null)
-            {
-                doc.Example = new MultilineCode(
-                    commentParser.ParseNode(node, new ParseOptions {PreserveWhitespace = true}));
-            }
+            doc.Example = new MultilineCode(_commentParser.ParseNode(node, new ParseOptions {PreserveWhitespace = true}));
         }
 
         protected void ParseParamSummary(IDocumentationMember member, IDocumentationElement doc)
         {
-            if (member.Xml == null)
-            {
-                return;
-            }
-
+            if (member.Xml == null) return;
             XmlNode node = member.Xml.SelectSingleNode("param[@name='" + doc.Name + "']");
+            if (node == null) return;
 
-            ParseSummary(node, doc);
+            doc.Summary = new Summary(_commentParser.ParseNode(node));
         }
 
         protected void ParseRemarks(IDocumentationMember member, IDocumentationElement doc)
         {
-            if (member.Xml == null)
-            {
-                return;
-            }
-
+            if (member.Xml == null) return;
             XmlNode node = member.Xml.SelectSingleNode("remarks");
+            if (node == null) return;
 
-            if (node != null)
-            {
-                doc.Remarks = new Remarks(commentParser.ParseNode(node));
-            }
+            doc.Remarks = new Remarks(_commentParser.ParseNode(node));
         }
 
         protected void ParseReturns(IDocumentationMember member, Method doc)
         {
-            if (member.Xml == null)
-            {
-                return;
-            }
-
+            if (member.Xml == null) return;
             XmlNode node = member.Xml.SelectSingleNode("returns");
+            if (node == null) return;
 
-            if (node != null)
-            {
-                doc.Returns = new Summary(commentParser.ParseNode(node));
-            }
+            doc.Returns = new Summary(_commentParser.ParseNode(node));
         }
 
         protected void ParseSummary(IDocumentationMember member, IDocumentationElement doc)
         {
-            if (member.Xml == null)
-            {
-                return;
-            }
-
+            if (member.Xml == null) return;
             XmlNode node = member.Xml.SelectSingleNode("summary");
+            if (node == null) return;
 
-            ParseSummary(node, doc);
+            doc.Summary = new Summary(_commentParser.ParseNode(node));
         }
 
         protected void ParseValue(IDocumentationMember member, IDocumentationElement doc)
         {
-            if (member.Xml == null)
-            {
-                return;
-            }
-
+            if (member.Xml == null) return;
             XmlNode node = member.Xml.SelectSingleNode("value");
+            if (node == null) return;
 
-            if (node != null)
-            {
-                doc.Value = new Value(commentParser.ParseNode(node));
-            }
-        }
-
-        void ParseSummary(XmlNode node, IDocumentationElement doc)
-        {
-            if (node != null)
-            {
-                doc.Summary = new Summary(commentParser.ParseNode(node));
-            }
+            doc.Value = new Value(_commentParser.ParseNode(node));
         }
     }
 }

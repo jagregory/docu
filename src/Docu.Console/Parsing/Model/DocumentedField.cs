@@ -14,11 +14,10 @@ namespace Docu.Parsing.Model
             TargetType = targetType;
         }
 
-        public Type TargetType { get; set; }
-        public FieldInfo Field { get; set; }
-
-        public XmlNode Xml { get; set; }
-        public Identifier Name { get; set; }
+        public Identifier Name { get; private set; }
+        public Type TargetType { get; private set; }
+        public XmlNode Xml { get; private set; }
+        public FieldInfo Field { get; private set; }
 
         public bool Match(Identifier name)
         {
