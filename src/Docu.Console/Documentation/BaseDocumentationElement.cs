@@ -37,6 +37,8 @@ namespace Docu.Documentation
 
         public Value Value { get; set; }
 
+        public string ObsoleteReason { get; set; }
+
         public virtual void ConvertToExternalReference()
         {
             IsExternal = true;

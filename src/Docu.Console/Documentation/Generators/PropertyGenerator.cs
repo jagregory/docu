@@ -30,7 +30,10 @@ namespace Docu.Documentation.Generators
                     association.Property.PropertyType,
                     Namespace.Unresolved(IdentifierFor.Namespace(association.Property.PropertyType.Namespace)));
             Property doc = Property.Unresolved(
-                IdentifierFor.Property(association.Property, association.TargetType), type, propertyReturnType);
+                IdentifierFor.Property(association.Property, association.TargetType),
+                type,
+                association.Property,
+                propertyReturnType);
 
             ParseSummary(association, doc);
             ParseValue(association, doc);

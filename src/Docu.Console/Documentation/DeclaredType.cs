@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Docu.Parsing.Model;
 
 namespace Docu.Documentation
@@ -14,7 +15,7 @@ namespace Docu.Documentation
 
         readonly List<Property> properties = new List<Property>();
 
-        Type representedType;
+        Type declaration;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DeclaredType" /> class.
@@ -51,7 +52,7 @@ namespace Docu.Documentation
 
         public bool IsInterface
         {
-            get { return representedType != null && representedType.IsInterface; }
+            get { return declaration != null && declaration.IsInterface; }
         }
 
         public IList<Method> Methods
@@ -65,7 +66,7 @@ namespace Docu.Documentation
 
         public string PrettyName
         {
-            get { return representedType == null ? Name : representedType.GetPrettyName(); }
+            get { return declaration == null ? Name : declaration.GetPrettyName(); }
         }
 
         public IList<Property> Properties
@@ -73,25 +74,24 @@ namespace Docu.Documentation
             get { return properties; }
         }
 
-        public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Type type, Namespace ns)
+        public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Type declaration, Namespace ns)
         {
-            var declaredType = new DeclaredType(typeIdentifier, ns) {IsResolved = false, representedType = type};
+            var declaredType = new DeclaredType(typeIdentifier, ns) {IsResolved = false, declaration = declaration};
 
-            if (type.BaseType != null)
+            if (declaration.BaseType != null)
             {
                 declaredType.ParentType = Unresolved(
-                    IdentifierFor.Type(type.BaseType),
-                    type.BaseType,
-                    Namespace.Unresolved(IdentifierFor.Namespace(type.BaseType.Namespace)));
+                    IdentifierFor.Type(declaration.BaseType),
+                    declaration.BaseType,
+                    Namespace.Unresolved(IdentifierFor.Namespace(declaration.BaseType.Namespace)));
             }
 
-            IEnumerable<Type> interfaces = GetInterfaces(type);
+            IEnumerable<Type> interfaces = GetInterfaces(declaration);
 
             foreach (Type face in interfaces)
             {
                 declaredType.Interfaces.Add(
-                    Unresolved(
-                        IdentifierFor.Type(face), face, Namespace.Unresolved(IdentifierFor.Namespace(face.Namespace))));
+                    Unresolved(IdentifierFor.Type(face), face, Namespace.Unresolved(IdentifierFor.Namespace(face.Namespace))));
             }
 
             return declaredType;
@@ -127,7 +127,7 @@ namespace Docu.Documentation
                 }
 
                 Namespace = type.Namespace;
-                representedType = type.representedType;
+                declaration = type.declaration;
                 ParentType = type.ParentType;
                 Interfaces = type.Interfaces;
 
@@ -147,6 +147,11 @@ namespace Docu.Documentation
                     {
                         face.Resolve(referencables);
                     }
+                }
+
+                if (declaration != null && declaration.IsDefined(typeof(ObsoleteAttribute)))
+                {
+                    ObsoleteReason = declaration.GetCustomAttribute<ObsoleteAttribute>().Message;
                 }
 
                 if (!Summary.IsResolved)

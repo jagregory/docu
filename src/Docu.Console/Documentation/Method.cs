@@ -11,7 +11,7 @@ namespace Docu.Documentation
     {
         readonly IList<MethodParameter> parameters = new List<MethodParameter>();
 
-        MethodBase representedMethod;
+        MethodBase declaration;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Method" /> class.
@@ -33,8 +33,7 @@ namespace Docu.Documentation
         {
             get
             {
-                return representedMethod != null &&
-                    (representedMethod.IsStatic && representedMethod.GetCustomAttributes(typeof (ExtensionAttribute), false).Length > 0);
+                return declaration != null && (declaration.IsStatic && declaration.IsDefined(typeof (ExtensionAttribute)));
             }
         }
 
@@ -76,7 +75,7 @@ namespace Docu.Documentation
 
         public string PrettyName
         {
-            get { return representedMethod == null ? Name : representedMethod.GetPrettyName(); }
+            get { return declaration == null ? Name : declaration.GetPrettyName(); }
         }
 
         public void Resolve(IDictionary<Identifier, IReferencable> referencables)
@@ -99,7 +98,11 @@ namespace Docu.Documentation
                     ReturnType.Resolve(referencables);
                 }
 
-                representedMethod = method.representedMethod;
+                declaration = method.declaration;
+                if (declaration != null && declaration.IsDefined(typeof (ObsoleteAttribute)))
+                {
+                    ObsoleteReason = declaration.GetCustomAttribute<ObsoleteAttribute>().Message;
+                }
 
                 if (!Summary.IsResolved)
                 {
@@ -130,11 +133,11 @@ namespace Docu.Documentation
             return new Method(methodIdentifier, type) {IsResolved = false};
         }
 
-        public static Method Unresolved(MethodIdentifier methodIdentifier, DeclaredType type, MethodBase representedMethod, IReferencable returnType)
+        public static Method Unresolved(MethodIdentifier methodIdentifier, DeclaredType type, MethodBase declaration, IReferencable returnType)
         {
             return new Method(methodIdentifier, type)
                 {
-                    IsResolved = false, representedMethod = representedMethod, ReturnType = returnType
+                    IsResolved = false, declaration = declaration, ReturnType = returnType
                 };
         }
 

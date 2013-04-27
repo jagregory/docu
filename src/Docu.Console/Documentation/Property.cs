@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Docu.Parsing.Model;
 
 namespace Docu.Documentation
@@ -13,6 +14,8 @@ namespace Docu.Documentation
             HasGet = identifier.HasGet;
             HasSet = identifier.HasSet;
         }
+
+        PropertyInfo declaration;
 
         public bool HasGet { get; private set; }
         public bool HasSet { get; private set; }
@@ -50,6 +53,12 @@ namespace Docu.Documentation
                     ReturnType.Resolve(referencables);
                 }
 
+                declaration = property.declaration;
+                if (declaration != null && declaration.IsDefined(typeof(ObsoleteAttribute)))
+                {
+                    ObsoleteReason = declaration.GetCustomAttribute<ObsoleteAttribute>().Message;
+                }
+
                 if (!Summary.IsResolved)
                 {
                     Summary.Resolve(referencables);
@@ -71,9 +80,9 @@ namespace Docu.Documentation
             return new Property(propertyIdentifier, type) {IsResolved = false};
         }
 
-        public static Property Unresolved(PropertyIdentifier propertyIdentifier, DeclaredType type, IReferencable returnType)
+        public static Property Unresolved(PropertyIdentifier propertyIdentifier, DeclaredType type, PropertyInfo declaration, IReferencable returnType)
         {
-            return new Property(propertyIdentifier, type) {IsResolved = false, ReturnType = returnType};
+            return new Property(propertyIdentifier, type) {IsResolved = false, declaration = declaration, ReturnType = returnType};
         }
     }
 }
