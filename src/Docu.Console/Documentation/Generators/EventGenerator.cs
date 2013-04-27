@@ -1,10 +1,10 @@
+using System.Collections.Generic;
+using Docu.Parsing.Comments;
+using Docu.Parsing.Model;
+
 namespace Docu.Documentation.Generators
 {
-    using System.Collections.Generic;
-    using Parsing.Comments;
-    using Parsing.Model;
-
-    internal class EventGenerator : BaseGenerator
+    internal class EventGenerator : BaseGenerator, IGenerator<DocumentedEvent>
     {
         readonly IDictionary<Identifier, IReferencable> matchedAssociations;
 

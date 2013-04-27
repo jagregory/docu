@@ -1,12 +1,10 @@
-namespace Docu.Documentation
+using System.Collections.Generic;
+using Docu.Parsing.Comments;
+using Docu.Parsing.Model;
+
+namespace Docu.Documentation.Generators
 {
-    using System.Collections.Generic;
-
-    using Generators;
-    using Parsing.Comments;
-    using Parsing.Model;
-
-    internal class PropertyGenerator : BaseGenerator
+    internal class PropertyGenerator : BaseGenerator, IGenerator<DocumentedProperty>
     {
         readonly IDictionary<Identifier, IReferencable> matchedAssociations;
 

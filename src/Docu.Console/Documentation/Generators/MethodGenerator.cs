@@ -1,11 +1,11 @@
+using System.Collections.Generic;
+using System.Reflection;
+using Docu.Parsing.Comments;
+using Docu.Parsing.Model;
+
 namespace Docu.Documentation.Generators
 {
-    using Parsing.Comments;
-    using Parsing.Model;
-    using System.Collections.Generic;
-    using System.Reflection;
-
-    internal class MethodGenerator : BaseGenerator
+    internal class MethodGenerator : BaseGenerator, IGenerator<DocumentedMethod>
     {
         readonly IDictionary<Identifier, IReferencable> matchedAssociations;
 

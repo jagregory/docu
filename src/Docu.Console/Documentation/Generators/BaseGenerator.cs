@@ -1,13 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using Docu.Documentation.Comments;
+using Docu.Parsing.Comments;
+using Docu.Parsing.Model;
+
 namespace Docu.Documentation.Generators
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Xml;
-
-    using Comments;
-    using Parsing.Comments;
-    using Parsing.Model;
-
     internal abstract class BaseGenerator
     {
         readonly ICommentParser commentParser;

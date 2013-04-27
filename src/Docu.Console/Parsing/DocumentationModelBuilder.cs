@@ -46,40 +46,14 @@ namespace Docu.Parsing
         public IList<Namespace> CombineToTypeHierarchy(IList<IDocumentationMember> documentedMembers)
         {
             var matchedAssociations = new Dictionary<Identifier, IReferencable>();
-
-            var namespaces = new NamespaceGenerator(matchedAssociations);
-            var types = new TypeGenerator(matchedAssociations, _commentParser);
-            var methods = new MethodGenerator(matchedAssociations, _commentParser);
-            var properties = new PropertyGenerator(matchedAssociations, _commentParser);
-            var events = new EventGenerator(matchedAssociations, _commentParser);
-            var fields = new FieldGenerator(matchedAssociations, _commentParser);
-
-            var steps = new List<IGenerationStep>
-                {
-                    new GenerationStep<IDocumentationMember>(namespaces.Add),
-                    new GenerationStep<DocumentedType>(types.Add),
-                    new GenerationStep<DocumentedMethod>(methods.Add),
-                    new GenerationStep<DocumentedProperty>(properties.Add),
-                    new GenerationStep<DocumentedEvent>(events.Add),
-                    new GenerationStep<DocumentedField>(fields.Add),
-                };
-
             var hierarchy = new List<Namespace>();
 
-            foreach (IGenerationStep step in steps)
-            {
-                foreach (IDocumentationMember member in documentedMembers.Where(step.Criteria))
-                {
-                    try
-                    {
-                        step.Action(hierarchy, member);
-                    }
-                    catch (UnsupportedDocumentationMemberException ex)
-                    {
-                        _eventAggregator.Publish(EventType.Warning, "Unsupported documentation member found: '" + ex.MemberName + "'");
-                    }
-                }
-            }
+            Generate(documentedMembers, new NamespaceGenerator(matchedAssociations), hierarchy);
+            Generate(documentedMembers, new TypeGenerator(matchedAssociations, _commentParser), hierarchy);
+            Generate(documentedMembers, new MethodGenerator(matchedAssociations, _commentParser), hierarchy);
+            Generate(documentedMembers, new PropertyGenerator(matchedAssociations, _commentParser), hierarchy);
+            Generate(documentedMembers, new EventGenerator(matchedAssociations, _commentParser), hierarchy);
+            Generate(documentedMembers, new FieldGenerator(matchedAssociations, _commentParser), hierarchy);
 
             foreach (Namespace ns in hierarchy)
             {
@@ -96,6 +70,21 @@ namespace Docu.Parsing
             }
 
             return hierarchy;
+        }
+
+        void Generate<T>(IEnumerable<IDocumentationMember> documentedMembers, IGenerator<T> generator, List<Namespace> hierarchy) where T : class
+        {
+            foreach (T member in documentedMembers.OfType<T>())
+            {
+                try
+                {
+                    generator.Add(hierarchy, member);
+                }
+                catch (UnsupportedDocumentationMemberException ex)
+                {
+                    _eventAggregator.Publish(EventType.Warning, "Unsupported documentation member found: '" + ex.MemberName + "'");
+                }
+            }
         }
     }
 }

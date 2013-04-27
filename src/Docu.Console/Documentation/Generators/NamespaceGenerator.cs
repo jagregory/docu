@@ -1,11 +1,10 @@
+using System;
+using System.Collections.Generic;
+using Docu.Parsing.Model;
+
 namespace Docu.Documentation.Generators
 {
-    using System;
-    using System.Collections.Generic;
-
-    using Parsing.Model;
-
-    internal class NamespaceGenerator
+    internal class NamespaceGenerator : IGenerator<IDocumentationMember>
     {
         readonly IDictionary<Identifier, IReferencable> matchedAssociations;
 
