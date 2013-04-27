@@ -40,9 +40,8 @@ namespace Docu.Documentation.Generators
 
             if (node != null)
             {
-                doc.Example =
-                    new MultilineCode(
-                        commentParser.ParseNode(node, new ParseOptions {PreserveWhitespace = true}));
+                doc.Example = new MultilineCode(
+                    commentParser.ParseNode(node, new ParseOptions {PreserveWhitespace = true}));
             }
         }
 

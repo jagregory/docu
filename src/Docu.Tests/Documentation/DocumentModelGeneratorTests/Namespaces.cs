@@ -1,5 +1,6 @@
 using Docu.Documentation;
 using Docu.Events;
+using Docu.Parsing;
 using Docu.Parsing.Model;
 using Example;
 using Example.Deep;
@@ -13,13 +14,13 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldBuildNamespaces()
         {
-            var model = new DocumentModel(StubParser, new EventAggregator());
+            var model = new DocumentationModelBuilder(StubParser, new EventAggregator());
             var members = new[]
             {
                 Type<First>(@"<member name=""T:Example.First"" />"),  
                 Type<DeepFirst>(@"<member name=""T:Example.Deep.DeepFirst"" />"),
             };
-            var namespaces = model.Create(members);
+            var namespaces = model.CombineToTypeHierarchy(members);
 
             namespaces.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromNamespace("Example")));
             namespaces.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromNamespace("Example.Deep")));

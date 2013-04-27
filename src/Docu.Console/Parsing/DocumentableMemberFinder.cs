@@ -6,7 +6,7 @@ namespace Docu.Parsing
 {
     public static class DocumentableMemberFinder
     {
-        public static IEnumerable<IDocumentationMember> GetMembersForDocumenting(IEnumerable<Type> types)
+        public static IEnumerable<IDocumentationMember> ReflectMembersForDocumenting(IEnumerable<Type> types)
         {
             foreach (var type in types)
             {

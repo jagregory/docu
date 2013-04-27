@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Docu.Documentation;
 using Docu.Events;
 using Docu.Parsing.Comments;
 
@@ -70,8 +69,7 @@ namespace Docu
                     new SeeCodeCommentParser(),
                 });
 
-            var documentModel = new DocumentModel(commentParser, eventAggregator);
-            var generator = new DocumentationGenerator(outputPath, templatePath, documentModel, eventAggregator);
+            var generator = new DocumentationGenerator(outputPath, templatePath, commentParser, eventAggregator);
 
             if (Verify(arguments, assemblies, xmls))
             {

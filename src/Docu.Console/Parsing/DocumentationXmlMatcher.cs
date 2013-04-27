@@ -6,30 +6,30 @@ namespace Docu.Parsing
 {
     public static class DocumentationXmlMatcher
     {
-        public static IList<IDocumentationMember> DocumentMembers(IEnumerable<IDocumentationMember> undocumentedMembers, IEnumerable<XmlNode> snippets)
+        public static IList<IDocumentationMember> DocumentMembers(IEnumerable<IDocumentationMember> reflectedMembers, IEnumerable<XmlNode> xmlDocumentationSnippets)
         {
-            var members = new List<IDocumentationMember>(undocumentedMembers);
+            var members = new List<IDocumentationMember>(reflectedMembers);
 
-            foreach (XmlNode node in snippets)
+            foreach (XmlNode node in xmlDocumentationSnippets)
             {
                 string name = node.Attributes["name"].Value;
 
                 if (name.StartsWith("T"))
-                    ParseType(members, node);
+                    MatchType(members, node);
                 else if (name.StartsWith("M"))
-                    ParseMethod(members, node);
+                    MatchMethod(members, node);
                 else if (name.StartsWith("P"))
-                    ParseProperty(members, node);
+                    MatchProperty(members, node);
                 else if (name.StartsWith("E"))
-                    ParseEvent(members, node);
+                    MatchEvent(members, node);
                 else if (name.StartsWith("F"))
-                    ParseField(members, node);
+                    MatchField(members, node);
             }
 
             return members;
         }
 
-        static void ParseProperty(List<IDocumentationMember> members, XmlNode node)
+        static void MatchProperty(List<IDocumentationMember> members, XmlNode node)
         {
             Identifier member = Identifier.FromString(node.Attributes["name"].Value);
 
@@ -41,7 +41,7 @@ namespace Docu.Parsing
             }
         }
 
-        static void ParseEvent(List<IDocumentationMember> members, XmlNode node)
+        static void MatchEvent(List<IDocumentationMember> members, XmlNode node)
         {
             var member = Identifier.FromString(node.Attributes["name"].Value);
 
@@ -53,7 +53,7 @@ namespace Docu.Parsing
             }
         }
 
-        static void ParseField(List<IDocumentationMember> members, XmlNode node)
+        static void MatchField(List<IDocumentationMember> members, XmlNode node)
         {
             var member = Identifier.FromString(node.Attributes["name"].Value);
 
@@ -65,7 +65,7 @@ namespace Docu.Parsing
             }
         }
 
-        static void ParseMethod(List<IDocumentationMember> members, XmlNode node)
+        static void MatchMethod(List<IDocumentationMember> members, XmlNode node)
         {
             Identifier member = Identifier.FromString(node.Attributes["name"].Value);
 
@@ -80,7 +80,7 @@ namespace Docu.Parsing
             }
         }
 
-        static void ParseType(List<IDocumentationMember> members, XmlNode node)
+        static void MatchType(List<IDocumentationMember> members, XmlNode node)
         {
             var identifier = Identifier.FromString(node.Attributes["name"].Value);
             var positionOfUndocumentedType = members.FindIndex(m =>

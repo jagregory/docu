@@ -107,9 +107,9 @@ namespace Docu.Tests.Parsing
         [Test]
         public void should_add_events()
         {
-            document_member<EventType>();
+            document_member<EventTypeEx>();
 
-            var member = find_event<EventType>("AnEvent");
+            var member = find_event<EventTypeEx>("AnEvent");
             member.ShouldBeOfType<ReflectedEvent>();
             member.Name.ToString().ShouldEqual("AnEvent");
         }
@@ -126,7 +126,7 @@ namespace Docu.Tests.Parsing
 
         private void document_member<T>()
         {
-            members = DocumentationXmlMatcher.DocumentMembers(DocumentableMemberFinder.GetMembersForDocumenting(new[] {typeof(T)}), new XmlNode[0]);
+            members = DocumentationXmlMatcher.DocumentMembers(DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof(T)}), new XmlNode[0]);
         }
 
         private IDocumentationMember find_member<T>()

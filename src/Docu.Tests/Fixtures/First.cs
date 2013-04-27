@@ -81,7 +81,7 @@ namespace Example
         {}
     }
 
-    public class EventType
+    public class EventTypeEx
     {
         public event EventHandler<EventArgs> AnEvent;
     }

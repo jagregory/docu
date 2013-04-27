@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml;
 using Docu.Documentation.Comments;
 using System.Linq;
@@ -46,16 +45,12 @@ namespace Docu.Parsing.Comments
 
         public IList<Comment> ParseNode(XmlNode node)
         {
-            return ParseNode(node, new ParseOptions());
+            return Parse(node.ChildNodes, new ParseOptions());
         }
 
         public IList<Comment> ParseNode(XmlNode node, ParseOptions options)
         {
-            var blocks = new List<Comment>();
-
-            blocks.AddRange(Parse(node.ChildNodes, options));
-
-            return blocks.AsReadOnly();
+            return Parse(node.ChildNodes, options);
         }
     }
 }

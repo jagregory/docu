@@ -1,4 +1,3 @@
-using Docu.Documentation;
 using Docu.Events;
 using Docu.IO;
 using Docu.Output;
@@ -7,24 +6,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Docu.Parsing.Comments;
 
 namespace Docu
 {
     public class DocumentationGenerator
     {
-        readonly string outputPath;
-        readonly string templatePath;
-        readonly DocumentModel documentModel;
-        readonly EventAggregator eventAggregator;
-        readonly List<Assembly> assemblies = new List<Assembly>();
-        readonly List<string> contentsOfXmlFiles = new List<string>();
+        readonly string _outputPath;
+        readonly string _templatePath;
 
-        public DocumentationGenerator(string outputPath, string templatePath, DocumentModel documentModel, EventAggregator eventAggregator)
+        readonly ICommentParser _commentParser;
+        readonly EventAggregator _eventAggregator;
+        readonly List<Assembly> _assemblies = new List<Assembly>();
+        readonly List<string> _contentsOfXmlFiles = new List<string>();
+
+        public DocumentationGenerator(string outputPath, string templatePath, ICommentParser commentParser, EventAggregator eventAggregator)
         {
-            this.outputPath = outputPath;
-            this.templatePath = templatePath;
-            this.documentModel = documentModel;
-            this.eventAggregator = eventAggregator;
+            _outputPath = outputPath;
+            _templatePath = templatePath;
+            _commentParser = commentParser;
+            _eventAggregator = eventAggregator;
         }
 
         public void SetAssemblies(IEnumerable<string> assemblyPaths)
@@ -33,11 +34,11 @@ namespace Docu
             {
                 try
                 {
-                    assemblies.Add(Assembly.LoadFrom(assemblyPath));
+                    _assemblies.Add(Assembly.LoadFrom(assemblyPath));
                 }
                 catch (BadImageFormatException)
                 {
-                    eventAggregator.Publish(EventType.BadFile, assemblyPath);
+                    _eventAggregator.Publish(EventType.BadFile, assemblyPath);
                 }
             }
         }
@@ -46,23 +47,23 @@ namespace Docu
         {
             foreach (string xmlFile in xmlFiles)
             {
-                contentsOfXmlFiles.Add(File.ReadAllText(xmlFile));
+                _contentsOfXmlFiles.Add(File.ReadAllText(xmlFile));
             }
         }
 
         public void Generate()
         {
-            if (assemblies.Count <= 0) return;
+            if (_assemblies.Count <= 0) return;
 
-            var parser = new AssemblyXmlParser(documentModel);
-            var namespaces = parser.CreateDocumentModel(assemblies, contentsOfXmlFiles);
+            var parser = new DocumentationModelBuilder(_commentParser, _eventAggregator);
+            var namespaces = parser.CreateDocumentModel(_assemblies, _contentsOfXmlFiles);
 
             var writer = new BulkPageWriter(new PageWriter(new HtmlGenerator(), new FileSystemOutputWriter(), new PatternTemplateResolver()));
-            writer.SetAssemblies(assemblies);
-            writer.CreatePagesFromDirectory(templatePath, outputPath, namespaces);
+            writer.SetAssemblies(_assemblies);
+            writer.CreatePagesFromDirectory(_templatePath, _outputPath, namespaces);
 
             var resourceManager = new UntransformableResourceManager();
-            resourceManager.MoveResources(templatePath, outputPath);
+            resourceManager.MoveResources(_templatePath, _outputPath);
         }
     }
 }
