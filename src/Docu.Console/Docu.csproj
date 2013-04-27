@@ -71,7 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildInfo.cs" />
-    <Compile Include="Documentation\Comments\BaseComment.cs" />
+    <Compile Include="Documentation\Comments\Comment.cs" />
     <Compile Include="Documentation\Comments\InlineList.cs" />
     <Compile Include="Documentation\Comments\MultilineCode.cs" />
     <Compile Include="Documentation\Comments\ParameterReference.cs" />
@@ -153,7 +153,6 @@
     <Compile Include="Documentation\IReferencable.cs" />
     <Compile Include="Documentation\IReferrer.cs" />
     <Compile Include="Parsing\Comments\CommentParser.cs" />
-    <Compile Include="Documentation\Comments\IComment.cs" />
     <Compile Include="Documentation\IDocumentModel.cs" />
     <Compile Include="Parsing\AssemblyXmlParser.cs" />
     <Compile Include="Parsing\Comments\ICommentParser.cs" />

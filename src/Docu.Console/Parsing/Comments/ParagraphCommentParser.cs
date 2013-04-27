@@ -10,7 +10,7 @@ namespace Docu.Parsing.Comments
             return node.Name == "para";
         }
 
-        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last, ParseOptions options)
+        public Comment Parse(ICommentParser parser, XmlNode node, bool first, bool last, ParseOptions options)
         {
             return new Paragraph(parser.Parse(node.ChildNodes));
         }

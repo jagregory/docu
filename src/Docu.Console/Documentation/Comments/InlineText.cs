@@ -1,17 +1,17 @@
 namespace Docu.Documentation.Comments
 {
-    public class InlineText : BaseComment
+    public class InlineText : Comment
     {
         public InlineText(string text)
         {
-            this.Text = text;
+            Text = text;
         }
 
         public string Text { get; private set; }
 
         public override string ToString()
         {
-            return this.Text;
+            return Text;
         }
     }
 }

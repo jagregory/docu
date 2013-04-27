@@ -2,16 +2,15 @@ namespace Docu.Documentation.Comments
 {
     using System.Collections.Generic;
 
-    public class Summary : BaseComment
+    public class Summary : Comment
     {
         public Summary()
-            : this(new IComment[0])
         {
         }
 
-        public Summary(IEnumerable<IComment> comments)
+        public Summary(IEnumerable<Comment> comments)
         {
-            comments.ForEach(this.AddChild);
+            comments.ForEach(AddChild);
         }
     }
 }

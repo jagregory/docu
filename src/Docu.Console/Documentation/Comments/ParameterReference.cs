@@ -1,17 +1,17 @@
 namespace Docu.Documentation.Comments
 {
-    public class ParameterReference : BaseComment
+    public class ParameterReference : Comment
     {
         public ParameterReference(string parameter)
         {
-            this.Parameter = parameter;
+            Parameter = parameter;
         }
 
         public string Parameter { get; private set; }
 
         public override string ToString()
         {
-            return this.Parameter;
+            return Parameter;
         }
     }
 }

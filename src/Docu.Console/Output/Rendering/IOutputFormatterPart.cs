@@ -5,7 +5,7 @@ namespace Docu.Output.Rendering
 {
     internal interface IOutputFormatterPart
     {
-        Func<IComment, bool> Criteria { get; }
-        Func<IComment, string> Action { get; }
+        Func<Comment, bool> Criteria { get; }
+        Func<Comment, string> Action { get; }
     }
 }

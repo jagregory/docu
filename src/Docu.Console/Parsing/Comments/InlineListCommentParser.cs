@@ -10,7 +10,7 @@ namespace Docu.Parsing.Comments
             return node.Name == "list";
         }
 
-        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last, ParseOptions options)
+        public Comment Parse(ICommentParser parser, XmlNode node, bool first, bool last, ParseOptions options)
         {
             var typeAttribute = node.Attributes["type"];
             var listTypeName = typeAttribute == null ? string.Empty : typeAttribute.Value;

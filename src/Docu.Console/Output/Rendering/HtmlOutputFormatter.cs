@@ -40,7 +40,7 @@ namespace Docu.Output.Rendering
             EventUrlFormat = "~/{type.namespace}/{type}.htm#{event}";
         }
 
-        public string Format(IComment comment)
+        public string Format(Comment comment)
         {
             foreach (var step in Formatters)
             {
@@ -56,12 +56,12 @@ namespace Docu.Output.Rendering
             return "<p>" + FormatGeneralContainer(comment) + "</p>";
         }
 
-        string FormatGeneralContainer(IComment comment)
+        string FormatGeneralContainer(Comment comment)
         {
             return FormatChildren(comment.Children);
         }
 
-        string FormatChildren(IEnumerable<IComment> comments)
+        string FormatChildren(IEnumerable<Comment> comments)
         {
             var sb = new StringBuilder();
 

@@ -250,7 +250,7 @@ namespace Docu.Output.Rendering
         /// </summary>
         /// <param name="comment"></param>
         /// <returns></returns>
-        public string Format(IComment comment)
+        public string Format(Comment comment)
         {
             return Formatter.Format(comment);
         }

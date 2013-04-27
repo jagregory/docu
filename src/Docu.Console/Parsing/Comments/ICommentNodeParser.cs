@@ -6,6 +6,6 @@ namespace Docu.Parsing.Comments
     public interface ICommentNodeParser
     {
         bool CanParse(XmlNode node);
-        IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last, ParseOptions options);
+        Comment Parse(ICommentParser parser, XmlNode node, bool first, bool last, ParseOptions options);
     }
 }

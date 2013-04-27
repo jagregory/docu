@@ -8,7 +8,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
     public static class CommentAssertionExtensions
     {
         public static void ShouldMatchStructure<T>(this T comment, Action<CommentBuilder> builderAction)
-            where T : IComment, new()
+            where T : Comment, new()
         {
             var builder = new CommentBuilder();
 
@@ -19,7 +19,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 
         public class CommentBuilder
         {
-            readonly List<Action<IComment>> assertions = new List<Action<IComment>>();
+            readonly List<Action<Comment>> assertions = new List<Action<Comment>>();
 
             public void InlineText(string text)
             {
@@ -35,7 +35,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
                 });
             }
 
-            public void VerifyExpectations(IComment comment)
+            public void VerifyExpectations(Comment comment)
             {
                 foreach (var assertion in assertions)
                     assertion(comment);

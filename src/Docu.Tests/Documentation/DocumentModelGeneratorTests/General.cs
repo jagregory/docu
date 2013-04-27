@@ -136,7 +136,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
                 Type<Second>(@"<member name=""T:Example.Second""><summary><see cref=""T:Example.First"" /></summary></member>"),  
             };
             var namespaces = model.Create(members);
-            var comment = new List<IComment>(namespaces[0].Types[1].Summary.Children);
+            var comment = new List<Comment>(namespaces[0].Types[1].Summary.Children);
 
             ((See)comment[0]).Reference.ShouldNotBeNull();
             ((See)comment[0]).Reference.IsResolved.ShouldBeTrue();
@@ -148,7 +148,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var model = new DocumentModel(RealParser, new EventAggregator());
             var members = new[] { Type<Second>(@"<member name=""T:Example.Second""><summary><see cref=""T:Example.First"" /></summary></member>") };
             var namespaces = model.Create(members);
-            var comment = new List<IComment>(namespaces[0].Types[0].Summary.Children);
+            var comment = new List<Comment>(namespaces[0].Types[0].Summary.Children);
 
             ((See)comment[0]).Reference.IsExternal.ShouldBeTrue();
             ((See)comment[0]).Reference.Name.ShouldEqual("First");

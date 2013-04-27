@@ -38,7 +38,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 
             contentParser.Stub(x => x.ParseNode(null))
                 .IgnoreArguments()
-                .Return(new List<IComment>());
+                .Return(new List<Comment>());
 
             model.Create(members);
 

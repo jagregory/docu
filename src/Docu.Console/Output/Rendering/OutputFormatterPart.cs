@@ -3,7 +3,7 @@ using Docu.Documentation.Comments;
 
 namespace Docu.Output.Rendering
 {
-    public class OutputFormatterPart<T> : IOutputFormatterPart
+    public class OutputFormatterPart<T> : IOutputFormatterPart where T : Comment
     {
         readonly Func<T, string> _action;
 
@@ -12,12 +12,12 @@ namespace Docu.Output.Rendering
             _action = action;
         }
 
-        public Func<IComment, bool> Criteria
+        public Func<Comment, bool> Criteria
         {
             get { return x => x is T; }
         }
-            
-        public Func<IComment, string> Action
+
+        public Func<Comment, string> Action
         {
             get { return x => _action((T)x); }
         }

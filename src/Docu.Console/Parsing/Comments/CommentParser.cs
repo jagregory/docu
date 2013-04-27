@@ -15,14 +15,14 @@ namespace Docu.Parsing.Comments
             _parsers = parsers;
         }
 
-        public IList<IComment> Parse(XmlNodeList nodes)
+        public IList<Comment> Parse(XmlNodeList nodes)
         {
             return Parse(nodes, new ParseOptions());
         }
 
-        public IList<IComment> Parse(XmlNodeList nodes, ParseOptions options)
+        public IList<Comment> Parse(XmlNodeList nodes, ParseOptions options)
         {
-            var blocks = new List<IComment>();
+            var blocks = new List<Comment>();
 
             var count = nodes.Count;
             for(var i = 0; i < count; i++)
@@ -44,14 +44,14 @@ namespace Docu.Parsing.Comments
             return blocks;
         }
 
-        public IList<IComment> ParseNode(XmlNode node)
+        public IList<Comment> ParseNode(XmlNode node)
         {
             return ParseNode(node, new ParseOptions());
         }
 
-        public IList<IComment> ParseNode(XmlNode node, ParseOptions options)
+        public IList<Comment> ParseNode(XmlNode node, ParseOptions options)
         {
-            var blocks = new List<IComment>();
+            var blocks = new List<Comment>();
 
             blocks.AddRange(Parse(node.ChildNodes, options));
 

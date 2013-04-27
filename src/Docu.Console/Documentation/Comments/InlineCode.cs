@@ -1,10 +1,10 @@
 namespace Docu.Documentation.Comments
 {
-    public class InlineCode : BaseComment
+    public class InlineCode : Comment
     {
         public InlineCode(string text)
         {
-            this.Text = text;
+            Text = text;
         }
 
         public string Text { get; private set; }

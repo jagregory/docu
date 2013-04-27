@@ -10,7 +10,7 @@ namespace Docu.Parsing.Comments
             return node.Name == "paramref";
         }
 
-        public IComment Parse(ICommentParser parser, XmlNode node, bool first, bool last, ParseOptions options)
+        public Comment Parse(ICommentParser parser, XmlNode node, bool first, bool last, ParseOptions options)
         {
             var attribute = node.Attributes["name"];
             var parameterName = attribute == null ? string.Empty : attribute.Value;

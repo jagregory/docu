@@ -36,7 +36,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             StubParser = MockRepository.GenerateStub<ICommentParser>();
             StubParser.Stub(x => x.Parse(null))
                       .IgnoreArguments()
-                      .Return(new List<IComment>());
+                      .Return(new List<Comment>());
         }
 
         protected DocumentedType Type<T>(string xml)

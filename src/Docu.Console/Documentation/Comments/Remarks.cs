@@ -2,16 +2,15 @@ namespace Docu.Documentation.Comments
 {
     using System.Collections.Generic;
 
-    public class Remarks : BaseComment
+    public class Remarks : Comment
     {
         public Remarks()
-            : this(new IComment[0])
         {
         }
 
-        public Remarks(IEnumerable<IComment> comments)
+        public Remarks(IEnumerable<Comment> comments)
         {
-            comments.ForEach(this.AddChild);
+            comments.ForEach(AddChild);
         }
     }
 }

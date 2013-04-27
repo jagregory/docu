@@ -2,11 +2,11 @@ namespace Docu.Documentation.Comments
 {
     using System.Collections.Generic;
 
-    public class Paragraph : BaseComment
+    public class Paragraph : Comment
     {
-        public Paragraph(IEnumerable<IComment> comments)
+        public Paragraph(IEnumerable<Comment> comments)
         {
-            comments.ForEach(this.AddChild);
+            comments.ForEach(AddChild);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
                 Type<First>(@"<member name=""T:Example.First""><summary>First summary</summary></member>"),
             };
             var namespaces = model.Create(members);
-            var comment = new List<IComment>(namespaces[0].Types[0].Summary.Children);
+            var comment = new List<Comment>(namespaces[0].Types[0].Summary.Children);
 
             comment.Count.ShouldEqual(1);
             ((InlineText)comment[0]).Text.ShouldEqual("First summary");
@@ -37,7 +37,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 
             contentParser.Stub(x => x.ParseNode(null))
                 .IgnoreArguments()
-                .Return(new List<IComment>());
+                .Return(new List<Comment>());
 
             model.Create(members);
 
@@ -54,7 +54,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
                 Method<Second>(@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)""><summary>Second method 2</summary></member>", x => x.SecondMethod2(null, 0))
             };
             var namespaces = model.Create(members);
-            var comment = new List<IComment>(namespaces[0].Types[0].Methods[0].Summary.Children);
+            var comment = new List<Comment>(namespaces[0].Types[0].Methods[0].Summary.Children);
 
             comment.Count.ShouldEqual(1);
             ((InlineText)comment[0]).Text.ShouldEqual("Second method 2");
@@ -69,7 +69,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 
             contentParser.Stub(x => x.ParseNode(null))
                 .IgnoreArguments()
-                .Return(new List<IComment>());
+                .Return(new List<Comment>());
 
             model.Create(members);
 
@@ -86,7 +86,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
                 Property<Second>(@"<member name=""P:Example.Second.SecondProperty""><summary>Second property</summary></member>", x => x.SecondProperty),
             };
             var namespaces = model.Create(members);
-            var comment = new List<IComment>(namespaces[0].Types[0].Properties[0].Summary.Children);
+            var comment = new List<Comment>(namespaces[0].Types[0].Properties[0].Summary.Children);
 
             comment.Count.ShouldEqual(1);
             ((InlineText)comment[0]).Text.ShouldEqual("Second property");
@@ -102,7 +102,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
                 Event<Second>(@"<member name=""E:Example.Second.AnEvent""><summary>An event</summary></member>", "AnEvent"),
             };
             var namespaces = model.Create(members);
-            var comment = new List<IComment>(namespaces[0].Types[0].Events[0].Summary.Children);
+            var comment = new List<Comment>(namespaces[0].Types[0].Events[0].Summary.Children);
 
             comment.Count.ShouldEqual(1);
             ((InlineText)comment[0]).Text.ShouldEqual("An event");
@@ -118,7 +118,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
                 Field<Second>(@"<member name=""F:Example.Second.aField""><summary>A field</summary></member>", x => x.aField),
             };
             var namespaces = model.Create(members);
-            var comment = new List<IComment>(namespaces[0].Types[0].Fields[0].Summary.Children);
+            var comment = new List<Comment>(namespaces[0].Types[0].Fields[0].Summary.Children);
 
             comment.Count.ShouldEqual(1);
             ((InlineText)comment[0]).Text.ShouldEqual("A field");
@@ -138,8 +138,8 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
                 </member>", x => x.SecondMethod2(null, 0))
             };
             var namespaces = model.Create(members);
-            var comment1 = new List<IComment>(namespaces[0].Types[0].Methods[0].Parameters[0].Summary.Children);
-            var comment2 = new List<IComment>(namespaces[0].Types[0].Methods[0].Parameters[1].Summary.Children);
+            var comment1 = new List<Comment>(namespaces[0].Types[0].Methods[0].Parameters[0].Summary.Children);
+            var comment2 = new List<Comment>(namespaces[0].Types[0].Methods[0].Parameters[1].Summary.Children);
 
             comment1.Count.ShouldEqual(1);
             ((InlineText)comment1[0]).Text.ShouldEqual("First parameter");
@@ -163,7 +163,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 
             contentParser.Stub(x => x.ParseNode(null))
                 .IgnoreArguments()
-                .Return(new List<IComment>());
+                .Return(new List<Comment>());
 
             model.Create(members);
 
