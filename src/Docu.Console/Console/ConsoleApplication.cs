@@ -1,9 +1,4 @@
-using Docu.Documentation;
 using Docu.Events;
-using Docu.IO;
-using Docu.Output;
-using Docu.Parsing;
-using Docu.Parsing.Comments;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +13,6 @@ namespace Docu.Console
         readonly IEventAggregator eventAggregator;
         readonly IScreenWriter screenWriter;
         readonly IList<ISwitch> switches = new List<ISwitch>();
-        bool canRun;
 
         public ConsoleApplication(IScreenWriter screenWriter, DocumentationGenerator documentationGenerator, IEventAggregator eventAggregator)
         {
@@ -30,33 +24,11 @@ namespace Docu.Console
             DefineSwitches();
         }
 
-        public static void Run(IEnumerable<string> args)
+        public void Run(IEnumerable<string> args)
         {
-            var eventAggregator = new EventAggregator();
+            arguments.AddRange(args);
 
-            var commentParser = new CommentParser(new ICommentNodeParser[]
-                {
-                    new InlineCodeCommentParser(),
-                    new InlineListCommentParser(),
-                    new InlineTextCommentParser(),
-                    new MultilineCodeCommentParser(),
-                    new ParagraphCommentParser(),
-                    new ParameterReferenceParser(),
-                    new SeeCodeCommentParser(),
-                });
-
-            var documentModel = new DocumentModel(commentParser, eventAggregator);
-            var pageWriter = new BulkPageWriter(new PageWriter(new HtmlGenerator(), new FileSystemOutputWriter(), new PatternTemplateResolver()));
-            var generator = new DocumentationGenerator(new AssemblyLoader(), new XmlLoader(), new AssemblyXmlParser(documentModel), pageWriter, new UntransformableResourceManager(), eventAggregator);
-            var application = new ConsoleApplication(new ConsoleScreenWriter(), generator, eventAggregator);
-
-            application.SetArguments(args);
-            application.Run();
-        }
-
-        public void Run()
-        {
-            if (!canRun)
+            if (arguments.Count == 0)
             {
                 ShowMessage(Messages.Help);
                 return;
@@ -81,16 +53,6 @@ namespace Docu.Console
                 documentationGenerator.Generate();
 
                 ShowMessage(Messages.Done);
-            }
-        }
-
-        void SetArguments(IEnumerable<string> args)
-        {
-            arguments.AddRange(args);
-
-            if (arguments.Count > 0)
-            {
-                canRun = true;
             }
         }
 
