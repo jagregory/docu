@@ -20,9 +20,9 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (First), typeof (Second), typeof (Third)});
             var snippets = new[] {@"<member name=""T:Example.Second"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromType(typeof (Second))) as DocumentedType;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Type(typeof(Second))) as DocumentedType;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -34,9 +34,9 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (First), typeof (GenericDefinition<>)});
             var snippets = new[] {@"<member name=""T:Example.GenericDefinition`1"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromType(typeof (GenericDefinition<>))) as DocumentedType;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Type(typeof(GenericDefinition<>))) as DocumentedType;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -48,9 +48,9 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (First), typeof (GenericDefinition<>), typeof (GenericDefinition<,>)});
             var snippets = new[] {@"<member name=""T:Example.GenericDefinition`2"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromType(typeof (GenericDefinition<,>))) as DocumentedType;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Type(typeof(GenericDefinition<,>))) as DocumentedType;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -62,10 +62,10 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (First), typeof (Second), typeof (Third)});
             var snippets = new[] {@"<member name=""M:Example.Second.SecondMethod"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var method = Method<Second>(x => x.SecondMethod());
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof (Second))) as DocumentedMethod;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(Second))) as DocumentedMethod;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -77,10 +77,10 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (First), typeof (Second), typeof (Third)});
             var snippets = new[] {@"<member name=""M:Example.Second.SecondMethod2(System.String,System.Int32)"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var method = Method<Second>(x => x.SecondMethod2(null, 0));
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof (Second))) as DocumentedMethod;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(Second))) as DocumentedMethod;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -92,10 +92,10 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (ClassWithOverload)});
             var snippets = new[] {@"<member name=""M:Example.ClassWithOverload.MethodWithArray(System.String[])"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var method = Method<ClassWithOverload>(x => x.MethodWithArray(null));
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof (ClassWithOverload))) as DocumentedMethod;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(ClassWithOverload))) as DocumentedMethod;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -108,16 +108,16 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (ClassWithOverload)});
             var snippets = new[] {@"<member name=""M:Example.ClassWithOverload.Method"" />".ToNode(), @"<member name=""M:Example.ClassWithOverload.Method(System.String)"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var method = Method<ClassWithOverload>(x => x.Method());
             var method2 = Method<ClassWithOverload>(x => x.Method(null));
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof (ClassWithOverload))) as DocumentedMethod;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(ClassWithOverload))) as DocumentedMethod;
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
             member.Method.ShouldEqual(method);
 
-            var member2 = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method2, typeof (ClassWithOverload))) as DocumentedMethod;
+            var member2 = members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method2, typeof(ClassWithOverload))) as DocumentedMethod;
             member2.ShouldNotBeNull();
             member2.Xml.ShouldEqual(snippets[0]);
             member2.Method.ShouldEqual(method2);
@@ -128,10 +128,10 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (First), typeof (GenericDefinition<>), typeof (GenericDefinition<,>)});
             var snippets = new[] {@"<member name=""M:Example.GenericDefinition`1.AMethod"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var method = Method<GenericDefinition<object>>(x => x.AMethod());
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof (GenericDefinition<>))) as DocumentedMethod;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(GenericDefinition<>))) as DocumentedMethod;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -144,10 +144,10 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (First), typeof (GenericDefinition<>), typeof (GenericDefinition<,>)});
             var snippets = new[] {@"<member name=""M:Example.GenericDefinition`1.BMethod``1"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var method = typeof (GenericDefinition<>).GetMethod("BMethod");
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof (GenericDefinition<>))) as DocumentedMethod;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(GenericDefinition<>))) as DocumentedMethod;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -159,10 +159,10 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (HasGenericMethods)});
             var snippets = new[] {@"<member name=""M:Example.HasGenericMethods.Do``1(``0)"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var method = typeof (HasGenericMethods).GetMethod("Do");
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof (HasGenericMethods))) as DocumentedMethod;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(HasGenericMethods))) as DocumentedMethod;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -174,10 +174,10 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (HasGenericMethods)});
             var snippets = new[] {@"<member name=""M:Example.HasGenericMethods.DoWithLookup``2(System.Collections.Generic.IDictionary{``0,``1},``0)"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var method = Method<HasGenericMethods>(x => x.DoWithLookup<string, string>(null, null));
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof (HasGenericMethods))) as DocumentedMethod;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(HasGenericMethods))) as DocumentedMethod;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -189,10 +189,10 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (HasGenericMethods)});
             var snippets = new[] {@"<member name=""M:Example.HasGenericMethods.Evaluate``1(System.Collections.Generic.IDictionary{System.String,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}},System.Int32)"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var method = Method<HasGenericMethods>(x => x.Evaluate<string>(null, 0));
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof (HasGenericMethods))) as DocumentedMethod;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(HasGenericMethods))) as DocumentedMethod;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -204,10 +204,10 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (First), typeof (Second), typeof (Third)});
             var snippets = new[] {@"<member name=""P:Example.Second.SecondProperty"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var property = Property<Second>(x => x.SecondProperty);
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromProperty(property, typeof (Second))) as DocumentedProperty;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Property(property, typeof(Second))) as DocumentedProperty;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);
@@ -219,10 +219,10 @@ namespace Docu.Tests.Parsing
         {
             var undocumentedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof (First), typeof (Second), typeof (Third)});
             var snippets = new[] {@"<member name=""E:Example.Second.AnEvent"" />".ToNode()};
-            var members = DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, snippets);
+            var members = DocumentationXmlMatcher.MatchDocumentationToMembers(undocumentedMembers, snippets);
             var ev = Event<Second>("AnEvent");
 
-            var member = members.FirstOrDefault(x => x.Name == Identifier.FromEvent(ev, typeof (Second))) as DocumentedEvent;
+            var member = members.FirstOrDefault(x => x.Name == IdentifierFor.Event(ev, typeof(Second))) as DocumentedEvent;
 
             member.ShouldNotBeNull();
             member.Xml.ShouldEqual(snippets[0]);

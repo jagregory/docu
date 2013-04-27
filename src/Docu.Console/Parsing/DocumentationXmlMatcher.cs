@@ -6,7 +6,7 @@ namespace Docu.Parsing
 {
     public static class DocumentationXmlMatcher
     {
-        public static IList<IDocumentationMember> DocumentMembers(IEnumerable<IDocumentationMember> reflectedMembers, IEnumerable<XmlNode> xmlDocumentationSnippets)
+        public static List<IDocumentationMember> MatchDocumentationToMembers(IEnumerable<IDocumentationMember> reflectedMembers, IEnumerable<XmlNode> xmlDocumentationSnippets)
         {
             var members = new List<IDocumentationMember>(reflectedMembers);
 
@@ -31,7 +31,7 @@ namespace Docu.Parsing
 
         static void MatchProperty(List<IDocumentationMember> members, XmlNode node)
         {
-            Identifier member = Identifier.FromString(node.Attributes["name"].Value);
+            Identifier member = IdentifierFor.XmlString(node.Attributes["name"].Value);
 
             for (int i = 0; i < members.Count; i++)
             {
@@ -43,7 +43,7 @@ namespace Docu.Parsing
 
         static void MatchEvent(List<IDocumentationMember> members, XmlNode node)
         {
-            var member = Identifier.FromString(node.Attributes["name"].Value);
+            var member = IdentifierFor.XmlString(node.Attributes["name"].Value);
 
             for (int i = 0; i < members.Count; i++)
             {
@@ -55,7 +55,7 @@ namespace Docu.Parsing
 
         static void MatchField(List<IDocumentationMember> members, XmlNode node)
         {
-            var member = Identifier.FromString(node.Attributes["name"].Value);
+            var member = IdentifierFor.XmlString(node.Attributes["name"].Value);
 
             for (int i = 0; i < members.Count; i++)
             {
@@ -67,7 +67,7 @@ namespace Docu.Parsing
 
         static void MatchMethod(List<IDocumentationMember> members, XmlNode node)
         {
-            Identifier member = Identifier.FromString(node.Attributes["name"].Value);
+            Identifier member = IdentifierFor.XmlString(node.Attributes["name"].Value);
 
             int index = members.FindIndex(x => member.Equals(x.Name));
             if (index == -1) return; // TODO: Privates         
@@ -82,7 +82,7 @@ namespace Docu.Parsing
 
         static void MatchType(List<IDocumentationMember> members, XmlNode node)
         {
-            var identifier = Identifier.FromString(node.Attributes["name"].Value);
+            var identifier = IdentifierFor.XmlString(node.Attributes["name"].Value);
             var positionOfUndocumentedType = members.FindIndex(m =>
                 {
                     var reflected = m as ReflectedType;

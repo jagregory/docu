@@ -113,6 +113,7 @@
     <Compile Include="Parsing\Model\DocumentedField.cs" />
     <Compile Include="Parsing\Model\EventIdentifier.cs" />
     <Compile Include="Parsing\Model\FieldIdentifier.cs" />
+    <Compile Include="Parsing\Model\IdentifierFor.cs" />
     <Compile Include="Parsing\Model\IDocumentationMember.cs" />
     <Compile Include="Parsing\Model\Identifier.cs" />
     <Compile Include="Parsing\Model\DocumentedMethod.cs" />

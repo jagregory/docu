@@ -82,7 +82,7 @@ namespace Docu.Tests.Output
             type = typeof(ClassWithOverload).to_type();
             type.Methods.Add(new ClassWithOverload().method_for(x => x.Method()));
             type.Methods.Add(new ClassWithOverload().method_for(x => x.Method(null))
-                                .setup(cfg =>
+                                .Setup(cfg =>
                                     cfg.Parameters.Add(typeof(string).to_type().to_method_parameter_called("one"))));
         };
 
@@ -104,7 +104,7 @@ namespace Docu.Tests.Output
         {
             type = typeof(ClassWithOverload).to_type();
             type.Methods.Add(new ClassWithOverload().method_for(x => x.Method())
-                                .setup(cfg =>
+                                .Setup(cfg =>
                                     cfg.ReturnType = typeof(string).to_type()));
         };
 
@@ -126,7 +126,7 @@ namespace Docu.Tests.Output
         {
             type = typeof(PropertyType).to_type();
             type.Properties.Add(new PropertyType().property_for(x => x.Property)
-                                .setup(cfg =>
+                                .Setup(cfg =>
                                     cfg.ReturnType = typeof(string).to_type()));
         };
 

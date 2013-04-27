@@ -26,11 +26,11 @@ namespace Docu.Documentation.Generators
 
             DeclaredType propertyReturnType =
                 DeclaredType.Unresolved(
-                    Identifier.FromType(association.Property.PropertyType),
+                    IdentifierFor.Type(association.Property.PropertyType),
                     association.Property.PropertyType,
-                    Namespace.Unresolved(Identifier.FromNamespace(association.Property.PropertyType.Namespace)));
+                    Namespace.Unresolved(IdentifierFor.Namespace(association.Property.PropertyType.Namespace)));
             Property doc = Property.Unresolved(
-                Identifier.FromProperty(association.Property, association.TargetType), type, propertyReturnType);
+                IdentifierFor.Property(association.Property, association.TargetType), type, propertyReturnType);
 
             ParseSummary(association, doc);
             ParseValue(association, doc);

@@ -21,7 +21,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var namespaces = model.CombineToTypeHierarchy(members);
             var ev = typeof (Second).GetEvent("AnEvent");
 
-            namespaces[0].Types[0].Events.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromEvent(ev, typeof (Second))));
+            namespaces[0].Types[0].Events.ShouldContain(x => x.IsIdentifiedBy(IdentifierFor.Event(ev, typeof(Second))));
         }
     }
 }

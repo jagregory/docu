@@ -26,7 +26,7 @@ namespace Docu.Parsing
             var reflectedMembers = DocumentableMemberFinder.ReflectMembersForDocumenting(assemblies.SelectMany(a => a.GetExportedTypes()));
             var xmlDocumentationSnippets = GetXmlDocumentationSnippets(xmlDocumentContents);
 
-            var documentedMembers = DocumentationXmlMatcher.DocumentMembers(reflectedMembers, xmlDocumentationSnippets);
+            List<IDocumentationMember> documentedMembers = DocumentationXmlMatcher.MatchDocumentationToMembers(reflectedMembers, xmlDocumentationSnippets);
 
             return CombineToTypeHierarchy(documentedMembers);
         }

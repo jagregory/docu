@@ -23,7 +23,7 @@ namespace Docu.Documentation.Generators
 
             DeclaredType type = FindType(association, namespaces);
 
-            Event doc = Event.Unresolved(Identifier.FromEvent(association.Event, association.TargetType), type);
+            Event doc = Event.Unresolved(IdentifierFor.Event(association.Event, association.TargetType), type);
 
             ParseSummary(association, doc);
             ParseRemarks(association, doc);

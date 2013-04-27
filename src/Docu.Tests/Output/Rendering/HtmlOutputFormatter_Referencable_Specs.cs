@@ -86,27 +86,27 @@ namespace Docu.Tests.Output.Rendering
 
         protected static DeclaredType Type<T>()
         {
-            return new DeclaredType(Identifier.FromType(typeof(T)), Namespace.Unresolved(Identifier.FromNamespace(typeof(T).Namespace)));
+            return new DeclaredType(IdentifierFor.Type(typeof(T)), Namespace.Unresolved(IdentifierFor.Namespace(typeof(T).Namespace)));
         }
 
         protected static Method Method<T>(string name)
         {
-            return new Method(Identifier.FromMethod(typeof(T).GetMethod(name), typeof(T)), Type<T>());
+            return new Method(IdentifierFor.Method(typeof(T).GetMethod(name), typeof(T)), Type<T>());
         }
 
         protected static Property Property<T>(string name)
         {
-            return new Property(Identifier.FromProperty(typeof(T).GetProperty(name), typeof(T)), Type<T>());
+            return new Property(IdentifierFor.Property(typeof(T).GetProperty(name), typeof(T)), Type<T>());
         }
 
         protected static Field Field<T>(string name)
         {
-            return new Field(Identifier.FromField(typeof(T).GetField(name), typeof(T)), Type<T>());
+            return new Field(IdentifierFor.Field(typeof(T).GetField(name), typeof(T)), Type<T>());
         }
 
         protected static Event Event<T>(string name)
         {
-            return new Event(Identifier.FromEvent(typeof(T).GetEvent(name), typeof(T)), Type<T>());
+            return new Event(IdentifierFor.Event(typeof(T).GetEvent(name), typeof(T)), Type<T>());
         }
     }
 }

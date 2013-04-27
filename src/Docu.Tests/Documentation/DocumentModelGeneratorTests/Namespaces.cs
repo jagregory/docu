@@ -1,4 +1,3 @@
-using Docu.Documentation;
 using Docu.Events;
 using Docu.Parsing;
 using Docu.Parsing.Model;
@@ -22,8 +21,8 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             };
             var namespaces = model.CombineToTypeHierarchy(members);
 
-            namespaces.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromNamespace("Example")));
-            namespaces.ShouldContain(x => x.IsIdentifiedBy(Identifier.FromNamespace("Example.Deep")));
+            namespaces.ShouldContain(x => x.IsIdentifiedBy(IdentifierFor.Namespace("Example")));
+            namespaces.ShouldContain(x => x.IsIdentifiedBy(IdentifierFor.Namespace("Example.Deep")));
         }
     }
 }

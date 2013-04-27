@@ -16,7 +16,7 @@ namespace Docu.Parsing.Model
 
         public override TypeIdentifier CloneAsType()
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public override bool Equals(Identifier obj)

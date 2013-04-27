@@ -64,6 +64,5 @@ namespace Docu.Parsing.Model
 
             return _namespace.CompareTo(other._namespace);
         }
-
     }
 }

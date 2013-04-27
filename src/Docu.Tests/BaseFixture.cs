@@ -20,16 +20,6 @@ namespace Docu.Tests
             return method;
         }
 
-        protected MethodInfo Method<T>(Expression<Func<T, object>> methodAction)
-        {
-            var method = ((MethodCallExpression)methodAction.Body).Method;
-
-            if (method.IsGenericMethod)
-                return method.GetGenericMethodDefinition();
-
-            return method;
-        }
-
         protected PropertyInfo Property<T>(Expression<Func<T, object>> propertyAction)
         {
             return ((MemberExpression)propertyAction.Body).Member as PropertyInfo;
@@ -59,12 +49,12 @@ namespace Docu.Tests
 
         protected Namespace Namespace(string ns)
         {
-            return new Namespace(Identifier.FromNamespace(ns));
+            return new Namespace(IdentifierFor.Namespace(ns));
         }
 
         protected DeclaredType Type<T>(Namespace ns)
         {
-            var type = new DeclaredType(Identifier.FromType(typeof(T)), ns);
+            var type = new DeclaredType(IdentifierFor.Type(typeof(T)), ns);
 
             ns.AddType(type);
 

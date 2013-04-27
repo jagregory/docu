@@ -27,10 +27,10 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var namespaces = model.CombineToTypeHierarchy(members);
 
             namespaces[0].Types
-                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(First))))
-                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(Second))));
+                .ShouldContain(x => x.IsIdentifiedBy(IdentifierFor.Type(typeof(First))))
+                .ShouldContain(x => x.IsIdentifiedBy(IdentifierFor.Type(typeof(Second))));
             namespaces[1].Types
-                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromType(typeof(DeepFirst))));
+                .ShouldContain(x => x.IsIdentifiedBy(IdentifierFor.Type(typeof(DeepFirst))));
         }
 
         [Test]
@@ -170,8 +170,8 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var method2 = Method<Second>(x => x.SecondMethod2(null, 0));
 
             namespaces[0].Types[0].Methods
-                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromMethod(method, typeof(Second))))
-                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromMethod(method2, typeof(Second))));
+                .ShouldContain(x => x.IsIdentifiedBy(IdentifierFor.Method(method, typeof(Second))))
+                .ShouldContain(x => x.IsIdentifiedBy(IdentifierFor.Method(method2, typeof(Second))));
         }
 
         [Test]

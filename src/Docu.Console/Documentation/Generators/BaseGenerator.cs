@@ -18,14 +18,14 @@ namespace Docu.Documentation.Generators
 
         protected static Namespace FindNamespace(IDocumentationMember association, List<Namespace> namespaces)
         {
-            NamespaceIdentifier identifier = Identifier.FromNamespace(association.TargetType.Namespace);
+            NamespaceIdentifier identifier = IdentifierFor.Namespace(association.TargetType.Namespace);
             return namespaces.Find(x => x.IsIdentifiedBy(identifier));
         }
 
         protected static DeclaredType FindType(IDocumentationMember association, List<Namespace> namespaces)
         {
-            var typeName = Identifier.FromType(association.TargetType);
-            var identifier = Identifier.FromNamespace(association.TargetType.Namespace);
+            var typeName = IdentifierFor.Type(association.TargetType);
+            var identifier = IdentifierFor.Namespace(association.TargetType.Namespace);
             return namespaces.Find(x => x.IsIdentifiedBy(identifier)).Types.FirstOrDefault(x => x.IsIdentifiedBy(typeName));
         }
 

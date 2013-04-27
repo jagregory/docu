@@ -80,9 +80,9 @@ namespace Docu.Documentation
             if (type.BaseType != null)
             {
                 declaredType.ParentType = Unresolved(
-                    Identifier.FromType(type.BaseType),
+                    IdentifierFor.Type(type.BaseType),
                     type.BaseType,
-                    Namespace.Unresolved(Identifier.FromNamespace(type.BaseType.Namespace)));
+                    Namespace.Unresolved(IdentifierFor.Namespace(type.BaseType.Namespace)));
             }
 
             IEnumerable<Type> interfaces = GetInterfaces(type);
@@ -91,7 +91,7 @@ namespace Docu.Documentation
             {
                 declaredType.Interfaces.Add(
                     Unresolved(
-                        Identifier.FromType(face), face, Namespace.Unresolved(Identifier.FromNamespace(face.Namespace))));
+                        IdentifierFor.Type(face), face, Namespace.Unresolved(IdentifierFor.Namespace(face.Namespace))));
             }
 
             return declaredType;

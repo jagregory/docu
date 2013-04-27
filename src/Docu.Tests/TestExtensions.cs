@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Docu.Documentation;
@@ -10,14 +11,9 @@ namespace Docu.Tests
 {
     internal static class TestExtensions
     {
-        public static IList<Namespace> to_namespaces(this string[] namespaces)
+        public static IList<Namespace> to_namespaces(this IEnumerable<string> namespaces)
         {
-            var list = new List<Namespace>();
-
-            foreach (var ns in namespaces)
-                list.Add(to_namespace(ns));
-
-            return list;
+            return namespaces.Select(to_namespace).ToList();
         }
 
         public static InlineText to_text(this string text)
@@ -27,7 +23,7 @@ namespace Docu.Tests
 
         public static Namespace to_namespace(this string ns)
         {
-            return new Namespace(Identifier.FromNamespace(ns));
+            return new Namespace(IdentifierFor.Namespace(ns));
         }
 
         public static DeclaredType to_type(this Type type)
@@ -35,14 +31,9 @@ namespace Docu.Tests
             return type.to_type_in_namespace(type.Namespace.to_namespace());
         }
 
-        public static DeclaredType to_type<T>(this T instance)
+        static DeclaredType to_type_in_namespace(this Type type, Namespace ns)
         {
-            return typeof(T).to_type();
-        }
-
-        public static DeclaredType to_type_in_namespace(this Type type, Namespace ns)
-        {
-            var declaredType = new DeclaredType(Identifier.FromType(type), ns);
+            var declaredType = new DeclaredType(IdentifierFor.Type(type), ns);
 
             ns.AddType(declaredType);
 
@@ -54,46 +45,30 @@ namespace Docu.Tests
             return new MethodParameter(name, type);
         }
 
-        public static Method method_for<T>(this T instance, Expression<Func<T, object>> method_signature)
-        {
-            return new Method(Identifier.FromMethod(Method(method_signature), typeof(T)), null);
-        }
-
         public static Method method_for<T>(this T instance, Expression<Action<T>> method_signature)
         {
-            return new Method(Identifier.FromMethod(Method(method_signature), typeof(T)), null);
+            return new Method(IdentifierFor.Method(Method(method_signature), typeof (T)), null);
         }
 
         public static Property property_for<T>(this T instance, Expression<Func<T, object>> property_signature)
         {
-            return new Property(Identifier.FromProperty(Property(property_signature), typeof(T)), null);
+            return new Property(IdentifierFor.Property(Property(property_signature), typeof (T)), null);
         }
 
-        public static T setup<T>(this T instance, Action<T> setup)
+        public static T Setup<T>(this T instance, Action<T> setup)
         {
             setup(instance);
-
             return instance;
         }
 
-        private static PropertyInfo Property<T>(Expression<Func<T, object>> propertyAction)
+        static PropertyInfo Property<T>(Expression<Func<T, object>> propertyAction)
         {
-            return ((MemberExpression)propertyAction.Body).Member as PropertyInfo;
+            return ((MemberExpression) propertyAction.Body).Member as PropertyInfo;
         }
 
-        private static MethodInfo Method<T>(Expression<Action<T>> methodAction)
+        static MethodInfo Method<T>(Expression<Action<T>> methodAction)
         {
-            var method = ((MethodCallExpression)methodAction.Body).Method;
-
-            if (method.IsGenericMethod)
-                return method.GetGenericMethodDefinition();
-
-            return method;
-        }
-
-        private static MethodInfo Method<T>(Expression<Func<T, object>> methodAction)
-        {
-            var method = ((MethodCallExpression)methodAction.Body).Method;
+            MethodInfo method = ((MethodCallExpression) methodAction.Body).Method;
 
             if (method.IsGenericMethod)
                 return method.GetGenericMethodDefinition();

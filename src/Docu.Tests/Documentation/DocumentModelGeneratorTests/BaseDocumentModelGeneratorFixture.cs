@@ -41,36 +41,36 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
 
         protected DocumentedType Type<T>(string xml)
         {
-            return new DocumentedType(Identifier.FromType(typeof (T)), xml.ToNode(), typeof (T));
+            return new DocumentedType(IdentifierFor.Type(typeof(T)), xml.ToNode(), typeof(T));
         }
 
         protected DocumentedType Type(Type type, string xml)
         {
-            return new DocumentedType(Identifier.FromType(type), xml.ToNode(), type);
+            return new DocumentedType(IdentifierFor.Type(type), xml.ToNode(), type);
         }
 
         protected DocumentedMethod Method<T>(string xml, Expression<Action<T>> methodAction)
         {
             var method = ((MethodCallExpression) methodAction.Body).Method;
-            return new DocumentedMethod(Identifier.FromMethod(method, typeof (T)), xml.ToNode(), method, typeof (T));
+            return new DocumentedMethod(IdentifierFor.Method(method, typeof(T)), xml.ToNode(), method, typeof(T));
         }
 
         protected DocumentedProperty Property<T>(string xml, Expression<Func<T, object>> propertyAction)
         {
             var property = ((MemberExpression) propertyAction.Body).Member as PropertyInfo;
-            return new DocumentedProperty(Identifier.FromProperty(property, typeof (T)), xml.ToNode(), property, typeof (T));
+            return new DocumentedProperty(IdentifierFor.Property(property, typeof(T)), xml.ToNode(), property, typeof(T));
         }
 
         protected DocumentedField Field<T>(string xml, Expression<Func<T, object>> fieldAction)
         {
             var field = ((MemberExpression) fieldAction.Body).Member as FieldInfo;
-            return new DocumentedField(Identifier.FromField(field, typeof (T)), xml.ToNode(), field, typeof (T));
+            return new DocumentedField(IdentifierFor.Field(field, typeof(T)), xml.ToNode(), field, typeof(T));
         }
 
         protected DocumentedEvent Event<T>(string xml, string eventName)
         {
             var ev = typeof (T).GetEvent(eventName);
-            return new DocumentedEvent(Identifier.FromEvent(ev, typeof (T)), xml.ToNode(), ev, typeof (T));
+            return new DocumentedEvent(IdentifierFor.Event(ev, typeof(T)), xml.ToNode(), ev, typeof(T));
         }
     }
 }

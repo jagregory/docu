@@ -65,6 +65,7 @@ namespace Docu.Tests.Parsing
                 .ShouldBeNull();
         }
 
+        [Test, Ignore]
         public void ShouldAddExplicitlyImplementedClassMethods()
         {
             document_member<ClassWithExplicitMethodImplementation>();
@@ -126,24 +127,24 @@ namespace Docu.Tests.Parsing
 
         private void document_member<T>()
         {
-            members = DocumentationXmlMatcher.DocumentMembers(DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof(T)}), new XmlNode[0]);
+            members = DocumentationXmlMatcher.MatchDocumentationToMembers(DocumentableMemberFinder.ReflectMembersForDocumenting(new[] {typeof(T)}), new XmlNode[0]);
         }
 
         private IDocumentationMember find_member<T>()
         {
-            return members.FirstOrDefault(x => x.Name == Identifier.FromType(typeof(T)));
+            return members.FirstOrDefault(x => x.Name == IdentifierFor.Type(typeof(T)));
         }
 
         private IDocumentationMember find_event<T>(string name)
         {
-            return members.FirstOrDefault(x => x.Name == Identifier.FromEvent(typeof(T).GetEvent(name), typeof(T)));
+            return members.FirstOrDefault(x => x.Name == IdentifierFor.Event(typeof(T).GetEvent(name), typeof(T)));
         }
 
         private IDocumentationMember find_member<T>(Expression<Action<T>> methodAction)
         {
             var method = ((MethodCallExpression)methodAction.Body).Method;
 
-            return members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(T)));
+            return members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(T)));
         }
 
         private IDocumentationMember find_member<T>(Expression<Func<T, object>> propertyOrField)
@@ -151,23 +152,23 @@ namespace Docu.Tests.Parsing
             var member = ((MemberExpression)propertyOrField.Body).Member;
 
             if (member is PropertyInfo)
-                return members.FirstOrDefault(x => x.Name == Identifier.FromProperty((PropertyInfo)member, typeof(T)));
+                return members.FirstOrDefault(x => x.Name == IdentifierFor.Property((PropertyInfo)member, typeof(T)));
 
-            return members.FirstOrDefault(x => x.Name == Identifier.FromField((FieldInfo)member, typeof(T)));
+            return members.FirstOrDefault(x => x.Name == IdentifierFor.Field((FieldInfo)member, typeof(T)));
         }
 
         private IDocumentationMember find_member<T>(Expression<Action> methodAction)
         {
             var method = ((MethodCallExpression)methodAction.Body).Method;
 
-            return members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(T)));
+            return members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(T)));
         }
 
         private IDocumentationMember find_member<T>(string methodName)
         {
             var method = typeof(T).GetMethod(methodName);
 
-            return members.FirstOrDefault(x => x.Name == Identifier.FromMethod(method, typeof(T)));
+            return members.FirstOrDefault(x => x.Name == IdentifierFor.Method(method, typeof(T)));
         }
     }
 }

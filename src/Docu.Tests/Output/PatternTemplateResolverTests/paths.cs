@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace Docu.Tests.Output.PatternTemplateResolverTests
 {
     [TestFixture]
-    public class paths : BaseFixture
+    public class Paths : BaseFixture
     {
         [Test]
         public void MatchesSingleFilename()
@@ -51,8 +51,8 @@ namespace Docu.Tests.Output.PatternTemplateResolverTests
             var resolver = new PatternTemplateResolver();
             var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
-            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
+            namespaces[0].AddType(new DeclaredType(IdentifierFor.Type(typeof(First)), namespaces[0]));
+            namespaces[1].AddType(new DeclaredType(IdentifierFor.Type(typeof(Second)), namespaces[1]));
 
             var results = resolver.Resolve("!type.htm.spark", namespaces);
 
@@ -109,8 +109,8 @@ namespace Docu.Tests.Output.PatternTemplateResolverTests
             var resolver = new PatternTemplateResolver();
             var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
-            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
+            namespaces[0].AddType(new DeclaredType(IdentifierFor.Type(typeof(First)), namespaces[0]));
+            namespaces[1].AddType(new DeclaredType(IdentifierFor.Type(typeof(Second)), namespaces[1]));
 
             var results = resolver.Resolve("!type\\template.htm.spark", namespaces);
 
@@ -127,10 +127,10 @@ namespace Docu.Tests.Output.PatternTemplateResolverTests
             var resolver = new PatternTemplateResolver();
             var namespaces = Namespaces("One", "Two");
 
-            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[0]));
-            namespaces[0].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[0]));
-            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(First)), namespaces[1]));
-            namespaces[1].AddType(new DeclaredType(Identifier.FromType(typeof(Second)), namespaces[1]));
+            namespaces[0].AddType(new DeclaredType(IdentifierFor.Type(typeof(First)), namespaces[0]));
+            namespaces[0].AddType(new DeclaredType(IdentifierFor.Type(typeof(Second)), namespaces[0]));
+            namespaces[1].AddType(new DeclaredType(IdentifierFor.Type(typeof(First)), namespaces[1]));
+            namespaces[1].AddType(new DeclaredType(IdentifierFor.Type(typeof(Second)), namespaces[1]));
 
             var results = resolver.Resolve("!namespace\\!type.htm.spark", namespaces);
 

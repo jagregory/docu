@@ -21,7 +21,7 @@ namespace Docu.Documentation.Generators
                     string.Format("There was no namespace found for {0}", association.TargetType.AssemblyQualifiedName));
             }
 
-            NamespaceIdentifier ns = Identifier.FromNamespace(association.TargetType.Namespace);
+            NamespaceIdentifier ns = IdentifierFor.Namespace(association.TargetType.Namespace);
 
             if (!namespaces.Exists(x => x.IsIdentifiedBy(ns)))
             {

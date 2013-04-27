@@ -24,11 +24,11 @@ namespace Docu.Documentation.Generators
             DeclaredType type = FindType(association, namespaces);
 
             DeclaredType returnType = DeclaredType.Unresolved(
-                Identifier.FromType(association.Field.FieldType),
+                IdentifierFor.Type(association.Field.FieldType),
                 association.Field.FieldType,
-                Namespace.Unresolved(Identifier.FromNamespace(association.Field.FieldType.Namespace)));
+                Namespace.Unresolved(IdentifierFor.Namespace(association.Field.FieldType.Namespace)));
             Field doc = Field.Unresolved(
-                Identifier.FromField(association.Field, association.TargetType), type, returnType);
+                IdentifierFor.Field(association.Field, association.TargetType), type, returnType);
 
             ParseSummary(association, doc);
             ParseRemarks(association, doc);

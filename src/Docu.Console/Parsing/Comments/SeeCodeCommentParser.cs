@@ -16,7 +16,7 @@ namespace Docu.Parsing.Comments
         {
             IReferencable reference = new NullReference();
             if (node.Attributes["cref"] == null) return new See(reference);
-            var referenceTarget = Identifier.FromString(node.Attributes["cref"].Value);
+            var referenceTarget = IdentifierFor.XmlString(node.Attributes["cref"].Value);
 
             if (referenceTarget is NamespaceIdentifier)
                 reference = Namespace.Unresolved((NamespaceIdentifier)referenceTarget);

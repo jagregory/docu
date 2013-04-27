@@ -4,12 +4,12 @@ namespace Docu.Parsing.Model
 {
     public sealed class PropertyIdentifier : Identifier, IEquatable<PropertyIdentifier>, IComparable<PropertyIdentifier>
     {
-        private readonly TypeIdentifier typeId;
+        private readonly TypeIdentifier _typeId;
 
         public PropertyIdentifier(string name, bool hasGet, bool hasSet, TypeIdentifier typeId)
             : base(name)
         {
-            this.typeId = typeId;
+            _typeId = typeId;
             HasGet = hasGet;
             HasSet = hasSet;
         }
@@ -19,12 +19,12 @@ namespace Docu.Parsing.Model
 
         public override NamespaceIdentifier CloneAsNamespace()
         {
-            return typeId.CloneAsNamespace();
+            return _typeId.CloneAsNamespace();
         }
 
         public override TypeIdentifier CloneAsType()
         {
-            return typeId.CloneAsType();
+            return _typeId.CloneAsType();
         }
 
         public override bool Equals(Identifier obj)
@@ -41,7 +41,7 @@ namespace Docu.Parsing.Model
                 return false;
             }
 
-            return (Name == other.Name) && typeId.Equals(other.typeId);
+            return (Name == other.Name) && _typeId.Equals(other._typeId);
         }
 
         public override int CompareTo(Identifier other)
@@ -62,7 +62,7 @@ namespace Docu.Parsing.Model
                 return comparison;
             }
 
-            return typeId.CompareTo(other.typeId);
+            return _typeId.CompareTo(other._typeId);
         }
     }
 }

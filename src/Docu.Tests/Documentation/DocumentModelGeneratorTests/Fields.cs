@@ -22,7 +22,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
             var field = Field<Second>(x => x.aField);
 
             namespaces[0].Types[0].Fields
-                .ShouldContain(x => x.IsIdentifiedBy(Identifier.FromField(field, typeof(Second))));
+                .ShouldContain(x => x.IsIdentifiedBy(IdentifierFor.Field(field, typeof(Second))));
         }
     }
 }
