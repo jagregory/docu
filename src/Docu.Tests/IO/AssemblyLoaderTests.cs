@@ -31,7 +31,7 @@ namespace Docu.Tests.IO
             {
                 loader.LoadFrom(assembly.Location + "kjdkjdhsfjksahk"); //Just garbage :)
             }
-            catch (FileNotFoundException err)
+            catch (FileNotFoundException)
             {
                 assemblyCouldntBeLoaded = true;
             }

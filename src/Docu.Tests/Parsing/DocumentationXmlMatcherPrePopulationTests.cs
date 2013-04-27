@@ -14,13 +14,11 @@ namespace Docu.Tests.Parsing
     [TestFixture]
     public class DocumentationXmlMatcherPrePopulationTests : BaseFixture
     {
-        private DocumentationXmlMatcher matcher;
         private IList<IDocumentationMember> members;
 
         [SetUp]
         public void CreateAssociator()
         {
-            matcher = new DocumentationXmlMatcher();
         }
 
         [Test]
@@ -128,7 +126,7 @@ namespace Docu.Tests.Parsing
 
         private void document_member<T>()
         {
-            members = matcher.DocumentMembers(DocMembers(typeof(T)), new XmlNode[0]);
+            members = DocumentationXmlMatcher.DocumentMembers(DocumentableMemberFinder.GetMembersForDocumenting(new[] {typeof(T)}), new XmlNode[0]);
         }
 
         private IDocumentationMember find_member<T>()

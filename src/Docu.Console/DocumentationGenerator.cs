@@ -9,11 +9,11 @@ using Docu.Parsing;
 
 namespace Docu
 {
-    public class DocumentationGenerator : IDocumentationGenerator
+    public class DocumentationGenerator
     {
         private readonly List<Assembly> assemblies = new List<Assembly>();
         private readonly IAssemblyLoader assemblyLoader;
-        private readonly IAssemblyXmlParser parser;
+        private readonly AssemblyXmlParser parser;
         private readonly IUntransformableResourceManager resourceManager;
         private readonly IEventAggregator eventAggregator;
         private readonly IBulkPageWriter writer;
@@ -22,7 +22,7 @@ namespace Docu
         private string outputPath = "output";
         private string templatePath = Path.Combine(Path.GetDirectoryName(typeof(DocumentationGenerator).Assembly.Location), "templates");
 
-        public DocumentationGenerator(IAssemblyLoader assemblyLoader, IXmlLoader xmlLoader, IAssemblyXmlParser parser, IBulkPageWriter writer, IUntransformableResourceManager resourceManager, IEventAggregator eventAggregator)
+        public DocumentationGenerator(IAssemblyLoader assemblyLoader, IXmlLoader xmlLoader, AssemblyXmlParser parser, IBulkPageWriter writer, IUntransformableResourceManager resourceManager, IEventAggregator eventAggregator)
         {
             this.assemblyLoader = assemblyLoader;
             this.xmlLoader = xmlLoader;
@@ -54,22 +54,12 @@ namespace Docu
                 .Publish(path);
         }
 
-        public void SetAssemblies(IEnumerable<Assembly> assembliesToParse)
-        {
-            assemblies.AddRange(assembliesToParse);
-        }
-
         public void SetXmlFiles(IEnumerable<string> xmlFiles)
         {
             foreach (string xmlFile in xmlFiles)
             {
                 contentsOfXmlFiles.Add(xmlLoader.LoadFrom(xmlFile));
             }
-        }
-
-        public void SetXmlContent(IEnumerable<string> xmlContents)
-        {
-            contentsOfXmlFiles.AddRange(xmlContents);
         }
 
         public void SetTemplatePath(string templateDirectory)

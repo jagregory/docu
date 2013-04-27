@@ -84,16 +84,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Console\ConsoleApplicationTests\Arguments.cs" />
-    <Compile Include="Console\ConsoleApplicationTests\BadXml.cs" />
-    <Compile Include="Console\ConsoleApplicationTests\Switches.cs" />
-    <Compile Include="Console\ConsoleApplicationTests\ValidArguments.cs" />
     <Compile Include="DocumentationGeneratorTests\BaseDocumentationGeneratorFixture.cs" />
-    <Compile Include="DocumentationGeneratorTests\Generate.cs" />
-    <Compile Include="DocumentationGeneratorTests\SetOutputPath.cs" />
-    <Compile Include="DocumentationGeneratorTests\SetTemplatePath.cs" />
-    <Compile Include="DocumentationGeneratorTests\SetXml.cs" />
-    <Compile Include="DocumentationGeneratorTests\SetAssembly.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\CommentAssertionExtensions.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Examples.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Returns.cs" />
@@ -138,7 +129,6 @@
     <Compile Include="Fixtures\Second.cs" />
     <Compile Include="Fixtures\Third.cs" />
     <Compile Include="Output\HtmlGenerationTests.cs" />
-    <Compile Include="Parsing\AssemblyXmlParserTests.cs" />
     <Compile Include="Output\PatternTemplateResolverTests\paths.cs" />
     <Compile Include="ExtensionTests.cs" />
     <Compile Include="Output\Rendering\PrettyNameTests.cs" />
@@ -194,6 +184,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Console\ConsoleApplicationTests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

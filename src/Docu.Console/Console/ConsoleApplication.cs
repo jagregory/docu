@@ -4,46 +4,26 @@ namespace Docu.Console
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-
-    using Docu.Events;
-
+    using Events;
     using StructureMap;
 
     public class ConsoleApplication
     {
         private readonly List<string> arguments = new List<string>();
-
-        private readonly IDocumentationGenerator documentationGenerator;
-
+        private readonly DocumentationGenerator documentationGenerator;
         private readonly IEventAggregator eventAggregator;
-
         private readonly IScreenWriter screenWriter;
-
         private readonly IList<ISwitch> switches = new List<ISwitch>();
-
         private bool canRun;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConsoleApplication"/> class.
-        /// </summary>
-        /// <param name="screenWriter">
-        /// The screen writer.
-        /// </param>
-        /// <param name="documentationGenerator">
-        /// The documentation generator.
-        /// </param>
-        /// <param name="eventAggregator">
-        /// The event aggregator.
-        /// </param>
-        public ConsoleApplication(
-            IScreenWriter screenWriter, IDocumentationGenerator documentationGenerator, IEventAggregator eventAggregator)
+        public ConsoleApplication(IScreenWriter screenWriter, DocumentationGenerator documentationGenerator, IEventAggregator eventAggregator)
         {
             this.screenWriter = screenWriter;
             this.documentationGenerator = documentationGenerator;
             this.eventAggregator = eventAggregator;
 
-            this.WireUpListeners();
-            this.DefineSwitches();
+            WireUpListeners();
+            DefineSwitches();
         }
 
         public static void Run(IEnumerable<string> args)
@@ -58,51 +38,51 @@ namespace Docu.Console
 
         public void Run()
         {
-            if (!this.canRun)
+            if (!canRun)
             {
-                this.ShowMessage(Messages.Help);
+                ShowMessage(Messages.Help);
                 return;
             }
 
-            if (this.ProcessSwitches() == false)
+            if (ProcessSwitches() == false)
             {
                 return;
             }
 
-            this.ShowMessage(Messages.Splash);
+            ShowMessage(Messages.Splash);
 
-            string[] assemblies = this.GetAssembliesFromArgs(this.arguments);
-            string[] xmls = this.GetXmlsFromArgs(this.arguments, assemblies);
+            string[] assemblies = GetAssembliesFromArgs(arguments);
+            string[] xmls = GetXmlsFromArgs(arguments, assemblies);
 
-            if (this.VerifyArguments(assemblies, xmls))
+            if (VerifyArguments(assemblies, xmls))
             {
-                this.ShowMessage(Messages.Start);
+                ShowMessage(Messages.Start);
 
-                this.documentationGenerator.SetAssemblies(assemblies);
-                this.documentationGenerator.SetXmlFiles(xmls);
-                this.documentationGenerator.Generate();
+                documentationGenerator.SetAssemblies(assemblies);
+                documentationGenerator.SetXmlFiles(xmls);
+                documentationGenerator.Generate();
 
-                this.ShowMessage(Messages.Done);
+                ShowMessage(Messages.Done);
             }
         }
 
-        public void SetArguments(IEnumerable<string> args)
+        private void SetArguments(IEnumerable<string> args)
         {
-            this.arguments.AddRange(args);
+            arguments.AddRange(args);
 
-            if (this.arguments.Count > 0)
+            if (arguments.Count > 0)
             {
-                this.canRun = true;
+                canRun = true;
             }
         }
 
-        private static string getExpectedXmlFileForAssembly(string assembly)
+        private static string GetExpectedXmlFileForAssembly(string assembly)
         {
             string extension = Path.GetExtension(assembly);
             return assembly.Substring(0, assembly.Length - extension.Length) + ".xml";
         }
 
-        private static bool isAssemblyArgument(string argument)
+        private static bool IsAssemblyArgument(string argument)
         {
             string fileExtension = Path.GetExtension(argument);
             return fileExtension.Equals(".dll", StringComparison.InvariantCultureIgnoreCase)
@@ -111,35 +91,35 @@ namespace Docu.Console
 
         private void BadFile(string path)
         {
-            this.ShowMessage(new BadFileMessage(path));
+            ShowMessage(new BadFileMessage(path));
         }
 
         private void DefineSwitches()
         {
-            this.switches.Add(
+            switches.Add(
                 new Switch(
-                    "--help", 
+                    "--help",
                     () =>
                         {
-                            this.ShowMessage(new HelpMessage());
+                            ShowMessage(new HelpMessage());
                             return false;
                         }));
 
-            this.switches.Add(
+            switches.Add(
                 new ParameterSwitch(
-                    "--output", 
+                    "--output",
                     arg =>
                         {
-                            this.documentationGenerator.SetOutputPath(arg.TrimEnd('\\'));
+                            documentationGenerator.SetOutputPath(arg.TrimEnd('\\'));
                             return true;
                         }));
 
-            this.switches.Add(
+            switches.Add(
                 new ParameterSwitch(
-                    "--templates", 
+                    "--templates",
                     arg =>
                         {
-                            this.documentationGenerator.SetTemplatePath(arg.TrimEnd('\\'));
+                            documentationGenerator.SetTemplatePath(arg.TrimEnd('\\'));
                             return true;
                         }));
         }
@@ -150,9 +130,9 @@ namespace Docu.Console
 
             foreach (string arg in args)
             {
-                if (isAssemblyArgument(arg))
+                if (IsAssemblyArgument(arg))
                 {
-                    assemblies.AddRange(this.GetFiles(arg));
+                    assemblies.AddRange(GetFiles(arg));
                 }
             }
 
@@ -190,7 +170,7 @@ namespace Docu.Console
             {
                 if (arg.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    xmls.AddRange(this.GetFiles(arg));
+                    xmls.AddRange(GetFiles(arg));
                 }
             }
 
@@ -199,9 +179,9 @@ namespace Docu.Console
                 // none specified, try to find some
                 foreach (string assembly in assemblies)
                 {
-                    string name = getExpectedXmlFileForAssembly(assembly);
+                    string name = GetExpectedXmlFileForAssembly(assembly);
 
-                    foreach (string file in this.GetFiles(name))
+                    foreach (string file in GetFiles(name))
                     {
                         if (File.Exists(file))
                         {
@@ -216,18 +196,18 @@ namespace Docu.Console
 
         private bool ProcessSwitches()
         {
-            foreach (ISwitch svvitch in this.switches)
+            foreach (ISwitch svvitch in switches)
             {
-                for (int i = this.arguments.Count - 1; i >= 0; i--)
+                for (int i = arguments.Count - 1; i >= 0; i--)
                 {
-                    string argument = this.arguments[i];
+                    string argument = arguments[i];
 
                     if (!svvitch.IsMatch(argument))
                     {
                         continue;
                     }
 
-                    this.arguments.RemoveAt(i);
+                    arguments.RemoveAt(i);
 
                     if (svvitch.Handle(argument) == false)
                     {
@@ -241,29 +221,29 @@ namespace Docu.Console
 
         private void ShowMessage(IScreenMessage message)
         {
-            this.screenWriter.WriteMessage(message);
+            screenWriter.WriteMessage(message);
         }
 
         private bool VerifyArguments(IEnumerable<string> assemblies, IEnumerable<string> xmls)
         {
-            foreach (string argument in this.arguments)
+            foreach (string argument in arguments)
             {
-                if (isAssemblyArgument(argument)
+                if (IsAssemblyArgument(argument)
                     || Path.GetExtension(argument).Equals(".xml", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
 
-                this.ShowMessage(new InvalidArgumentMessage(argument));
+                ShowMessage(new InvalidArgumentMessage(argument));
                 return false;
             }
 
-            if (!this.VerifyAssemblies(assemblies))
+            if (!VerifyAssemblies(assemblies))
             {
                 return false;
             }
 
-            if (!this.VerifyXmls(xmls))
+            if (!VerifyXmls(xmls))
             {
                 return false;
             }
@@ -275,7 +255,7 @@ namespace Docu.Console
         {
             if (!assemblies.Any())
             {
-                this.ShowMessage(Messages.NoAssembliesSpecified);
+                ShowMessage(Messages.NoAssembliesSpecified);
                 return false;
             }
 
@@ -283,7 +263,7 @@ namespace Docu.Console
             {
                 if (!File.Exists(assembly))
                 {
-                    this.ShowMessage(new AssemblyNotFoundMessage(assembly));
+                    ShowMessage(new AssemblyNotFoundMessage(assembly));
                     return false;
                 }
             }
@@ -295,7 +275,7 @@ namespace Docu.Console
         {
             if (!xmls.Any())
             {
-                this.ShowMessage(Messages.NoXmlsFound);
+                ShowMessage(Messages.NoXmlsFound);
                 return false;
             }
 
@@ -303,7 +283,7 @@ namespace Docu.Console
             {
                 if (!File.Exists(xml))
                 {
-                    this.ShowMessage(new XmlNotFoundMessage(xml));
+                    ShowMessage(new XmlNotFoundMessage(xml));
                     return false;
                 }
             }
@@ -313,13 +293,13 @@ namespace Docu.Console
 
         private void Warning(string message)
         {
-            this.ShowMessage(new WarningMessage(message));
+            ShowMessage(new WarningMessage(message));
         }
 
         private void WireUpListeners()
         {
-            this.eventAggregator.GetEvent<WarningEvent>().Subscribe(this.Warning);
-            this.eventAggregator.GetEvent<BadFileEvent>().Subscribe(this.BadFile);
+            eventAggregator.GetEvent<WarningEvent>().Subscribe(Warning);
+            eventAggregator.GetEvent<BadFileEvent>().Subscribe(BadFile);
         }
     }
 }

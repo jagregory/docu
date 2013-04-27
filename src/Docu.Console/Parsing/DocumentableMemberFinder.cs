@@ -4,9 +4,9 @@ using Docu.Parsing.Model;
 
 namespace Docu.Parsing
 {
-    public class DocumentableMemberFinder : IDocumentableMemberFinder
+    public static class DocumentableMemberFinder
     {
-        public IEnumerable<IDocumentationMember> GetMembersForDocumenting(IEnumerable<Type> types)
+        public static IEnumerable<IDocumentationMember> GetMembersForDocumenting(IEnumerable<Type> types)
         {
             foreach (var type in types)
             {
@@ -24,7 +24,7 @@ namespace Docu.Parsing
 
                 foreach (var constructor in type.GetConstructors())
                 {
-                    yield return new ReflectedMethod(Identifier.FromMethod(constructor, type), constructor, type);    
+                    yield return new ReflectedMethod(Identifier.FromMethod(constructor, type), constructor, type);
                 }
 
                 foreach (var property in type.GetProperties())

@@ -4,9 +4,9 @@ using System.Xml;
 
 namespace Docu.Parsing
 {
-    public class DocumentationXmlMatcher : IDocumentationXmlMatcher
+    public static class DocumentationXmlMatcher
     {
-        public IList<IDocumentationMember> DocumentMembers(IEnumerable<IDocumentationMember> undocumentedMembers, IEnumerable<XmlNode> snippets)
+        public static IList<IDocumentationMember> DocumentMembers(IEnumerable<IDocumentationMember> undocumentedMembers, IEnumerable<XmlNode> snippets)
         {
             var members = new List<IDocumentationMember>(undocumentedMembers);
 
@@ -29,7 +29,7 @@ namespace Docu.Parsing
             return members;
         }
 
-        private void ParseProperty(List<IDocumentationMember> members, XmlNode node)
+        static void ParseProperty(List<IDocumentationMember> members, XmlNode node)
         {
             Identifier member = Identifier.FromString(node.Attributes["name"].Value);
 
@@ -41,7 +41,7 @@ namespace Docu.Parsing
             }
         }
 
-        private void ParseEvent(List<IDocumentationMember> members, XmlNode node)
+        static void ParseEvent(List<IDocumentationMember> members, XmlNode node)
         {
             var member = Identifier.FromString(node.Attributes["name"].Value);
 
@@ -53,7 +53,7 @@ namespace Docu.Parsing
             }
         }
 
-        private void ParseField(List<IDocumentationMember> members, XmlNode node)
+        static void ParseField(List<IDocumentationMember> members, XmlNode node)
         {
             var member = Identifier.FromString(node.Attributes["name"].Value);
 
@@ -65,7 +65,7 @@ namespace Docu.Parsing
             }
         }
 
-        private void ParseMethod(List<IDocumentationMember> members, XmlNode node)
+        static void ParseMethod(List<IDocumentationMember> members, XmlNode node)
         {
             Identifier member = Identifier.FromString(node.Attributes["name"].Value);
 
@@ -80,7 +80,7 @@ namespace Docu.Parsing
             }
         }
 
-        private void ParseType(List<IDocumentationMember> members, XmlNode node)
+        static void ParseType(List<IDocumentationMember> members, XmlNode node)
         {
             var identifier = Identifier.FromString(node.Attributes["name"].Value);
             var positionOfUndocumentedType = members.FindIndex(m =>

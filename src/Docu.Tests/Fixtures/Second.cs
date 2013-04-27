@@ -1,5 +1,7 @@
 using System;
 
+// ReSharper disable EventNeverInvoked
+// ReSharper disable InconsistentNaming
 namespace Example
 {
     public class Second
@@ -30,3 +32,5 @@ namespace Example
         public event EventHandler<EventArgs> AnEvent;
     }
 }
+// ReSharper restore InconsistentNaming
+// ReSharper restore EventNeverInvoked

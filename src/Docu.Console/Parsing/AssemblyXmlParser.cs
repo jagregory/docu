@@ -7,17 +7,13 @@ using Docu.Parsing.Model;
 
 namespace Docu.Parsing
 {
-    public class AssemblyXmlParser : IAssemblyXmlParser
+    public class AssemblyXmlParser
     {
-        private readonly IDocumentableMemberFinder documentableMembers;
         private readonly IDocumentModel documentModel;
-        private readonly IDocumentationXmlMatcher xmlMatcher;
 
-        public AssemblyXmlParser(IDocumentationXmlMatcher xmlMatcher, IDocumentModel documentModel, IDocumentableMemberFinder documentableMembers)
+        public AssemblyXmlParser(IDocumentModel documentModel)
         {
-            this.xmlMatcher = xmlMatcher;
             this.documentModel = documentModel;
-            this.documentableMembers = documentableMembers;
         }
 
         public IList<Namespace> CreateDocumentModel(IEnumerable<Assembly> assemblies, IEnumerable<string> xmlDocumentContents)
@@ -32,7 +28,7 @@ namespace Docu.Parsing
             var undocumentedMembers = GetUndocumentedMembers(assemblies);
             var members = GetMembersXml(xmlDocumentContents);
 
-            return xmlMatcher.DocumentMembers(undocumentedMembers, members);
+            return DocumentationXmlMatcher.DocumentMembers(undocumentedMembers, members);
         }
 
         private IEnumerable<XmlNode> GetMembersXml(IEnumerable<string> xmlDocumentContents)
@@ -60,7 +56,7 @@ namespace Docu.Parsing
                 types.AddRange(assembly.GetExportedTypes());
             }
 
-            return documentableMembers.GetMembersForDocumenting(types);
+            return DocumentableMemberFinder.GetMembersForDocumenting(types);
         }
     }
 }

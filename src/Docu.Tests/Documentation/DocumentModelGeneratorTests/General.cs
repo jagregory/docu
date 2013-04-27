@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
-using Docu.Parsing.Comments;
+using Docu.Parsing;
 using Docu.Parsing.Model;
 using Example;
 using Example.Deep;
@@ -50,7 +50,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void should_have_summary_for_documented_types()
         {
             var model = new DocumentModel(RealParser, StubEventAggregator);
-            var members = new List<IDocumentationMember>(DocMembers(typeof(First)));
+            var members = DocumentableMemberFinder.GetMembersForDocumenting(new[] {typeof (First)}).ToList();
             var indexOfType = members.FindIndex(m => m is ReflectedType);
             members[indexOfType] = Type<First>(@"<member name=""T:Example.First""><summary>The type description</summary></member>");
             var namespaces = model.Create(members);
