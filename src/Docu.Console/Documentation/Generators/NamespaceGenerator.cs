@@ -3,18 +3,12 @@ namespace Docu.Documentation.Generators
     using System;
     using System.Collections.Generic;
 
-    using Docu.Parsing.Model;
+    using Parsing.Model;
 
     internal class NamespaceGenerator
     {
-        private readonly IDictionary<Identifier, IReferencable> matchedAssociations;
+        readonly IDictionary<Identifier, IReferencable> matchedAssociations;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NamespaceGenerator"/> class.
-        /// </summary>
-        /// <param name="matchedAssociations">
-        /// The matched associations.
-        /// </param>
         public NamespaceGenerator(IDictionary<Identifier, IReferencable> matchedAssociations)
         {
             this.matchedAssociations = matchedAssociations;
@@ -33,7 +27,7 @@ namespace Docu.Documentation.Generators
             if (!namespaces.Exists(x => x.IsIdentifiedBy(ns)))
             {
                 Namespace doc = Namespace.Unresolved(ns);
-                this.matchedAssociations.Add(association.Name.CloneAsNamespace(), doc);
+                matchedAssociations.Add(association.Name.CloneAsNamespace(), doc);
                 namespaces.Add(doc);
             }
         }

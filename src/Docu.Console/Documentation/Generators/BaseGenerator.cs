@@ -4,20 +4,14 @@ namespace Docu.Documentation.Generators
     using System.Linq;
     using System.Xml;
 
-    using Docu.Documentation.Comments;
-    using Docu.Parsing.Comments;
-    using Docu.Parsing.Model;
+    using Comments;
+    using Parsing.Comments;
+    using Parsing.Model;
 
     internal abstract class BaseGenerator
     {
-        private readonly ICommentParser commentParser;
+        readonly ICommentParser commentParser;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BaseGenerator"/> class.
-        /// </summary>
-        /// <param name="commentParser">
-        /// The comment parser.
-        /// </param>
         protected BaseGenerator(ICommentParser commentParser)
         {
             this.commentParser = commentParser;
@@ -48,7 +42,7 @@ namespace Docu.Documentation.Generators
             {
                 doc.Example =
                     new MultilineCode(
-                        this.commentParser.ParseNode(node, new ParseOptions { PreserveWhitespace = true }));
+                        commentParser.ParseNode(node, new ParseOptions {PreserveWhitespace = true}));
             }
         }
 
@@ -61,7 +55,7 @@ namespace Docu.Documentation.Generators
 
             XmlNode node = member.Xml.SelectSingleNode("param[@name='" + doc.Name + "']");
 
-            this.ParseSummary(node, doc);
+            ParseSummary(node, doc);
         }
 
         protected void ParseRemarks(IDocumentationMember member, IDocumentationElement doc)
@@ -75,7 +69,7 @@ namespace Docu.Documentation.Generators
 
             if (node != null)
             {
-                doc.Remarks = new Remarks(this.commentParser.ParseNode(node));
+                doc.Remarks = new Remarks(commentParser.ParseNode(node));
             }
         }
 
@@ -90,7 +84,7 @@ namespace Docu.Documentation.Generators
 
             if (node != null)
             {
-                doc.Returns = new Summary(this.commentParser.ParseNode(node));
+                doc.Returns = new Summary(commentParser.ParseNode(node));
             }
         }
 
@@ -103,7 +97,7 @@ namespace Docu.Documentation.Generators
 
             XmlNode node = member.Xml.SelectSingleNode("summary");
 
-            this.ParseSummary(node, doc);
+            ParseSummary(node, doc);
         }
 
         protected void ParseValue(IDocumentationMember member, IDocumentationElement doc)
@@ -117,15 +111,15 @@ namespace Docu.Documentation.Generators
 
             if (node != null)
             {
-                doc.Value = new Value(this.commentParser.ParseNode(node));
+                doc.Value = new Value(commentParser.ParseNode(node));
             }
         }
 
-        private void ParseSummary(XmlNode node, IDocumentationElement doc)
+        void ParseSummary(XmlNode node, IDocumentationElement doc)
         {
             if (node != null)
             {
-                doc.Summary = new Summary(this.commentParser.ParseNode(node));
+                doc.Summary = new Summary(commentParser.ParseNode(node));
             }
         }
     }

@@ -1,23 +1,13 @@
 namespace Docu.Documentation.Generators
 {
     using System.Collections.Generic;
-
-    using Docu.Parsing.Comments;
-    using Docu.Parsing.Model;
+    using Parsing.Comments;
+    using Parsing.Model;
 
     internal class FieldGenerator : BaseGenerator
     {
-        private readonly IDictionary<Identifier, IReferencable> matchedAssociations;
+        readonly IDictionary<Identifier, IReferencable> matchedAssociations;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FieldGenerator"/> class.
-        /// </summary>
-        /// <param name="matchedAssociations">
-        /// The matched associations.
-        /// </param>
-        /// <param name="commentParser">
-        /// The comment parser.
-        /// </param>
         public FieldGenerator(IDictionary<Identifier, IReferencable> matchedAssociations, ICommentParser commentParser)
             : base(commentParser)
         {
@@ -31,21 +21,21 @@ namespace Docu.Documentation.Generators
                 return;
             }
 
-            Namespace ns = this.FindNamespace(association, namespaces);
-            DeclaredType type = this.FindType(ns, association);
+            Namespace ns = FindNamespace(association, namespaces);
+            DeclaredType type = FindType(ns, association);
 
             DeclaredType returnType = DeclaredType.Unresolved(
-                Identifier.FromType(association.Field.FieldType), 
-                association.Field.FieldType, 
+                Identifier.FromType(association.Field.FieldType),
+                association.Field.FieldType,
                 Namespace.Unresolved(Identifier.FromNamespace(association.Field.FieldType.Namespace)));
             Field doc = Field.Unresolved(
                 Identifier.FromField(association.Field, association.TargetType), type, returnType);
 
-            this.ParseSummary(association, doc);
-            this.ParseRemarks(association, doc);
-            this.ParseExample(association, doc);
+            ParseSummary(association, doc);
+            ParseRemarks(association, doc);
+            ParseExample(association, doc);
 
-            this.matchedAssociations.Add(association.Name, doc);
+            matchedAssociations.Add(association.Name, doc);
             type.AddField(doc);
         }
     }

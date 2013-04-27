@@ -3,7 +3,7 @@ namespace Docu.Documentation.Generators
     using System;
     using System.Collections.Generic;
 
-    using Docu.Parsing.Model;
+    using Parsing.Model;
 
     internal interface IGenerationStep
     {

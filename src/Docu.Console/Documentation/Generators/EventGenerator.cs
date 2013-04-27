@@ -1,23 +1,13 @@
 namespace Docu.Documentation.Generators
 {
     using System.Collections.Generic;
-
-    using Docu.Parsing.Comments;
-    using Docu.Parsing.Model;
+    using Parsing.Comments;
+    using Parsing.Model;
 
     internal class EventGenerator : BaseGenerator
     {
-        private readonly IDictionary<Identifier, IReferencable> matchedAssociations;
+        readonly IDictionary<Identifier, IReferencable> matchedAssociations;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EventGenerator"/> class.
-        /// </summary>
-        /// <param name="matchedAssociations">
-        /// The matched associations.
-        /// </param>
-        /// <param name="commentParser">
-        /// The comment parser.
-        /// </param>
         public EventGenerator(IDictionary<Identifier, IReferencable> matchedAssociations, ICommentParser commentParser)
             : base(commentParser)
         {
@@ -31,16 +21,16 @@ namespace Docu.Documentation.Generators
                 return;
             }
 
-            Namespace ns = this.FindNamespace(association, namespaces);
-            DeclaredType type = this.FindType(ns, association);
+            Namespace ns = FindNamespace(association, namespaces);
+            DeclaredType type = FindType(ns, association);
 
             Event doc = Event.Unresolved(Identifier.FromEvent(association.Event, association.TargetType), type);
 
-            this.ParseSummary(association, doc);
-            this.ParseRemarks(association, doc);
-            this.ParseExample(association, doc);
+            ParseSummary(association, doc);
+            ParseRemarks(association, doc);
+            ParseExample(association, doc);
 
-            this.matchedAssociations.Add(association.Name, doc);
+            matchedAssociations.Add(association.Name, doc);
             type.AddEvent(doc);
         }
     }

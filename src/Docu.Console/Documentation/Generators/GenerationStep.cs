@@ -3,37 +3,25 @@ namespace Docu.Documentation.Generators
     using System;
     using System.Collections.Generic;
 
-    using Docu.Parsing.Model;
+    using Parsing.Model;
 
     internal class GenerationStep<T> : IGenerationStep
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GenerationStep{T}"/> class.
-        /// </summary>
-        /// <param name="action">
-        /// The action.
-        /// </param>
         public GenerationStep(Action<List<Namespace>, T> action)
         {
-            this.Action = action;
+            Action = action;
+        }
+
+        public Func<IDocumentationMember, bool> Criteria
+        {
+            get { return x => x is T; }
         }
 
         public Action<List<Namespace>, T> Action { get; private set; }
 
-        public Func<IDocumentationMember, bool> Criteria
-        {
-            get
-            {
-                return x => x is T;
-            }
-        }
-
         Action<List<Namespace>, IDocumentationMember> IGenerationStep.Action
         {
-            get
-            {
-                return (x, y) => this.Action(x, (T)y);
-            }
+            get { return (x, y) => Action(x, (T) y); }
         }
     }
 }
