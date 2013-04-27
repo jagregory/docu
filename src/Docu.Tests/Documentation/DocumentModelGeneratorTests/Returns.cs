@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
+using Docu.Events;
 using Docu.Parsing.Comments;
 using Docu.Parsing.Model;
 using Example;
@@ -16,7 +17,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveReturnsForMethods()
         {
-            var model = new DocumentModel(RealParser, StubEventAggregator);
+            var model = new DocumentModel(RealParser, new EventAggregator());
             var members = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),
@@ -32,7 +33,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         public void ShouldPassMethodReturnsToContentParser()
         {
             var contentParser = MockRepository.GenerateMock<ICommentParser>();
-            var model = new DocumentModel(contentParser, StubEventAggregator);
+            var model = new DocumentModel(contentParser, new EventAggregator());
             var members = new[] { Method<Second>(@"<member name=""M:Example.Second.ReturnType""><returns>Method with return</returns></member>", x => x.ReturnType()), };
 
             contentParser.Stub(x => x.ParseNode(null))

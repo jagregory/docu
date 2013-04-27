@@ -56,8 +56,8 @@ namespace Docu
             string[] xmls = GetXmlsFromArgs(arguments, assemblies);
 
             var eventAggregator = new EventAggregator();
-            eventAggregator.GetEvent<WarningEvent>().Subscribe(message => Console.WriteLine("WARNING: " + message));
-            eventAggregator.GetEvent<BadFileEvent>().Subscribe(path => Console.WriteLine("The requested file is in a bad format and could not be loaded: '" + path + "'"));
+            eventAggregator.Subscribe(EventType.Warning, message => Console.WriteLine("WARNING: " + message));
+            eventAggregator.Subscribe(EventType.BadFile, path => Console.WriteLine("The requested file is in a bad format and could not be loaded: '" + path + "'"));
 
             var commentParser = new CommentParser(new ICommentNodeParser[]
                 {

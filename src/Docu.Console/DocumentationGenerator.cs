@@ -15,11 +15,11 @@ namespace Docu
         readonly string outputPath;
         readonly string templatePath;
         readonly DocumentModel documentModel;
-        readonly IEventAggregator eventAggregator;
+        readonly EventAggregator eventAggregator;
         readonly List<Assembly> assemblies = new List<Assembly>();
         readonly List<string> contentsOfXmlFiles = new List<string>();
 
-        public DocumentationGenerator(string outputPath, string templatePath, DocumentModel documentModel, IEventAggregator eventAggregator)
+        public DocumentationGenerator(string outputPath, string templatePath, DocumentModel documentModel, EventAggregator eventAggregator)
         {
             this.outputPath = outputPath;
             this.templatePath = templatePath;
@@ -37,9 +37,7 @@ namespace Docu
                 }
                 catch (BadImageFormatException)
                 {
-                    eventAggregator
-                        .GetEvent<BadFileEvent>()
-                        .Publish(assemblyPath);
+                    eventAggregator.Publish(EventType.BadFile, assemblyPath);
                 }
             }
         }

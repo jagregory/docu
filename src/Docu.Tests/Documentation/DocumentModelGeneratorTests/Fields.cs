@@ -1,4 +1,5 @@
 using Docu.Documentation;
+using Docu.Events;
 using Docu.Parsing.Model;
 using Example;
 using NUnit.Framework;
@@ -11,7 +12,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveEventsInTypes()
         {
-            var model = new DocumentModel(StubParser, StubEventAggregator);
+            var model = new DocumentModel(StubParser, new EventAggregator());
             var members = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),  

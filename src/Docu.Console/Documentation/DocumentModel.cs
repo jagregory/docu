@@ -3,61 +3,44 @@ namespace Docu.Documentation
     using System.Collections.Generic;
     using System.Linq;
 
-    using Docu.Documentation.Generators;
-    using Docu.Events;
-    using Docu.Parsing;
-    using Docu.Parsing.Comments;
-    using Docu.Parsing.Model;
+    using Generators;
+    using Events;
+    using Parsing;
+    using Parsing.Comments;
+    using Parsing.Model;
 
     public class DocumentModel : IDocumentModel
     {
-        private readonly EventGenerator Events;
+        readonly EventGenerator Events;
+        readonly FieldGenerator Fields;
+        readonly MethodGenerator Methods;
+        readonly NamespaceGenerator Namespaces;
+        readonly PropertyGenerator Properties;
+        readonly TypeGenerator Types;
+        readonly EventAggregator eventAggregator;
 
-        private readonly FieldGenerator Fields;
+        readonly IDictionary<Identifier, IReferencable> matchedAssociations = new Dictionary<Identifier, IReferencable>();
+        readonly IList<IGenerationStep> steps;
 
-        private readonly MethodGenerator Methods;
-
-        private readonly NamespaceGenerator Namespaces;
-
-        private readonly PropertyGenerator Properties;
-
-        private readonly TypeGenerator Types;
-
-        private readonly IEventAggregator eventAggregator;
-
-        private readonly IDictionary<Identifier, IReferencable> matchedAssociations =
-            new Dictionary<Identifier, IReferencable>();
-
-        private readonly IList<IGenerationStep> steps;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DocumentModel"/> class.
-        /// </summary>
-        /// <param name="commentParser">
-        /// The comment parser.
-        /// </param>
-        /// <param name="eventAggregator">
-        /// The event aggregator.
-        /// </param>
-        public DocumentModel(ICommentParser commentParser, IEventAggregator eventAggregator)
+        public DocumentModel(ICommentParser commentParser, EventAggregator eventAggregator)
         {
-            this.Namespaces = new NamespaceGenerator(this.matchedAssociations);
-            this.Types = new TypeGenerator(this.matchedAssociations, commentParser);
-            this.Methods = new MethodGenerator(this.matchedAssociations, commentParser);
-            this.Properties = new PropertyGenerator(this.matchedAssociations, commentParser);
-            this.Events = new EventGenerator(this.matchedAssociations, commentParser);
-            this.Fields = new FieldGenerator(this.matchedAssociations, commentParser);
+            Namespaces = new NamespaceGenerator(matchedAssociations);
+            Types = new TypeGenerator(matchedAssociations, commentParser);
+            Methods = new MethodGenerator(matchedAssociations, commentParser);
+            Properties = new PropertyGenerator(matchedAssociations, commentParser);
+            Events = new EventGenerator(matchedAssociations, commentParser);
+            Fields = new FieldGenerator(matchedAssociations, commentParser);
 
             this.eventAggregator = eventAggregator;
 
-            this.steps = new List<IGenerationStep>
+            steps = new List<IGenerationStep>
                 {
-                    new GenerationStep<IDocumentationMember>(this.Namespaces.Add), 
-                    new GenerationStep<DocumentedType>(this.Types.Add), 
-                    new GenerationStep<DocumentedMethod>(this.Methods.Add), 
-                    new GenerationStep<DocumentedProperty>(this.Properties.Add), 
-                    new GenerationStep<DocumentedEvent>(this.Events.Add), 
-                    new GenerationStep<DocumentedField>(this.Fields.Add), 
+                    new GenerationStep<IDocumentationMember>(Namespaces.Add),
+                    new GenerationStep<DocumentedType>(Types.Add),
+                    new GenerationStep<DocumentedMethod>(Methods.Add),
+                    new GenerationStep<DocumentedProperty>(Properties.Add),
+                    new GenerationStep<DocumentedEvent>(Events.Add),
+                    new GenerationStep<DocumentedField>(Fields.Add),
                 };
         }
 
@@ -65,9 +48,9 @@ namespace Docu.Documentation
         {
             var namespaces = new List<Namespace>();
 
-            this.matchedAssociations.Clear();
+            matchedAssociations.Clear();
 
-            foreach (IGenerationStep step in this.steps)
+            foreach (IGenerationStep step in steps)
             {
                 foreach (IDocumentationMember member in members.Where(step.Criteria))
                 {
@@ -77,7 +60,7 @@ namespace Docu.Documentation
                     }
                     catch (UnsupportedDocumentationMemberException ex)
                     {
-                        this.RaiseCreationWarning(ex);
+                        RaiseCreationWarning(ex);
                     }
                 }
             }
@@ -86,22 +69,21 @@ namespace Docu.Documentation
             {
                 if (!ns.IsResolved)
                 {
-                    ns.Resolve(this.matchedAssociations);
+                    ns.Resolve(matchedAssociations);
                 }
             }
 
-            this.Sort(namespaces);
+            Sort(namespaces);
 
             return namespaces;
         }
 
-        private void RaiseCreationWarning(UnsupportedDocumentationMemberException exception)
+        void RaiseCreationWarning(UnsupportedDocumentationMemberException exception)
         {
-            this.eventAggregator.GetEvent<WarningEvent>().Publish(
-                "Unsupported documentation member found: '" + exception.MemberName + "'");
+            eventAggregator.Publish(EventType.Warning, "Unsupported documentation member found: '" + exception.MemberName + "'");
         }
 
-        private void Sort(List<Namespace> namespaces)
+        void Sort(List<Namespace> namespaces)
         {
             namespaces.Sort((x, y) => x.Name.CompareTo(y.Name));
 

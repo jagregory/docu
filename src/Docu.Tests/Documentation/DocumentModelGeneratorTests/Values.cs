@@ -1,6 +1,7 @@
 using System.Linq;
 using Docu.Documentation;
 using Docu.Documentation.Comments;
+using Docu.Events;
 using Docu.Parsing.Comments;
 using Docu.Parsing.Model;
 using Example;
@@ -14,7 +15,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveValueForProperty()
         {
-            var model = new DocumentModel(RealParser, StubEventAggregator);
+            var model = new DocumentModel(RealParser, new EventAggregator());
             var properties = new IDocumentationMember[]
             {
                 Type<Second>(@"<member name=""T:Example.Second"" />"),
@@ -29,7 +30,7 @@ namespace Docu.Tests.Documentation.DocumentModelGeneratorTests
         [Test]
         public void ShouldHaveValueForMethod()
         {
-            var model = new DocumentModel(RealParser, StubEventAggregator);
+            var model = new DocumentModel(RealParser, new EventAggregator());
             var methods = new IDocumentationMember[]
             {
                 Type<ReturnMethodClass>(@"<member name=""T:Example.ReturnMethodClass"" />"),
