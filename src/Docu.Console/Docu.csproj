@@ -99,12 +99,7 @@
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\IEventAggregator.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="IO\AssemblyLoader.cs" />
     <Compile Include="DocumentationGenerator.cs" />
-    <Compile Include="Output\IBulkPageWriter.cs" />
-    <Compile Include="Output\IUntransformableResourceManager.cs" />
-    <Compile Include="IO\IAssemblyLoader.cs" />
-    <Compile Include="IO\IXmlLoader.cs" />
     <Compile Include="Parsing\Comments\ICommentNodeParser.cs" />
     <Compile Include="Parsing\Comments\InlineCodeCommentParser.cs" />
     <Compile Include="Parsing\Comments\InlineListCommentParser.cs" />
@@ -147,7 +142,6 @@
     <Compile Include="Output\HtmlGenerator.cs" />
     <Compile Include="Parsing\UnsupportedDocumentationMemberException.cs" />
     <Compile Include="Output\Rendering\HtmlOutputFormatter.cs" />
-    <Compile Include="Output\Rendering\IOutputFormatter.cs" />
     <Compile Include="Output\IOutputGenerator.cs" />
     <Compile Include="Output\IPatternTemplateResolver.cs" />
     <Compile Include="Output\IPageWriter.cs" />
@@ -170,7 +164,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Documentation\DocumentModel.cs" />
-    <Compile Include="IO\XmlLoader.cs" />
     <Compile Include="Output\UntransformableResourceManager.cs" />
     <Compile Include="Output\Rendering\TemplateHelperExtensions.cs" />
   </ItemGroup>

@@ -7,30 +7,30 @@ using System.Web;
 
 namespace Docu.Output.Rendering
 {
-    public class HtmlOutputFormatter : IOutputFormatter
+    public class HtmlOutputFormatter
     {
-        private readonly IList<IOutputFormatterPart> Formatters;
-        private readonly IDocuTemplate view;
+        readonly IList<IOutputFormatterPart> Formatters;
+        readonly IDocuTemplate view;
 
         public HtmlOutputFormatter(IDocuTemplate view)
         {
             this.view = view;
 
             Formatters = new List<IOutputFormatterPart>
-            {
-                new OutputFormatterPart<Summary>(FormatGeneralContainer),
-                new OutputFormatterPart<Remarks>(FormatGeneralContainer),
-                new OutputFormatterPart<See>(FormatSee),
-                new OutputFormatterPart<InlineText>(FormatInlineText),
-                new OutputFormatterPart<InlineCode>(FormatInlineCode),
-                new OutputFormatterPart<MultilineCode>(FormatMultilineCode),
-                new OutputFormatterPart<Paragraph>(FormatParagraph),
-                new OutputFormatterPart<ParameterReference>(FormatParameterReference),
-                new OutputFormatterPart<DefinitionList>(FormatDefinitionList),
-                new OutputFormatterPart<BulletList>(FormatBulletList),
-                new OutputFormatterPart<NumberList>(FormatNumberList),
-                new OutputFormatterPart<TableList>(FormatTableList),
-            };
+                {
+                    new OutputFormatterPart<Summary>(FormatGeneralContainer),
+                    new OutputFormatterPart<Remarks>(FormatGeneralContainer),
+                    new OutputFormatterPart<See>(FormatSee),
+                    new OutputFormatterPart<InlineText>(FormatInlineText),
+                    new OutputFormatterPart<InlineCode>(FormatInlineCode),
+                    new OutputFormatterPart<MultilineCode>(FormatMultilineCode),
+                    new OutputFormatterPart<Paragraph>(FormatParagraph),
+                    new OutputFormatterPart<ParameterReference>(FormatParameterReference),
+                    new OutputFormatterPart<DefinitionList>(FormatDefinitionList),
+                    new OutputFormatterPart<BulletList>(FormatBulletList),
+                    new OutputFormatterPart<NumberList>(FormatNumberList),
+                    new OutputFormatterPart<TableList>(FormatTableList),
+                };
 
             NamespaceUrlFormat = "~/{namespace}/index.htm";
             TypeUrlFormat = "~/{type.namespace}/{type}.htm";
@@ -44,24 +44,24 @@ namespace Docu.Output.Rendering
         {
             foreach (var step in Formatters)
             {
-                if (step.Criteria(comment) == true)
+                if (step.Criteria(comment))
                     return step.Action(comment);
             }
 
             return null;
         }
 
-        private string FormatParagraph(Paragraph comment)
+        string FormatParagraph(Paragraph comment)
         {
             return "<p>" + FormatGeneralContainer(comment) + "</p>";
         }
 
-        private string FormatGeneralContainer(IComment comment)
+        string FormatGeneralContainer(IComment comment)
         {
             return FormatChildren(comment.Children);
         }
 
-        private string FormatChildren(IEnumerable<IComment> comments)
+        string FormatChildren(IEnumerable<IComment> comments)
         {
             var sb = new StringBuilder();
 
@@ -75,17 +75,17 @@ namespace Docu.Output.Rendering
             return sb.ToString();
         }
 
-        private string FormatInlineText(InlineText comment)
+        string FormatInlineText(InlineText comment)
         {
             return comment.Text;
         }
 
-        private string FormatParameterReference(ParameterReference comment)
+        string FormatParameterReference(ParameterReference comment)
         {
             return "<var>" + comment.Parameter + "</var>";
         }
 
-        private string formatInlineList(IEnumerable<InlineListItem> items, string outerTagFormat, string itemFormat, string termFormat, string definitionFormat)
+        string formatInlineList(IEnumerable<InlineListItem> items, string outerTagFormat, string itemFormat, string termFormat, string definitionFormat)
         {
             var output = new StringBuilder();
             foreach (var listItem in items)
@@ -99,27 +99,27 @@ namespace Docu.Output.Rendering
             return string.Format(outerTagFormat, output);
         }
 
-        private string FormatDefinitionList(DefinitionList comment)
+        string FormatDefinitionList(DefinitionList comment)
         {
             return formatInlineList(comment.Items, "<dl>{0}</dl>", "{0}{1}", "<dt>{0}</dt>", "<dd>{0}</dd>");
         }
 
-        private string FormatTableList(TableList comment)
+        string FormatTableList(TableList comment)
         {
             return formatInlineList(comment.Items, "<table>{0}</table>", "<tr>{0}{1}</tr>", "<td>{0}</td>", "<td>{0}</td>");
         }
 
-        private string FormatNumberList(NumberList comment)
+        string FormatNumberList(NumberList comment)
         {
             return formatInlineList(comment.Items, "<ol>{0}</ol>", "<li>{0}{1}</li>", "{0}", "{0}");
         }
 
-        private string FormatBulletList(BulletList comment)
+        string FormatBulletList(BulletList comment)
         {
             return formatInlineList(comment.Items, "<ul>{0}</ul>", "<li>{0}{1}</li>", "{0}", "{0}");
         }
 
-        private string FormatSee(See block)
+        string FormatSee(See block)
         {
             return FormatReferencable(block.Reference);
         }
@@ -143,43 +143,43 @@ namespace Docu.Output.Rendering
                 url = Format(NamespaceUrlFormat, new Replacement("namespace", reference.Name));
             else if (reference is DeclaredType)
                 url = Format(TypeUrlFormat,
-                             new Replacement("type.namespace", ((DeclaredType)reference).Namespace.Name),
-                             new Replacement("type", reference.Name));
+                    new Replacement("type.namespace", ((DeclaredType) reference).Namespace.Name),
+                    new Replacement("type", reference.Name));
             else if (reference is Method)
             {
-                var type = ((Method)reference).Type;
+                var type = ((Method) reference).Type;
 
                 url = Format(MethodUrlFormat,
-                             new Replacement("type.namespace", type.Namespace.Name),
-                             new Replacement("type", type.Name),
-                             new Replacement("method", reference.Name));
+                    new Replacement("type.namespace", type.Namespace.Name),
+                    new Replacement("type", type.Name),
+                    new Replacement("method", reference.Name));
             }
             else if (reference is Property)
             {
-                var type = ((Property)reference).Type;
+                var type = ((Property) reference).Type;
 
                 url = Format(PropertyUrlFormat,
-                             new Replacement("type.namespace", type.Namespace.Name),
-                             new Replacement("type", type.Name),
-                             new Replacement("property", reference.Name));
+                    new Replacement("type.namespace", type.Namespace.Name),
+                    new Replacement("type", type.Name),
+                    new Replacement("property", reference.Name));
             }
             else if (reference is Field)
             {
-                var type = ((Field)reference).Type;
+                var type = ((Field) reference).Type;
 
                 url = Format(FieldUrlFormat,
-                             new Replacement("type.namespace", type.Namespace.Name),
-                             new Replacement("type", type.Name),
-                             new Replacement("field", reference.Name));
+                    new Replacement("type.namespace", type.Namespace.Name),
+                    new Replacement("type", type.Name),
+                    new Replacement("field", reference.Name));
             }
             else if (reference is Event)
             {
-                var type = ((Event)reference).Type;
+                var type = ((Event) reference).Type;
 
                 url = Format(EventUrlFormat,
-                             new Replacement("type.namespace", type.Namespace.Name),
-                             new Replacement("type", type.Name),
-                             new Replacement("event", reference.Name));
+                    new Replacement("type.namespace", type.Namespace.Name),
+                    new Replacement("type", type.Name),
+                    new Replacement("event", reference.Name));
             }
 
             if (reference.IsExternal)
@@ -197,12 +197,12 @@ namespace Docu.Output.Rendering
             return HttpUtility.HtmlEncode(value);
         }
 
-        private string FormatInlineCode(InlineCode block)
+        string FormatInlineCode(InlineCode block)
         {
             return "<code>" + block.Text + "</code>";
         }
 
-        private string FormatMultilineCode(MultilineCode block)
+        string FormatMultilineCode(MultilineCode block)
         {
             return FormatGeneralContainer(block);
         }
@@ -214,7 +214,7 @@ namespace Docu.Output.Rendering
         public string FieldUrlFormat { get; set; }
         public string EventUrlFormat { get; set; }
 
-        private string Format(string pattern, params Replacement[] replacements)
+        string Format(string pattern, params Replacement[] replacements)
         {
             string output = pattern;
 
@@ -226,7 +226,7 @@ namespace Docu.Output.Rendering
             return output;
         }
 
-        private class Replacement
+        class Replacement
         {
             public string Key { get; private set; }
             public string Value { get; private set; }

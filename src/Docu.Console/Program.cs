@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Docu.Documentation;
 using Docu.Events;
-using Docu.IO;
-using Docu.Output;
-using Docu.Parsing;
 using Docu.Parsing.Comments;
 
 namespace Docu
@@ -37,6 +34,27 @@ namespace Docu
                 return;
             }
 
+            string outputPath = "output";
+            string templatePath = Path.Combine(Path.GetDirectoryName(typeof (DocumentationGenerator).Assembly.Location), "templates");
+
+            for (int i = arguments.Count - 1; i >= 0; i--)
+            {
+                if (arguments[i].StartsWith("--output="))
+                {
+                    outputPath = arguments[i].Substring(9).TrimEnd('\\');
+                    arguments.RemoveAt(i);
+                    continue;
+                }
+                if (arguments[i].StartsWith("--templates="))
+                {
+                    templatePath = arguments[i].Substring(12).TrimEnd('\\');
+                    arguments.RemoveAt(i);
+                }
+            }
+
+            string[] assemblies = GetAssembliesFromArgs(arguments);
+            string[] xmls = GetXmlsFromArgs(arguments, assemblies);
+
             var eventAggregator = new EventAggregator();
             eventAggregator.GetEvent<WarningEvent>().Subscribe(message => Console.WriteLine("WARNING: " + message));
             eventAggregator.GetEvent<BadFileEvent>().Subscribe(path => Console.WriteLine("The requested file is in a bad format and could not be loaded: '" + path + "'"));
@@ -53,26 +71,7 @@ namespace Docu
                 });
 
             var documentModel = new DocumentModel(commentParser, eventAggregator);
-            var pageWriter = new BulkPageWriter(new PageWriter(new HtmlGenerator(), new FileSystemOutputWriter(), new PatternTemplateResolver()));
-            var generator = new DocumentationGenerator(new AssemblyLoader(), new XmlLoader(), new AssemblyXmlParser(documentModel), pageWriter, new UntransformableResourceManager(), eventAggregator);
-
-            for (int i = arguments.Count - 1; i >= 0; i--)
-            {
-                if (arguments[i].StartsWith("--output="))
-                {
-                    generator.SetOutputPath(arguments[i].Substring(9).TrimEnd('\\'));
-                    arguments.RemoveAt(i);
-                    continue;
-                }
-                if (arguments[i].StartsWith("--templates="))
-                {
-                    generator.SetTemplatePath(arguments[i].Substring(12).TrimEnd('\\'));
-                    arguments.RemoveAt(i);
-                }
-            }
-
-            string[] assemblies = GetAssembliesFromArgs(arguments);
-            string[] xmls = GetXmlsFromArgs(arguments, assemblies);
+            var generator = new DocumentationGenerator(outputPath, templatePath, documentModel, eventAggregator);
 
             if (Verify(arguments, assemblies, xmls))
             {

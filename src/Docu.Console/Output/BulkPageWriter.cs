@@ -5,7 +5,7 @@ using Docu.Documentation;
 
 namespace Docu.Output
 {
-    public class BulkPageWriter : IBulkPageWriter
+    public class BulkPageWriter
     {
         private readonly IPageWriter writer;
 

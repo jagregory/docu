@@ -21,7 +21,7 @@ namespace Docu.Output.Rendering
     /// </summary>
     public abstract class SparkTemplateBase : AbstractSparkView, IDocuTemplate
     {
-        protected readonly IOutputFormatter Formatter;
+        protected readonly HtmlOutputFormatter Formatter;
 
         protected SparkTemplateBase()
         {

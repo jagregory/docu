@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Docu.Output
 {
-    public class UntransformableResourceManager : IUntransformableResourceManager
+    public class UntransformableResourceManager
     {
         public void MoveResources(string templatePath, string outputPath)
         {
@@ -42,5 +42,4 @@ namespace Docu.Output
             return ((File.GetAttributes(path) & FileAttributes.Hidden) == FileAttributes.Hidden);
         }
     }
-
 }

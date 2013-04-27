@@ -80,7 +80,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DocumentationGeneratorTests\BaseDocumentationGeneratorFixture.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\CommentAssertionExtensions.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Examples.cs" />
     <Compile Include="Documentation\DocumentModelGeneratorTests\Returns.cs" />
@@ -113,7 +112,6 @@
     <Compile Include="Utils\TestTemplateAttribute.cs" />
     <Compile Include="Output\UntransformableResourceManagerTests.cs" />
     <Compile Include="Output\UntransformableResourceManagerTestsBase.cs" />
-    <Compile Include="IO\AssemblyLoaderTests.cs" />
     <Compile Include="IO\XmlLoaderTests.cs" />
     <Compile Include="Parsing\DocumentationXmlMatcherTests.cs" />
     <Compile Include="Parsing\DocumentationXmlMatcherPrePopulationTests.cs" />
@@ -183,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Console\ConsoleApplicationTests\" />
+    <Folder Include="DocumentationGeneratorTests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -5,7 +5,6 @@ using Docu.IO;
 using Example;
 using NUnit.Framework;
 using Rhino.Mocks;
-using Is=Rhino.Mocks.Constraints.Is;
 
 namespace Docu.Tests.Output
 {

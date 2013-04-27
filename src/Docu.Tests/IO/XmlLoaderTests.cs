@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Docu.IO;
 using NUnit.Framework;
 
 namespace Docu.Tests.IO
@@ -29,9 +28,7 @@ namespace Docu.Tests.IO
         [Test]
         public void should_load_xml_by_name()
         {
-            new XmlLoader()
-                .LoadFrom(xmlFile)
-                .ShouldEqual("an xml file");
+            File.ReadAllText(xmlFile).ShouldEqual("an xml file");
         }
     }
 }

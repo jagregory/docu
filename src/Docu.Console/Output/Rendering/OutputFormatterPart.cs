@@ -5,21 +5,21 @@ namespace Docu.Output.Rendering
 {
     public class OutputFormatterPart<T> : IOutputFormatterPart
     {
+        readonly Func<T, string> _action;
+
         public OutputFormatterPart(Func<T, string> action)
         {
-            Action = action;
+            _action = action;
         }
 
         public Func<IComment, bool> Criteria
         {
             get { return x => x is T; }
         }
-
-        public Func<T, string> Action { get; private set; }
             
-        Func<IComment, string> IOutputFormatterPart.Action
+        public Func<IComment, string> Action
         {
-            get { return x => Action((T)x); }
+            get { return x => _action((T)x); }
         }
     }
 }
