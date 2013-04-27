@@ -29,7 +29,7 @@ namespace Docu
             var pageWriter = new BulkPageWriter(new PageWriter(new HtmlGenerator(), new FileSystemOutputWriter(), new PatternTemplateResolver()));
             var generator = new DocumentationGenerator(new AssemblyLoader(), new XmlLoader(), new AssemblyXmlParser(documentModel), pageWriter, new UntransformableResourceManager(), eventAggregator);
             
-            var application = new ConsoleApplication(new ConsoleScreenWriter(), generator, eventAggregator);
+            var application = new ConsoleApplication(generator, eventAggregator);
             application.Run(args);
         }
     }

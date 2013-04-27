@@ -1,4 +1,3 @@
-using Docu.Console;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -16,7 +15,6 @@ namespace Docu.Parsing.Model
         private static char START_GENERIC_ARGUMENTS = '{';
         private static char END_GENERIC_ARGUMENTS = '}';
         private static char REFOUT_PARAMETER_SUFFIX = '@';
-        private static IScreenWriter screenWriter = new ConsoleScreenWriter();
 
         protected Identifier(string name)
         {
@@ -265,8 +263,8 @@ namespace Docu.Parsing.Model
                 }
                 catch (ReflectionTypeLoadException ex)
                 {
-                    screenWriter.WriteLine(string.Format("Could not load types of assembly '{0}'.{1}{2}",
-                                                         assembly.FullName, Environment.NewLine, ex.InnerException));
+                    System.Console.WriteLine("Could not load types of assembly '{0}'.{1}{2}",
+                        assembly.FullName, Environment.NewLine, ex.InnerException);
                 }
             }
         }
