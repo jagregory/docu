@@ -4,57 +4,73 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Docu.Console
+namespace Docu
 {
     public class ConsoleApplication
     {
-        readonly List<string> arguments = new List<string>();
         readonly DocumentationGenerator documentationGenerator;
         readonly IEventAggregator eventAggregator;
-        readonly IList<ISwitch> switches = new List<ISwitch>();
 
         public ConsoleApplication(DocumentationGenerator documentationGenerator, IEventAggregator eventAggregator)
         {
             this.documentationGenerator = documentationGenerator;
             this.eventAggregator = eventAggregator;
 
-            WireUpListeners();
-            DefineSwitches();
+            this.eventAggregator.GetEvent<WarningEvent>().Subscribe(message => Console.WriteLine("WARNING: " + message));
+            this.eventAggregator.GetEvent<BadFileEvent>().Subscribe(path => Console.WriteLine("The requested file is in a bad format and could not be loaded: '" + path + "'"));
         }
 
-        public void Run(IEnumerable<string> args)
+        public void Run(List<string> args)
         {
-            arguments.AddRange(args);
-
-            if (arguments.Count == 0)
+            if (args.Count == 0 || args.Contains("--help"))
             {
-                ShowHelp();
+                Console.WriteLine("usuage: docu pattern.dll [pattern.dll ...] [pattern.xml ...]");
+                Console.WriteLine();
+                Console.WriteLine(" * One or more dll matching patterns can be specified,");
+                Console.WriteLine("   e.g. MyProject*.dll or MyProject.dll");
+                Console.WriteLine();
+                Console.WriteLine(" * Xml file names can be inferred from the dll patterns");
+                Console.WriteLine("   or can be explicitly named.");
+                Console.WriteLine();
+                Console.WriteLine("Switches:");
+                Console.WriteLine("  --help          Shows this message");
+                Console.WriteLine("  --output=value  Sets the output path to value");
                 return;
             }
 
-            if (ProcessSwitches() == false)
+            for (int i = args.Count - 1; i >= 0; i--)
             {
-                return;
+                if (args[i].StartsWith("--output="))
+                {
+                    documentationGenerator.SetOutputPath(args[i].Substring(9).TrimEnd('\\'));
+                    args.RemoveAt(i);
+                    continue;
+                }
+                if (args[i].StartsWith("--templates="))
+                {
+                    documentationGenerator.SetTemplatePath(args[i].Substring(12).TrimEnd('\\'));
+                    args.RemoveAt(i);
+                }
             }
 
-            System.Console.WriteLine("-------------------------------");
-            System.Console.WriteLine(" docu: simple docs done simply ");
-            System.Console.WriteLine("-------------------------------");
-            System.Console.WriteLine();
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine(" docu: simple docs done simply ");
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine();
 
-            string[] assemblies = GetAssembliesFromArgs(arguments);
-            string[] xmls = GetXmlsFromArgs(arguments, assemblies);
+            string[] assemblies = GetAssembliesFromArgs(args);
+            string[] xmls = GetXmlsFromArgs(args, assemblies);
 
-            if (VerifyArguments(assemblies, xmls))
+            if (VerifyArguments(args, assemblies, xmls))
             {
-                System.Console.WriteLine("Starting documentation generation");
+                Console.WriteLine("Starting documentation generation");
 
                 documentationGenerator.SetAssemblies(assemblies);
                 documentationGenerator.SetXmlFiles(xmls);
                 documentationGenerator.Generate();
 
-                System.Console.WriteLine();
-                System.Console.WriteLine("Generation complete");
+                Console.WriteLine();
+                Console.WriteLine("Generation complete");
             }
         }
 
@@ -69,36 +85,6 @@ namespace Docu.Console
             string fileExtension = Path.GetExtension(argument);
             return fileExtension.Equals(".dll", StringComparison.InvariantCultureIgnoreCase)
                 || fileExtension.Equals(".exe", StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        void DefineSwitches()
-        {
-            switches.Add(
-                new Switch(
-                    "--help",
-                    () =>
-                        {
-                            ShowHelp();
-                            return false;
-                        }));
-
-            switches.Add(
-                new ParameterSwitch(
-                    "--output",
-                    arg =>
-                        {
-                            documentationGenerator.SetOutputPath(arg.TrimEnd('\\'));
-                            return true;
-                        }));
-
-            switches.Add(
-                new ParameterSwitch(
-                    "--templates",
-                    arg =>
-                        {
-                            documentationGenerator.SetTemplatePath(arg.TrimEnd('\\'));
-                            return true;
-                        }));
         }
 
         string[] GetAssembliesFromArgs(IEnumerable<string> args)
@@ -171,32 +157,7 @@ namespace Docu.Console
             return xmls.ToArray();
         }
 
-        bool ProcessSwitches()
-        {
-            foreach (ISwitch svvitch in switches)
-            {
-                for (int i = arguments.Count - 1; i >= 0; i--)
-                {
-                    string argument = arguments[i];
-
-                    if (!svvitch.IsMatch(argument))
-                    {
-                        continue;
-                    }
-
-                    arguments.RemoveAt(i);
-
-                    if (svvitch.Handle(argument) == false)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        bool VerifyArguments(IEnumerable<string> assemblies, IEnumerable<string> xmls)
+        bool VerifyArguments(IEnumerable<string> arguments, IEnumerable<string> assemblies, IEnumerable<string> xmls)
         {
             foreach (string argument in arguments)
             {
@@ -206,9 +167,9 @@ namespace Docu.Console
                     continue;
                 }
 
-                System.Console.WriteLine("Invalid argument '" + argument + "': what am I supposed to do with this?");
-                System.Console.WriteLine();
-                System.Console.WriteLine("Use --help to see usage and switches");
+                Console.WriteLine("Invalid argument '" + argument + "': what am I supposed to do with this?");
+                Console.WriteLine();
+                Console.WriteLine("Use --help to see usage and switches");
                 return false;
             }
 
@@ -229,7 +190,7 @@ namespace Docu.Console
         {
             if (!assemblies.Any())
             {
-                System.Console.WriteLine("No Assemblies specified: please give me some assemblies!");
+                Console.WriteLine("No Assemblies specified: please give me some assemblies!");
                 return false;
             }
 
@@ -237,7 +198,7 @@ namespace Docu.Console
             {
                 if (!File.Exists(assembly))
                 {
-                    System.Console.WriteLine("Assembly not found '" + assembly + "': cannot continue.");
+                    Console.WriteLine("Assembly not found '" + assembly + "': cannot continue.");
                     return false;
                 }
             }
@@ -249,8 +210,8 @@ namespace Docu.Console
         {
             if (!xmls.Any())
             {
-                System.Console.WriteLine("No XML documents found: none were found for the assembly names you gave,");
-                System.Console.WriteLine("explicitly specify them if their names differ from their associated assembly.");
+                Console.WriteLine("No XML documents found: none were found for the assembly names you gave,");
+                Console.WriteLine("explicitly specify them if their names differ from their associated assembly.");
                 return false;
             }
 
@@ -258,33 +219,12 @@ namespace Docu.Console
             {
                 if (!File.Exists(xml))
                 {
-                    System.Console.WriteLine("XML file not found '" + xml + "': cannot continue.");
+                    Console.WriteLine("XML file not found '" + xml + "': cannot continue.");
                     return false;
                 }
             }
 
             return true;
-        }
-
-        void ShowHelp()
-        {
-            System.Console.WriteLine("usuage: docu pattern.dll [pattern.dll ...] [pattern.xml ...]");
-            System.Console.WriteLine();
-            System.Console.WriteLine(" * One or more dll matching patterns can be specified,");
-            System.Console.WriteLine("   e.g. MyProject*.dll or MyProject.dll");
-            System.Console.WriteLine();
-            System.Console.WriteLine(" * Xml file names can be inferred from the dll patterns");
-            System.Console.WriteLine("   or can be explicitly named.");
-            System.Console.WriteLine();
-            System.Console.WriteLine("Switches:");
-            System.Console.WriteLine("  --help          Shows this message");
-            System.Console.WriteLine("  --output=value  Sets the output path to value");
-        }
-
-        void WireUpListeners()
-        {
-            eventAggregator.GetEvent<WarningEvent>().Subscribe(message => System.Console.WriteLine("WARNING: " + message));
-            eventAggregator.GetEvent<BadFileEvent>().Subscribe(path => System.Console.WriteLine("The requested file is in a bad format and could not be loaded: '" + path + "'"));
         }
     }
 }

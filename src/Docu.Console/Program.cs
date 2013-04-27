@@ -1,4 +1,4 @@
-﻿using Docu.Console;
+﻿using System.Collections.Generic;
 using Docu.Documentation;
 using Docu.Events;
 using Docu.IO;
@@ -30,7 +30,7 @@ namespace Docu
             var generator = new DocumentationGenerator(new AssemblyLoader(), new XmlLoader(), new AssemblyXmlParser(documentModel), pageWriter, new UntransformableResourceManager(), eventAggregator);
             
             var application = new ConsoleApplication(generator, eventAggregator);
-            application.Run(args);
+            application.Run(new List<string>(args));
         }
     }
 }
