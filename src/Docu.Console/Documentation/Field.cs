@@ -1,63 +1,37 @@
+using System;
+using System.Collections.Generic;
+using Docu.Parsing.Model;
+
 namespace Docu.Documentation
 {
-    using System;
-    using System.Collections.Generic;
-
-    using Docu.Parsing.Model;
-
     public class Field : BaseDocumentationElement, IReferencable
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Field"/> class.
-        /// </summary>
-        /// <param name="identifier">
-        /// The identifier.
-        /// </param>
-        /// <param name="type">
-        /// The type.
-        /// </param>
         public Field(FieldIdentifier identifier, DeclaredType type)
             : base(identifier)
         {
-            this.Type = type;
-        }
-
-        public string FullName
-        {
-            get
-            {
-                return this.Name;
-            }
-        }
-
-        public string PrettyName
-        {
-            get
-            {
-                return this.Name;
-            }
+            Type = type;
         }
 
         public IReferencable ReturnType { get; set; }
 
         public DeclaredType Type { get; set; }
 
-        public static Field Unresolved(FieldIdentifier fieldIdentifier, DeclaredType type)
+        public string FullName
         {
-            return new Field(fieldIdentifier, type) { IsResolved = false };
+            get { return Name; }
         }
 
-        public static Field Unresolved(FieldIdentifier fieldIdentifier, DeclaredType type, IReferencable returnType)
+        public string PrettyName
         {
-            return new Field(fieldIdentifier, type) { IsResolved = false, ReturnType = returnType };
+            get { return Name; }
         }
 
         public void Resolve(IDictionary<Identifier, IReferencable> referencables)
         {
-            if (referencables.ContainsKey(this.identifier))
+            if (referencables.ContainsKey(identifier))
             {
-                this.IsResolved = true;
-                IReferencable referencable = referencables[this.identifier];
+                IsResolved = true;
+                IReferencable referencable = referencables[identifier];
                 var field = referencable as Field;
 
                 if (field == null)
@@ -65,27 +39,37 @@ namespace Docu.Documentation
                     throw new InvalidOperationException("Cannot resolve to '" + referencable.GetType().FullName + "'");
                 }
 
-                this.ReturnType = field.ReturnType;
+                ReturnType = field.ReturnType;
 
-                if (!this.ReturnType.IsResolved)
+                if (!ReturnType.IsResolved)
                 {
-                    this.ReturnType.Resolve(referencables);
+                    ReturnType.Resolve(referencables);
                 }
 
-                if (!this.Summary.IsResolved)
+                if (!Summary.IsResolved)
                 {
-                    this.Summary.Resolve(referencables);
+                    Summary.Resolve(referencables);
                 }
 
-                if (!this.Remarks.IsResolved)
+                if (!Remarks.IsResolved)
                 {
-                    this.Remarks.Resolve(referencables);
+                    Remarks.Resolve(referencables);
                 }
             }
             else
             {
-                this.ConvertToExternalReference();
+                ConvertToExternalReference();
             }
+        }
+
+        public static Field Unresolved(FieldIdentifier fieldIdentifier, DeclaredType type)
+        {
+            return new Field(fieldIdentifier, type) {IsResolved = false};
+        }
+
+        public static Field Unresolved(FieldIdentifier fieldIdentifier, DeclaredType type, IReferencable returnType)
+        {
+            return new Field(fieldIdentifier, type) {IsResolved = false, ReturnType = returnType};
         }
     }
 }

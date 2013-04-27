@@ -1,78 +1,62 @@
+using System;
+using System.Collections.Generic;
+using Docu.Parsing.Model;
+
 namespace Docu.Documentation
 {
-    using System;
-    using System.Collections.Generic;
-
-    using Docu.Parsing.Model;
-
     public class DeclaredType : BaseDocumentationElement, IReferencable
     {
-        private readonly List<Event> events = new List<Event>();
+        readonly List<Event> events = new List<Event>();
 
-        private readonly List<Field> fields = new List<Field>();
+        readonly List<Field> fields = new List<Field>();
 
-        private readonly List<Method> methods = new List<Method>();
+        readonly List<Method> methods = new List<Method>();
 
-        private readonly List<Property> properties = new List<Property>();
+        readonly List<Property> properties = new List<Property>();
 
-        private Type representedType;
+        Type representedType;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeclaredType"/> class.
+        ///     Initializes a new instance of the <see cref="DeclaredType" /> class.
         /// </summary>
         /// <param name="name">
-        /// The name.
+        ///     The name.
         /// </param>
         /// <param name="ns">
-        /// The ns.
+        ///     The ns.
         /// </param>
         public DeclaredType(TypeIdentifier name, Namespace ns)
             : base(name)
         {
-            this.Namespace = ns;
-            this.Interfaces = new List<IReferencable>();
+            Namespace = ns;
+            Interfaces = new List<IReferencable>();
         }
 
         public IList<Event> Events
         {
-            get
-            {
-                return this.events;
-            }
+            get { return events; }
         }
 
         public IList<Field> Fields
         {
-            get
-            {
-                return this.fields;
-            }
+            get { return fields; }
         }
 
         public string FullName
         {
-            get
-            {
-                return (this.Namespace == null ? string.Empty : this.Namespace.FullName + ".") + this.PrettyName;
-            }
+            get { return (Namespace == null ? string.Empty : Namespace.FullName + ".") + PrettyName; }
         }
 
         public IList<IReferencable> Interfaces { get; set; }
 
         public bool IsInterface
         {
-            get
-            {
-                return this.representedType != null && this.representedType.IsInterface;
-            }
+            get { return representedType != null && representedType.IsInterface; }
         }
 
         public IList<Method> Methods
         {
-            get
-            {
-                return this.methods;
-            }
+            get { return methods; }
         }
 
         public Namespace Namespace { get; private set; }
@@ -81,29 +65,23 @@ namespace Docu.Documentation
 
         public string PrettyName
         {
-            get
-            {
-                return this.representedType == null ? this.Name : this.representedType.GetPrettyName();
-            }
+            get { return representedType == null ? Name : representedType.GetPrettyName(); }
         }
 
         public IList<Property> Properties
         {
-            get
-            {
-                return this.properties;
-            }
+            get { return properties; }
         }
 
         public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Type type, Namespace ns)
         {
-            var declaredType = new DeclaredType(typeIdentifier, ns) { IsResolved = false, representedType = type };
+            var declaredType = new DeclaredType(typeIdentifier, ns) {IsResolved = false, representedType = type};
 
             if (type.BaseType != null)
             {
                 declaredType.ParentType = Unresolved(
-                    Identifier.FromType(type.BaseType), 
-                    type.BaseType, 
+                    Identifier.FromType(type.BaseType),
+                    type.BaseType,
                     Namespace.Unresolved(Identifier.FromNamespace(type.BaseType.Namespace)));
             }
 
@@ -121,26 +99,26 @@ namespace Docu.Documentation
 
         public static DeclaredType Unresolved(TypeIdentifier typeIdentifier, Namespace ns)
         {
-            return new DeclaredType(typeIdentifier, ns) { IsResolved = false };
+            return new DeclaredType(typeIdentifier, ns) {IsResolved = false};
         }
 
         public void AddEvent(Event ev)
         {
-            this.events.Add(ev);
+            events.Add(ev);
         }
 
         public void AddField(Field field)
         {
-            this.fields.Add(field);
+            fields.Add(field);
         }
 
         public void Resolve(IDictionary<Identifier, IReferencable> referencables)
         {
-            if (referencables.ContainsKey(this.identifier))
+            if (referencables.ContainsKey(identifier))
             {
-                this.IsResolved = true;
+                IsResolved = true;
 
-                IReferencable referencable = referencables[this.identifier];
+                IReferencable referencable = referencables[identifier];
                 var type = referencable as DeclaredType;
 
                 if (type == null)
@@ -148,22 +126,22 @@ namespace Docu.Documentation
                     throw new InvalidOperationException("Cannot resolve to '" + referencable.GetType().FullName + "'");
                 }
 
-                this.Namespace = type.Namespace;
-                this.representedType = type.representedType;
-                this.ParentType = type.ParentType;
-                this.Interfaces = type.Interfaces;
+                Namespace = type.Namespace;
+                representedType = type.representedType;
+                ParentType = type.ParentType;
+                Interfaces = type.Interfaces;
 
-                if (!this.Namespace.IsResolved)
+                if (!Namespace.IsResolved)
                 {
-                    this.Namespace.Resolve(referencables);
+                    Namespace.Resolve(referencables);
                 }
 
-                if (this.ParentType != null && !this.ParentType.IsResolved)
+                if (ParentType != null && !ParentType.IsResolved)
                 {
-                    this.ParentType.Resolve(referencables);
+                    ParentType.Resolve(referencables);
                 }
 
-                foreach (IReferencable face in this.Interfaces)
+                foreach (IReferencable face in Interfaces)
                 {
                     if (!face.IsResolved)
                     {
@@ -171,12 +149,12 @@ namespace Docu.Documentation
                     }
                 }
 
-                if (!this.Summary.IsResolved)
+                if (!Summary.IsResolved)
                 {
-                    this.Summary.Resolve(referencables);
+                    Summary.Resolve(referencables);
                 }
 
-                foreach (Method method in this.Methods)
+                foreach (Method method in Methods)
                 {
                     if (!method.IsResolved)
                     {
@@ -184,7 +162,7 @@ namespace Docu.Documentation
                     }
                 }
 
-                foreach (Property property in this.Properties)
+                foreach (Property property in Properties)
                 {
                     if (!property.IsResolved)
                     {
@@ -192,7 +170,7 @@ namespace Docu.Documentation
                     }
                 }
 
-                foreach (Event ev in this.Events)
+                foreach (Event ev in Events)
                 {
                     if (!ev.IsResolved)
                     {
@@ -200,7 +178,7 @@ namespace Docu.Documentation
                     }
                 }
 
-                foreach (Field field in this.Fields)
+                foreach (Field field in Fields)
                 {
                     if (!field.IsResolved)
                     {
@@ -210,32 +188,32 @@ namespace Docu.Documentation
             }
             else
             {
-                this.ConvertToExternalReference();
+                ConvertToExternalReference();
             }
         }
 
         public void Sort()
         {
-            this.methods.Sort((x, y) => x.Name.CompareTo(y.Name));
-            this.properties.Sort((x, y) => x.Name.CompareTo(y.Name));
+            methods.Sort((x, y) => x.Name.CompareTo(y.Name));
+            properties.Sort((x, y) => x.Name.CompareTo(y.Name));
         }
 
         public override string ToString()
         {
-            return base.ToString() + " { Name = '" + this.Name + "'}";
+            return base.ToString() + " { Name = '" + Name + "'}";
         }
 
         internal void AddMethod(Method method)
         {
-            this.methods.Add(method);
+            methods.Add(method);
         }
 
         internal void AddProperty(Property property)
         {
-            this.properties.Add(property);
+            properties.Add(property);
         }
 
-        private static void FilterInterfaces(IList<Type> topLevelInterfaces, Type type)
+        static void FilterInterfaces(IList<Type> topLevelInterfaces, Type type)
         {
             foreach (Type face in type.GetInterfaces())
             {
@@ -254,7 +232,7 @@ namespace Docu.Documentation
             }
         }
 
-        private static IEnumerable<Type> GetInterfaces(Type type)
+        static IEnumerable<Type> GetInterfaces(Type type)
         {
             var interfaces = new List<Type>(type.GetInterfaces());
 

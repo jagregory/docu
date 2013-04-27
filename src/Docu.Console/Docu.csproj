@@ -86,6 +86,9 @@
     <Compile Include="Documentation\Generators\NamespaceGenerator.cs" />
     <Compile Include="Documentation\Generators\PropertyGenerator.cs" />
     <Compile Include="Documentation\Generators\TypeGenerator.cs" />
+    <Compile Include="Documentation\IResolvable.cs" />
+    <Compile Include="Documentation\NullIdentifier.cs" />
+    <Compile Include="Documentation\NullReference.cs" />
     <Compile Include="Events\EventType.cs" />
     <Compile Include="Documentation\BaseDocumentationElement.cs" />
     <Compile Include="Documentation\Event.cs" />

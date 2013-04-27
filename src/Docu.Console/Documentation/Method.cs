@@ -1,100 +1,61 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using Docu.Documentation.Comments;
+using Docu.Parsing.Model;
+
 namespace Docu.Documentation
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
-
-    using Docu.Documentation.Comments;
-    using Docu.Parsing.Model;
-
     public class Method : BaseDocumentationElement, IReferencable
     {
-        private readonly IList<MethodParameter> parameters = new List<MethodParameter>();
+        readonly IList<MethodParameter> parameters = new List<MethodParameter>();
 
-        private MethodBase representedMethod;
+        MethodBase representedMethod;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Method"/> class.
+        ///     Initializes a new instance of the <see cref="Method" /> class.
         /// </summary>
         /// <param name="identifier">
-        /// The identifier.
+        ///     The identifier.
         /// </param>
         /// <param name="type">
-        /// The type.
+        ///     The type.
         /// </param>
         public Method(MethodIdentifier identifier, DeclaredType type)
             : base(identifier)
         {
-            this.Type = type;
-            this.Returns = new Summary();
-        }
-
-        public string FullName
-        {
-            get
-            {
-                return this.Name;
-            }
-        }
-
-        public override bool HasDocumentation
-        {
-            get
-            {
-                return base.HasDocumentation || !this.Returns.IsEmpty;
-            }
+            Type = type;
+            Returns = new Summary();
         }
 
         public bool IsExtension
         {
             get
             {
-                return this.representedMethod != null
-                       &&
-                       (this.representedMethod.IsStatic
-                        && this.representedMethod.GetCustomAttributes(typeof(ExtensionAttribute), false).Length > 0);
+                return representedMethod != null &&
+                    (representedMethod.IsStatic && representedMethod.GetCustomAttributes(typeof (ExtensionAttribute), false).Length > 0);
             }
         }
 
         public bool IsPublic
         {
-            get
-            {
-                return ((MethodIdentifier)this.identifier).IsPublic;
-            }
+            get { return ((MethodIdentifier) identifier).IsPublic; }
         }
 
         public bool IsStatic
         {
-            get
-            {
-                return ((MethodIdentifier)this.identifier).IsStatic;
-            }
+            get { return ((MethodIdentifier) identifier).IsStatic; }
         }
 
         public bool IsConstructor
         {
-            get
-            {
-                return ((MethodIdentifier)this.identifier).IsConstructor;
-            }
+            get { return ((MethodIdentifier) identifier).IsConstructor; }
         }
 
         public IList<MethodParameter> Parameters
         {
-            get
-            {
-                return this.parameters;
-            }
-        }
-
-        public string PrettyName
-        {
-            get
-            {
-                return this.representedMethod == null ? this.Name : this.representedMethod.GetPrettyName();
-            }
+            get { return parameters; }
         }
 
         public IReferencable ReturnType { get; set; }
@@ -103,26 +64,27 @@ namespace Docu.Documentation
 
         public DeclaredType Type { get; set; }
 
-        public static Method Unresolved(MethodIdentifier methodIdentifier, DeclaredType type)
+        public string FullName
         {
-            return new Method(methodIdentifier, type) { IsResolved = false };
+            get { return Name; }
         }
 
-        public static Method Unresolved(
-            MethodIdentifier methodIdentifier, DeclaredType type, MethodBase representedMethod, IReferencable returnType)
+        public override bool HasDocumentation
         {
-            return new Method(methodIdentifier, type)
-                {
-                   IsResolved = false, representedMethod = representedMethod, ReturnType = returnType 
-                };
+            get { return base.HasDocumentation || !Returns.IsEmpty; }
+        }
+
+        public string PrettyName
+        {
+            get { return representedMethod == null ? Name : representedMethod.GetPrettyName(); }
         }
 
         public void Resolve(IDictionary<Identifier, IReferencable> referencables)
         {
-            if (referencables.ContainsKey(this.identifier))
+            if (referencables.ContainsKey(identifier))
             {
-                this.IsResolved = true;
-                IReferencable referencable = referencables[this.identifier];
+                IsResolved = true;
+                IReferencable referencable = referencables[identifier];
                 var method = referencable as Method;
 
                 if (method == null)
@@ -130,26 +92,26 @@ namespace Docu.Documentation
                     throw new InvalidOperationException("Cannot resolve to '" + referencable.GetType().FullName + "'");
                 }
 
-                this.ReturnType = method.ReturnType;
+                ReturnType = method.ReturnType;
 
-                if (this.ReturnType != null && !this.ReturnType.IsResolved)
+                if (ReturnType != null && !ReturnType.IsResolved)
                 {
-                    this.ReturnType.Resolve(referencables);
+                    ReturnType.Resolve(referencables);
                 }
 
-                this.representedMethod = method.representedMethod;
+                representedMethod = method.representedMethod;
 
-                if (!this.Summary.IsResolved)
+                if (!Summary.IsResolved)
                 {
-                    this.Summary.Resolve(referencables);
+                    Summary.Resolve(referencables);
                 }
 
-                if (!this.Remarks.IsResolved)
+                if (!Remarks.IsResolved)
                 {
-                    this.Remarks.Resolve(referencables);
+                    Remarks.Resolve(referencables);
                 }
 
-                foreach (MethodParameter para in this.Parameters)
+                foreach (MethodParameter para in Parameters)
                 {
                     if ((para.Reference != null) && (!para.Reference.IsResolved))
                     {
@@ -159,13 +121,26 @@ namespace Docu.Documentation
             }
             else
             {
-                this.ConvertToExternalReference();
+                ConvertToExternalReference();
             }
+        }
+
+        public static Method Unresolved(MethodIdentifier methodIdentifier, DeclaredType type)
+        {
+            return new Method(methodIdentifier, type) {IsResolved = false};
+        }
+
+        public static Method Unresolved(MethodIdentifier methodIdentifier, DeclaredType type, MethodBase representedMethod, IReferencable returnType)
+        {
+            return new Method(methodIdentifier, type)
+                {
+                    IsResolved = false, representedMethod = representedMethod, ReturnType = returnType
+                };
         }
 
         internal void AddParameter(MethodParameter parameter)
         {
-            this.parameters.Add(parameter);
+            parameters.Add(parameter);
         }
     }
 }

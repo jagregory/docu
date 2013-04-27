@@ -1,14 +1,13 @@
+using System.Collections.Generic;
+using System.Linq;
+using Docu.Documentation.Generators;
+using Docu.Events;
+using Docu.Parsing;
+using Docu.Parsing.Comments;
+using Docu.Parsing.Model;
+
 namespace Docu.Documentation
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Generators;
-    using Events;
-    using Parsing;
-    using Parsing.Comments;
-    using Parsing.Model;
-
     public class DocumentModel : IDocumentModel
     {
         readonly EventGenerator Events;

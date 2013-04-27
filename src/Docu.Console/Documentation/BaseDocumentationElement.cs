@@ -1,38 +1,29 @@
+using Docu.Documentation.Comments;
+using Docu.Parsing.Model;
+
 namespace Docu.Documentation
 {
-    using Docu.Documentation.Comments;
-    using Docu.Parsing.Model;
-
     public abstract class BaseDocumentationElement : IDocumentationElement
     {
         protected readonly Identifier identifier;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BaseDocumentationElement"/> class.
-        /// </summary>
-        /// <param name="identifier">
-        /// The identifier.
-        /// </param>
         protected BaseDocumentationElement(Identifier identifier)
         {
-            this.Name = identifier.ToString();
+            Name = identifier.ToString();
             this.identifier = identifier;
-            this.IsResolved = true;
-            this.Summary = new Summary();
-            this.Remarks = new Remarks();
-            this.Value = new Value();
-            this.Example = new MultilineCode();
+            IsResolved = true;
+            Summary = new Summary();
+            Remarks = new Remarks();
+            Value = new Value();
+            Example = new MultilineCode();
         }
-
-        public MultilineCode Example { get; set; }
 
         public virtual bool HasDocumentation
         {
-            get
-            {
-                return !(this.Summary.IsEmpty && this.Remarks.IsEmpty && this.Value.IsEmpty);
-            }
+            get { return !(Summary.IsEmpty && Remarks.IsEmpty && Value.IsEmpty); }
         }
+
+        public MultilineCode Example { get; set; }
 
         public bool IsExternal { get; private set; }
 
@@ -48,12 +39,12 @@ namespace Docu.Documentation
 
         public virtual void ConvertToExternalReference()
         {
-            this.IsExternal = true;
+            IsExternal = true;
         }
 
         public bool IsIdentifiedBy(Identifier otherIdentifier)
         {
-            return this.identifier.Equals(otherIdentifier);
+            return identifier.Equals(otherIdentifier);
         }
     }
 }

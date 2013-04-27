@@ -1,13 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
+using Docu.Parsing.Model;
+
 namespace Docu.Documentation
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Docu.Parsing.Model;
-
     public class Namespace : BaseDocumentationElement, IReferencable
     {
-        private readonly List<DeclaredType> types = new List<DeclaredType>();
+        readonly List<DeclaredType> types = new List<DeclaredType>();
 
         public Namespace(Identifier identifier)
             : base(identifier)
@@ -16,85 +15,51 @@ namespace Docu.Documentation
 
         public IEnumerable<DeclaredType> Classes
         {
-            get
-            {
-                return this.Types.Where(x => !x.IsInterface);
-            }
-        }
-
-        public string FullName
-        {
-            get
-            {
-                return this.Name;
-            }
+            get { return Types.Where(x => !x.IsInterface); }
         }
 
         public bool HasClasses
         {
-            get
-            {
-                return this.Classes.Any();
-            }
+            get { return Classes.Any(); }
         }
 
         public bool HasInterfaces
         {
-            get
-            {
-                return this.Interfaces.Any();
-            }
+            get { return Interfaces.Any(); }
         }
 
         public bool HasTypes
         {
-            get
-            {
-                return this.Types.Count > 0;
-            }
+            get { return Types.Count > 0; }
         }
 
         public IEnumerable<DeclaredType> Interfaces
         {
-            get
-            {
-                return this.Types.Where(x => x.IsInterface);
-            }
-        }
-
-        public string PrettyName
-        {
-            get
-            {
-                return this.Name;
-            }
+            get { return Types.Where(x => x.IsInterface); }
         }
 
         public IList<DeclaredType> Types
         {
-            get
-            {
-                return this.types;
-            }
+            get { return types; }
         }
 
-        public static Namespace Unresolved(NamespaceIdentifier namespaceIdentifier)
+        public string FullName
         {
-            return new Namespace(namespaceIdentifier) { IsResolved = false };
+            get { return Name; }
         }
 
-        public void AddType(DeclaredType type)
+        public string PrettyName
         {
-            this.types.Add(type);
+            get { return Name; }
         }
 
         public void Resolve(IDictionary<Identifier, IReferencable> referencables)
         {
-            if (referencables.ContainsKey(this.identifier))
+            if (referencables.ContainsKey(identifier))
             {
-                this.IsResolved = true;
+                IsResolved = true;
 
-                foreach (DeclaredType type in this.Types)
+                foreach (DeclaredType type in Types)
                 {
                     if (!type.IsResolved)
                     {
@@ -104,15 +69,25 @@ namespace Docu.Documentation
             }
             else
             {
-                this.ConvertToExternalReference();
+                ConvertToExternalReference();
             }
+        }
+
+        public static Namespace Unresolved(NamespaceIdentifier namespaceIdentifier)
+        {
+            return new Namespace(namespaceIdentifier) {IsResolved = false};
+        }
+
+        public void AddType(DeclaredType type)
+        {
+            types.Add(type);
         }
 
         public void Sort()
         {
-            this.types.Sort((x, y) => x.Name.CompareTo(y.Name));
+            types.Sort((x, y) => x.Name.CompareTo(y.Name));
 
-            foreach (DeclaredType type in this.types)
+            foreach (DeclaredType type in types)
             {
                 type.Sort();
             }
@@ -120,7 +95,7 @@ namespace Docu.Documentation
 
         public override string ToString()
         {
-            return base.ToString() + " { Name = '" + this.Name + "' }";
+            return base.ToString() + " { Name = '" + Name + "' }";
         }
     }
 }
