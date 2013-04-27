@@ -259,7 +259,6 @@ namespace Docu.Output.Rendering
         /// Returns a hyperlink to another symbol
         /// </summary>
         /// <remarks>The format of the URL in the returned hyperlink can be controlled by the methods <see cref="SetNamespaceUrlFormat"/>, <see cref="SetTypeUrlFormat"/>,  <see cref="SetPropertyUrlFormat"/>, <see cref="SetMethodUrlFormat"/>, <see cref="SetFieldUrlFormat"/> and <see cref="SetEventUrlFormat"/></remarks>
-        /// <param name="referencable"></param>
         /// <returns></returns>
         public string Format(IReferencable referencable, params Expression<Func<object, string>>[] attributes)
         {

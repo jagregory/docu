@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics;
 
 namespace Docu.Parsing.Model
 {
+    [DebuggerDisplay("{Name}")]
     public abstract class Identifier : IComparable<Identifier>, IEquatable<Identifier>
     {
         readonly string _name;

@@ -10,8 +10,7 @@ namespace Docu.Parsing.Model
         private readonly TypeIdentifier[] _parameters;
         private readonly TypeIdentifier _typeId;
 
-        public MethodIdentifier(string name, TypeIdentifier[] parameters, bool isStatic, bool isPublic, bool isConstructor,
-                                TypeIdentifier typeId)
+        public MethodIdentifier(string name, TypeIdentifier[] parameters, bool isStatic, bool isPublic, bool isConstructor, TypeIdentifier typeId)
             : base(name)
         {
             _typeId = typeId;

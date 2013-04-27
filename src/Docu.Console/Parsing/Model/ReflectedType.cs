@@ -6,6 +6,12 @@ namespace Docu.Parsing.Model
     {
         public ReflectedType(Identifier name, Type type)
             : base(name, null, type)
-        {}
+        {
+        }
+
+        public bool Match(Identifier name)
+        {
+            return Name.Equals(name);
+        }
     }
 }

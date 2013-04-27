@@ -67,10 +67,7 @@ namespace Docu.Parsing
 
         static void MatchMethod(List<IDocumentationMember> members, XmlNode node)
         {
-            Identifier member = IdentifierFor.XmlString(node.Attributes["name"].Value);
-
-            int index = members.FindIndex(x => member.Equals(x.Name));
-            if (index == -1) return; // TODO: Privates         
+            Identifier member = IdentifierFor.XmlString(node.Attributes["name"].Value);   
 
             for (int i = 0; i < members.Count; i++)
             {
