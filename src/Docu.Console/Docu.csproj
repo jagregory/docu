@@ -204,6 +204,7 @@
   <ItemGroup>
     <Content Include="templates\!namespace\_methods.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="templates\!namespace\_properties.spark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

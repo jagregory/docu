@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Docu.Parsing.Model
 {
     public static class IdentifierFor
     {
-        const string GenericParamaterPrefix = "``";
-        const string GenericRankPrefix = "`";
+        const string GenericTypeParameterPrefix = "`";
+        const string GenericMethodParamaterPrefix = "``";
         const string ArrayTypeSuffix = "[]";
         const char StartGenericArguments = '{';
         const char EndGenericArguments = '}';
@@ -19,8 +20,19 @@ namespace Docu.Parsing.Model
         public static TypeIdentifier Type(Type type)
         {
             return type.IsGenericParameter
-                ? new TypeIdentifier(GenericParamaterPrefix + type.GenericParameterPosition, GenericTypeNamespace)
+                ? new TypeIdentifier(GenericMethodParamaterPrefix + type.GenericParameterPosition, GenericTypeNamespace)
                 : new TypeIdentifier(type.Name, type.Namespace);
+        }
+
+        public static TypeIdentifier ParameterType(MethodBase method, Type type)
+        {
+            if (type.IsGenericParameter)
+            {
+                return method.IsGenericMethod && method.GetGenericArguments().Any(t => t.TypeHandle.Value == type.TypeHandle.Value)
+                    ? new TypeIdentifier(GenericMethodParamaterPrefix + type.GenericParameterPosition, GenericTypeNamespace)
+                    : new TypeIdentifier(GenericTypeParameterPrefix + type.GenericParameterPosition, GenericTypeNamespace);
+            }
+            return new TypeIdentifier(type.Name, type.Namespace);
         }
 
         public static MethodIdentifier Method(MethodBase method, Type type)
@@ -29,11 +41,11 @@ namespace Docu.Parsing.Model
             var parameters = new List<TypeIdentifier>();
 
             if (method.IsGenericMethod)
-                name += GenericParamaterPrefix + method.GetGenericArguments().Length;
+                name += GenericMethodParamaterPrefix + method.GetGenericArguments().Length;
 
             foreach (ParameterInfo param in method.GetParameters())
             {
-                parameters.Add(Type(param.ParameterType));
+                parameters.Add(ParameterType(method, param.ParameterType));
             }
 
             return new MethodIdentifier(name, parameters.ToArray(), method.IsStatic, method.IsPublic, method.IsConstructor, Type(type));
@@ -148,7 +160,7 @@ namespace Docu.Parsing.Model
                     int lengthOfGenericArgumentsSection = endOfGenericArguments - startOfGenericArguments - 1;
                     string genericArgumentsSection = paramName.Substring(startOfGenericArguments + 1, lengthOfGenericArgumentsSection);
                     int countOfGenericParametersForType = CountOfGenericArguments(genericArgumentsSection);
-                    typeNameToFind = nonGenericPartOfTypeName + GenericRankPrefix + countOfGenericParametersForType;
+                    typeNameToFind = nonGenericPartOfTypeName + GenericTypeParameterPrefix + countOfGenericParametersForType;
                 }
                 Type paramType;
                 bool isArray = typeNameToFind.EndsWith(ArrayTypeSuffix);
@@ -189,7 +201,7 @@ namespace Docu.Parsing.Model
 
         static bool IsGenericArgument(string parameter)
         {
-            return parameter.StartsWith(GenericParamaterPrefix);
+            return parameter.StartsWith(GenericMethodParamaterPrefix) || parameter.StartsWith(GenericTypeParameterPrefix);
         }
 
         static void BuildTypeLookup()
