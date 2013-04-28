@@ -26,6 +26,17 @@ namespace Docu.Parsing.Model
 
         public static TypeIdentifier ParameterType(MethodBase method, Type type)
         {
+            if (type.IsArray)
+            {
+                var elementType = type.GetElementType();
+                if (elementType.IsGenericParameter)
+                {
+                    return method.IsGenericMethod && method.GetGenericArguments().Any(t => t.TypeHandle.Value == elementType.TypeHandle.Value)
+                        ? new TypeIdentifier(GenericMethodParamaterPrefix + elementType.GenericParameterPosition + ArrayTypeSuffix, GenericTypeNamespace)
+                        : new TypeIdentifier(GenericTypeParameterPrefix + elementType.GenericParameterPosition + ArrayTypeSuffix, GenericTypeNamespace);
+                }
+            }
+
             if (type.IsGenericParameter)
             {
                 return method.IsGenericMethod && method.GetGenericArguments().Any(t => t.TypeHandle.Value == type.TypeHandle.Value)
