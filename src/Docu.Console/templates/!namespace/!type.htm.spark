@@ -79,13 +79,13 @@
 	<var publicConstructors="Type.Methods.Where(x => x.IsPublic && x.IsConstructor)" />
 	<methods methods="publicConstructors" title="'Public constructors'" />
 	
+	<var publicStaticMethods="Type.Methods.Where(x => x.IsPublic && x.IsStatic)" />
+	<methods methods="publicStaticMethods" title="'Public static methods'" />
+
 	<if condition="!Type.IsStatic">
 		<var publicInstanceMethods="Type.Methods.Where(x => x.IsPublic && !x.IsStatic && !x.IsConstructor)" />
 		<methods methods="publicInstanceMethods" title="'Public instance methods'" />
 	</if>
-
-	<var publicStaticMethods="Type.Methods.Where(x => x.IsPublic && x.IsStatic)" />
-	<methods methods="publicStaticMethods" title="'Public static methods'" />
 	
 	<properties properties="Type.Properties" title="'Public properties'" />
 	<fields fields="Type.Fields" title="'Public fields'" />
