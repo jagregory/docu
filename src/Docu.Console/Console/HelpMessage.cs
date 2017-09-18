@@ -6,7 +6,7 @@ namespace Docu.Console
     {
         public IEnumerable<string> GetBody()
         {
-            yield return "usuage: docu pattern.dll [pattern.dll ...] [pattern.xml ...]";
+            yield return "usage: docu pattern.dll [pattern.dll ...] [pattern.xml ...]";
             yield return "";
             yield return " * One or more dll matching patterns can be specified,";
             yield return "   e.g. MyProject*.dll or MyProject.dll";
