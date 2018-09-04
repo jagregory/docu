@@ -15,12 +15,19 @@ namespace Docu.Documentation.Generators
 
         public void Add(List<Namespace> namespaces, IDocumentationMember association)
         {
+            string namespace2 = "NoNamespace";
             if (association.TargetType.Namespace == null)
-                throw new NullReferenceException(
-                    string.Format("There was no namespace found for {0}",
-                                  association.TargetType.AssemblyQualifiedName));
+            {
+                //TODO this may be better as a build warning
+                System.Console.WriteLine(string.Format("There was no namespace found for {0}",
+                              association.TargetType.AssemblyQualifiedName));
+            }
+            else
+            {
+                namespace2 = association.TargetType.Namespace;
+            }
 
-            var ns = Identifier.FromNamespace(association.TargetType.Namespace);
+            var ns = Identifier.FromNamespace(namespace2);
 
             if (!namespaces.Exists(x => x.IsIdentifiedBy(ns)))
             {

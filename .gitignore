@@ -6,3 +6,4 @@ obj
 _ReSharper*
 artifacts
 TestResult.xml
+src/.vs/
