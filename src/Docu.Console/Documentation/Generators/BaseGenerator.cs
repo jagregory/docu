@@ -84,7 +84,19 @@ namespace Docu.Documentation.Generators
         protected Namespace FindNamespace(IDocumentationMember association, List<Namespace> namespaces)
         {
             var identifier = Identifier.FromNamespace(association.TargetType.Namespace);
-            return namespaces.Find(x => x.IsIdentifiedBy(identifier));
+            Namespace ns=  namespaces.Find(x => x.IsIdentifiedBy(identifier));
+            if (ns == null)
+            {
+                for (int i = 0; i < namespaces.Count; i++)
+                {
+                    if (namespaces[i].Name == "NoNamespace")
+                    {
+                        ns = namespaces[i];
+                        break;
+                    }
+                }
+            }
+            return ns;
         }
 
         protected DeclaredType FindType(Namespace ns, IDocumentationMember association)
